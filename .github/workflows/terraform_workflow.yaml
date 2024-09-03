@@ -1,0 +1,56 @@
+name: Terraform 
+
+on:
+  push:
+    paths:
+      - 'terraform/*'
+    branches: [ "main" ]
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  checkov:
+    uses: AGBG-ASG/terraform-workflows-template/.github/workflows/checkov.yaml@main
+    secrets:
+      fetcher-key: "${{ secrets.GH_APP_KEY }}"
+      gh-app-id: ${{ secrets.GH_APP_ID }}
+      gh-installation-id: ${{ secrets.GH_INSTALLATION_ID }}
+    with:
+      directory: terraform
+
+  tflint:
+    uses: AGBG-ASG/terraform-workflows-template/.github/workflows/tflint.yaml@main
+    with:
+      terraform-path: terraform
+  
+  trivy:
+    permissions:
+      contents: read
+      pull-requests: write
+    uses: AGBG-ASG/terraform-workflows-template/.github/workflows/trivy_secret_scan.yaml@main
+
+  terraformfmt:
+    uses: AGBG-ASG/terraform-workflows-template/.github/workflows/terraform_fmt.yaml@main
+    with:
+      terraform-path: terraform
+      terraform-version: 1.7.2
+
+  terraform:
+    needs: [terraformfmt,tflint,checkov,trivy]
+    uses: AGBG-ASG/terraform-workflows-template/.github/workflows/terraform.yaml@main
+    concurrency:
+      group: terraform
+    permissions:
+     contents: 'read'
+     id-token: 'write'
+     pull-requests: 'write'
+    secrets:
+      gh-app-key: "${{ secrets.GH_APP_KEY }}"
+      gcp-sa: "${{ secrets.GCP_SA }}"
+      wif-provider: "${{ secrets.WIF_PROVIDER }}"
+      gh-app-id: ${{ secrets.GH_APP_ID }}
+      gh-installation-id: ${{ secrets.GH_INSTALLATION_ID }}
+    with:
+      terraform-version: 1.7.2

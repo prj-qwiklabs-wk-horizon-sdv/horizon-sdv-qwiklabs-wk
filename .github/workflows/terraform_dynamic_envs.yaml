@@ -1,0 +1,125 @@
+name: Terraform
+
+on:
+  workflow_call:
+    secrets:
+      gcp-sa-key:
+        required: false
+        description: Google Service Account
+      wif-provider: 
+        required: false
+        description: "Workload Identity Federation provider"
+      gcp-sa:
+        required: false
+        description: "GCP Service account to impersonate"
+      gh-app-id:
+        required: false
+        description: "Github App ID"
+      gh-installation-id:
+        required: false
+        description: "Github Installation ID"
+      gh-app-key:
+        required: false
+        description: "Github App Private Key"
+        
+    inputs:
+      environment:
+        required: false
+        description: "environment to use"
+        type: string
+      gh-app-id:
+        required: false
+        description: "Github App ID"
+        type: number
+      gh-installation-id:
+        required: false
+        description: "Github Installation ID"
+        type: number
+      path:
+        required: false
+        description: "Terraform directory"
+        default: "terraform"
+        type: string
+      wif-provider: 
+        required: false
+        description: "Workload Identity Federation provider"
+        type: string
+      gcp-sa:
+        required: false
+        description: "GCP Service account to impersonate"
+        type: string
+      terraform-version:
+        required: false
+        default: latest
+        type: string
+      terraform-apply:
+        required: false
+        default: false
+        type: boolean
+
+jobs:
+  checkov:
+    uses: AGBG-ASG/terraform-workflows-template/.github/workflows/checkov.yaml@main
+    secrets:
+      gh-app-key: "${{ secrets.gh-app-key }}"
+      gh-app-id: "${{ secrets.gh-app-id }}"
+      gh-installation-id: "${{ secrets.gh-installation-id }}"
+    with:
+      gh-app-id: ${{ inputs.gh-app-id }}
+      gh-installation-id: ${{ inputs.gh-installation-id }}
+      directory: ${{ inputs.path }}
+
+  tflint:
+    uses: AGBG-ASG/terraform-workflows-template/.github/workflows/tflint.yaml@main
+    with:
+      terraform-path: ${{ inputs.path }}
+  
+  trivy:
+    permissions:
+      contents: read
+      pull-requests: write
+    uses: AGBG-ASG/terraform-workflows-template/.github/workflows/trivy_secret_scan.yaml@main
+
+  terraformfmt:
+    uses: AGBG-ASG/terraform-workflows-template/.github/workflows/terraform_fmt.yaml@main
+    with:
+      terraform-path: ${{ inputs.path }}
+      terraform-version: ${{ inputs.terraform-version }}
+  
+  get-phase:
+    name: Determine if it's plan or apply
+    runs-on: self-hosted
+    outputs:
+      phase: ${{ steps.get-env.outputs.phase }}
+    steps:
+    - name: get phase
+      id: get-env
+      shell: bash
+      run: |
+        if [[ "${{ github.ref }}" == 'refs/heads/main' ]]; then
+          echo "phase=apply" >> $GITHUB_OUTPUT;
+        else
+          echo "phase=plan" >> $GITHUB_OUTPUT;
+        fi
+
+  terraform:
+    needs: [terraformfmt,tflint,checkov,trivy,get-phase]
+    uses: AGBG-ASG/terraform-workflows-template/.github/workflows/terraform.yaml@main
+    concurrency:
+      group: terraform-${{ inputs.environment }}
+    permissions:
+     contents: 'read'
+     id-token: 'write'
+     pull-requests: 'write'
+    secrets:
+      gh-app-id: "${{ secrets.gh-app-id }}"
+      gh-installation-id: "${{ secrets.gh-installation-id }}"
+      gh-app-key: "${{ secrets.gh-app-key }}"
+      gcp-sa: "${{ secrets.gcp-sa }}"
+      wif-provider: "${{ secrets.wif-provider }}"
+    with:
+      gh-app-id: ${{ inputs.gh-app-id }}
+      gh-installation-id: ${{ inputs.gh-installation-id }}
+      terraform-version: ${{ inputs.terraform-version }}
+      directory: ${{ inputs.path }}
+      environment: ${{ inputs.environment }}-${{ needs.get-phase.outputs.phase }}
