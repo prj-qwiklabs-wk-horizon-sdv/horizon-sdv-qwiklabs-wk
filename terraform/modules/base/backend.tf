@@ -1,6 +1,6 @@
 terraform {
   backend "gcs" {
-    bucket = "prj-s-agbg-gcp-sdv-dev-tf-state"
-    prefix = "prj-s-agbg-gcp-sdv-dev-tf-state"
+    bucket = "prj-s-agbg-gcp-sdv-sdx-tf-state"
+    prefix = "prj-s-agbg-gcp-sdv-sdx-tf-state"
   }
 }

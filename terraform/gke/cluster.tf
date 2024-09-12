@@ -21,7 +21,10 @@ resource "google_container_node_pool" "primary_preemptible_nodes" {
   name       = var.cluster_node_pool_name
   location   = var.project_location
   cluster    = google_container_cluster.default.name
-  node_count = 0
+  node_count = 1
+  node_locations = [
+    "europe-west1-d",
+  ]
   node_config {
     preemptible  = true
     machine_type = "e2-medium"

@@ -1,5 +1,5 @@
 
-project_id       = "sdva-2108202401"
+project_id       = "sdvc-2108202401"
 project_location = "europe-west1"
 project_region   = "europe-west1"
 project_zone     = "europe-west1-d"
@@ -7,7 +7,7 @@ project_zone     = "europe-west1-d"
 vpc_network_name    = "sdv-network"
 network_subnet_name = "sdv-subnet"
 
-computer_sa = "268541173342-compute@developer.gserviceaccount.com"
+computer_sa = "966518152012-compute@developer.gserviceaccount.com"
 
 
 cluster_name           = "sdv-cluster"
