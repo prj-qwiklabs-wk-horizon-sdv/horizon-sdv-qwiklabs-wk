@@ -1,8 +1,8 @@
 resource "google_container_cluster" "default" {
   name                     = var.cluster_name
-  location                 = var.project_location
-  network                  = var.vpc_network_name
-  subnetwork               = var.network_subnet_name
+  location                 = var.location
+  network                  = var.network
+  subnetwork               = var.subnetwork
   remove_default_node_pool = true
   initial_node_count       = 1
 
@@ -18,20 +18,18 @@ resource "google_container_cluster" "default" {
 
 
 resource "google_container_node_pool" "primary_preemptible_nodes" {
-  name       = var.cluster_node_pool_name
-  location   = var.project_location
+  name       = var.node_pool_name
+  location   = var.location
   cluster    = google_container_cluster.default.name
   node_count = 1
-  node_locations = [
-    "europe-west1-d",
-  ]
+  node_locations = var.node_locations
   node_config {
     preemptible  = true
-    machine_type = "e2-medium"
+    machine_type = var.machine_type
 
     # Google recommends custom service accounts that have cloud-platform
     # scope and permissions granted via IAM Roles.
-    service_account = var.computer_sa
+    service_account = var.service_account
     oauth_scopes = [
       "https://www.googleapis.com/auth/cloud-platform"
     ]
