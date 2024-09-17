@@ -18,3 +18,14 @@ module "sdv-gke-cluster" {
   subnetwork      = var.network_subnet_name
   service_account = var.computer_sa
 }
+
+module "sdv-bastion-host" {
+  source          = "./modules/sdv-bastion-host"
+  host_name       = var.bastion_host_name
+  service_account = var.bastion_host_sa
+  project         = var.project_id
+  network         = var.vpc_network_name
+  subnetwork      = var.network_subnet_name
+  zone            = var.project_zone
+  members         = var.bastion_host_members
+}

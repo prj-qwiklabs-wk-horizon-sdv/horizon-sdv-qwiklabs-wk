@@ -1,9 +1,9 @@
 
 
 resource "google_service_account" "vm_sa" {
-  project      = var.project_id
-  account_id   = var.bastion_host_sa
-  display_name = "Service Account for VM"
+  project      = var.project
+  account_id   = var.service_account
+  display_name = "Service Account for the bastion host"
 }
 
 # A testing VM to allow OS Login + IAP tunneling.
@@ -11,9 +11,9 @@ module "instance_template" {
   source  = "terraform-google-modules/vm/google//modules/instance_template"
   version = "~> 11.0"
 
-  project_id   = var.project_id
+  project_id   = var.project
   machine_type = "n1-standard-1"
-  subnetwork   = var.network_subnet_name
+  subnetwork   = var.subnetwork
   service_account = {
     email  = google_service_account.vm_sa.email
     scopes = ["cloud-platform"]
@@ -21,15 +21,15 @@ module "instance_template" {
   metadata = {
     enable-oslogin = "TRUE"
   }
-  source_image = "projects/debian-cloud/global/images/debian-12-bookworm-v20240815"
+  source_image = var.source_image
 }
 
 resource "google_compute_instance_from_template" "vm" {
-  name    = var.bastion_host_name
-  project = var.project_id
-  zone    = var.project_zone
+  name    = var.host_name
+  project = var.project
+  zone    = var.zone
   network_interface {
-    subnetwork = var.network_subnet_name
+    subnetwork = var.subnetwork
   }
   source_instance_template = module.instance_template.self_link
 }
@@ -39,12 +39,12 @@ resource "google_compute_instance_from_template" "vm" {
 resource "google_service_account_iam_binding" "sa_user" {
   service_account_id = google_service_account.vm_sa.id
   role               = "roles/iam.serviceAccountUser"
-  members            = var.bastion_host_members
+  members            = var.members
 }
 
-resource "google_project_iam_member" "os_login_bindings" {
-  for_each = toset(var.bastion_host_members)
-  project  = var.project_id
+resource "google_project_iam_member" "os_admin_login_bindings" {
+  for_each = toset(var.members)
+  project  = var.project
   role     = "roles/compute.osAdminLogin"
   member   = each.key
 }
@@ -54,21 +54,21 @@ module "iap_tunneling" {
   version = "~> 6.0"
 
   fw_name_allow_ssh_from_iap = "bastion-allow-ssh-from-iap-to-tunnel"
-  project                    = var.project_id
-  network                    = var.vpc_network_name
+  project                    = var.project
+  network                    = var.network
   service_accounts           = [google_service_account.vm_sa.email]
   instances = [{
     name = google_compute_instance_from_template.vm.name
-    zone = var.project_zone
+    zone = var.zone
   }]
-  members = var.bastion_host_members
+  members = var.members
 }
 
 #
 # Allows the bastion host SA to manage the GKE cluster
 #
 resource "google_project_iam_binding" "container-admin-iam" {
-  project = var.project_id
+  project = var.project
   role    = "roles/container.admin"
   members = [
     "serviceAccount:${google_service_account.vm_sa.email}",
