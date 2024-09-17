@@ -12,7 +12,7 @@ module "instance_template" {
   version = "~> 11.0"
 
   project_id   = var.project
-  machine_type = "n1-standard-1"
+  machine_type = var.machine_type
   subnetwork   = var.subnetwork
   service_account = {
     email  = google_service_account.vm_sa.email

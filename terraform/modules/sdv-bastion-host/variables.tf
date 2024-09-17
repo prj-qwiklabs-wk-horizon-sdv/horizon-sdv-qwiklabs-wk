@@ -39,3 +39,9 @@ variable "members" {
   description = "List of members allowed to access the bastion server"
   type        = list(string)
 }
+
+variable "machine_type" {
+  description = "Machine type for the bastion host"
+  type        = string
+  default     = "n1-standard-1"
+}
