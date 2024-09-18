@@ -29,3 +29,13 @@ module "sdv-bastion-host" {
   zone            = var.project_zone
   members         = var.bastion_host_members
 }
+
+module "sdv-network" {
+  source      = "./modules/sdv-network"
+  project     = var.project_id
+  network     = var.vpc_network_name
+  subnetwork  = var.network_subnet_name
+  region      = var.project_region
+  router_name = var.sdv_network_egress_router_name
+}
+

@@ -16,3 +16,5 @@ cluster_node_pool_name = "sdv-node-pool"
 bastion_host_name    = "sdv-bastion-host"
 bastion_host_sa      = "sdv-bastion-host-sa-iap"
 bastion_host_members = ["user:edson.schlei@accenture.com", "user:wojciech.kobryn@accenture.com", "user:marta.kania@accenture.com"]
+
+sdv_network_egress_router_name = "sdv-egress-internet"

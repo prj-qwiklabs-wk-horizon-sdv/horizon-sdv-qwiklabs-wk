@@ -58,3 +58,8 @@ variable "bastion_host_sa" {
   description = "SA used by the bastion host and allow IAP to the host"
   type        = string
 }
+
+variable "sdv_network_egress_router_name" {
+  description = "Define the name of the egress router of the network"
+  type        = string
+}
