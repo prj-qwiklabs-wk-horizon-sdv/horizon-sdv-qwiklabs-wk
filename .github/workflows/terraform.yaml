@@ -1,5 +1,17 @@
 name: terraform
+
 on:
+  push:
+    paths:
+      - 'terraform/env/dev/*'
+      - 'terraform/modules/*'
+    branches: [
+      "feature/*"
+      ]
+  pull_request:
+    branches:
+      - main
+
   workflow_call:
     secrets:
       fetcher-key:
