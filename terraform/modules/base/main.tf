@@ -10,7 +10,7 @@ resource "google_project_service" "project_service" {
 
 
 module "sdv-gke-cluster" {
-  source          = "./modules/sdv-gke-cluster"
+  source          = "../sdv-gke-cluster"
   cluster_name    = var.sdv_cluster_name
   node_pool_name  = var.sdv_cluster_node_pool_name
   location        = var.sdv_location
@@ -20,7 +20,7 @@ module "sdv-gke-cluster" {
 }
 
 module "sdv-bastion-host" {
-  source          = "./modules/sdv-bastion-host"
+  source          = "../sdv-bastion-host"
   host_name       = var.sdv_bastion_host_name
   service_account = var.sdv_bastion_host_sa
   project         = var.sdv_project
@@ -31,7 +31,7 @@ module "sdv-bastion-host" {
 }
 
 module "sdv-network" {
-  source      = "./modules/sdv-network"
+  source      = "../sdv-network"
   project     = var.sdv_project
   network     = var.sdv_network
   subnetwork  = var.sdv_subnetwork

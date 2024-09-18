@@ -2,7 +2,7 @@ name: Docker build Artifact Registry
 on:
   workflow_call:
     secrets:
-      wif-provider: 
+      wif-provider:
         required: false
         description: "Workload Identity Federation provider"
       gcp-sa:
@@ -14,7 +14,7 @@ on:
 
 
     inputs:
-      wif-provider: 
+      wif-provider:
         required: false
         description: "Workload Identity Federation provider"
         type: string
@@ -50,7 +50,7 @@ jobs:
           echo "ARTIFACT_REGISTRY=${{ secrets.image-registry }}" >> $GITHUB_ENV;
         elif [[ "${{ inputs.image-registry }}" != '' ]]; then
           echo "ARTIFACT_REGISTRY=${{ inputs.image-registry }}" >> $GITHUB_ENV;
-        else 
+        else
           echo "Missing image-registry parameter."
           exit 1
         fi
@@ -71,7 +71,7 @@ jobs:
 
     - name: Checkout source code
       uses: actions/checkout@v4.1.1
-    
+
     - name: Set up QEMU
       uses: docker/setup-qemu-action@v2
 
@@ -80,7 +80,7 @@ jobs:
       with:
         driver-opts: |
           image=moby/buildkit:v0.10.6
-    
+
     - id: auth
       uses: google-github-actions/auth@v1
       with:
@@ -94,14 +94,14 @@ jobs:
         registry: ${{ inputs.registry-location }}-docker.pkg.dev
         username: oauth2accesstoken
         password: ${{ steps.auth.outputs.access_token }}
-    
+
     - name: get Docker labels
       uses: docker/metadata-action@v4
       id: meta
       with:
         images: ${{ env.ARTIFACT_REGISTRY }}/${{ env.IMAGE }}
-    
-    - name: get image ref for scanning 
+
+    - name: get image ref for scanning
       run: |
         echo "IMAGE_REF=$(echo ${{ steps.meta.outputs.tags }} | awk '{print $1}')" >> $GITHUB_ENV;
 
@@ -115,7 +115,6 @@ jobs:
         cache-from: type=gha
         cache-to: type=gha,mode=max
 
-      
     - name: Run Trivy Image Docker vulnerability scanner
       uses: aquasecurity/trivy-action@master
       id: trivy

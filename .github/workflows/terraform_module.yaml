@@ -46,7 +46,7 @@ jobs:
     uses: ./.github/workflows/tflint.yaml
     with:
       terraform-path: ${{ inputs.path }}
-  
+
   checkov:
     uses: ./.github/workflows/checkov.yaml
     secrets:
@@ -73,16 +73,16 @@ jobs:
         elif [[ "${{ inputs.gh-app-id }}" != '0' && "${{ inputs.gh-installation-id }}" != '0' ]]; then
           echo "GITHUB_APP_ID=${{ inputs.gh-app-id }}" >> $GITHUB_ENV;
           echo "GITHUB_APP_INSTALLATION_ID=${{ inputs.gh-installation-id }}" >> $GITHUB_ENV;
-        else 
+        else
           echo "Missing Github App id and/or Github Installation ID"
           exit 1
         fi
-        
+
     - name: Checkout Repository
       uses: actions/checkout@v4.1.1
       with:
         ref: ${{ github.event.pull_request.head.ref }}
-    
+
     - name: Setup terraform
       uses: hashicorp/setup-terraform@v3
       with:
@@ -91,18 +91,18 @@ jobs:
     - name: Get Terraform fetcher GitHub App token
       uses: tibdex/github-app-token@v1
       id: app_token
-      with: 
+      with:
         app_id: ${{ env.GITHUB_APP_ID }}
         installation_id: ${{ env.GITHUB_APP_INSTALLATION_ID}}
         private_key: ${{ secrets.gh-app-key }}
 
-    - name: Download Terraform Module Template Files
-      run: |
-        curl https://raw.githubusercontent.com/AGBG-ASG/terraform-module-template/main/.terraform-docs.yml -H "Authorization: Bearer ${{ steps.app_token.outputs.token }}" -o .terraform-docs.yml
-        curl https://raw.githubusercontent.com/AGBG-ASG/terraform-module-template/main/LICENSE -H "Authorization: Bearer ${{ steps.app_token.outputs.token }}" -o LICENSE
-        curl https://raw.githubusercontent.com/AGBG-ASG/terraform-module-template/main/.gitignore -H "Authorization: Bearer ${{ steps.app_token.outputs.token }}" -o .gitignore
-        curl https://raw.githubusercontent.com/AGBG-ASG/terraform-module-template/main/CODEOWNERS -H "Authorization: Bearer ${{ steps.app_token.outputs.token }}" -o CODEOWNERS
-   
+    # - name: Download Terraform Module Template Files
+    #   run: |
+    #     curl https://raw.githubusercontent.com/AGBG-ASG/terraform-module-template/main/.terraform-docs.yml -H "Authorization: Bearer ${{ steps.app_token.outputs.token }}" -o .terraform-docs.yml
+    #     curl https://raw.githubusercontent.com/AGBG-ASG/terraform-module-template/main/LICENSE -H "Authorization: Bearer ${{ steps.app_token.outputs.token }}" -o LICENSE
+    #     curl https://raw.githubusercontent.com/AGBG-ASG/terraform-module-template/main/.gitignore -H "Authorization: Bearer ${{ steps.app_token.outputs.token }}" -o .gitignore
+    #     curl https://raw.githubusercontent.com/AGBG-ASG/terraform-module-template/main/CODEOWNERS -H "Authorization: Bearer ${{ steps.app_token.outputs.token }}" -o CODEOWNERS
+
     - name: Render terraform docs inside the README.md
       run: |
         curl -sSLo ./terraform-docs.tar.gz https://terraform-docs.io/dl/v0.16.0/terraform-docs-v0.16.0-$(uname)-amd64.tar.gz
@@ -110,7 +110,7 @@ jobs:
         chmod +x terraform-docs
         ./terraform-docs -c .terraform-docs.yml .
         rm terraform-docs terraform-docs.tar.gz
-    
+
     - name: terraform fmt
       working-directory: ${{ inputs.path }}/
       run: terraform fmt -recursive

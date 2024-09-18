@@ -6,7 +6,7 @@ on:
       gcp-sa-key:
         required: false
         description: Google Service Account
-      wif-provider: 
+      wif-provider:
         required: false
         description: "Workload Identity Federation provider"
       gcp-sa:
@@ -21,7 +21,7 @@ on:
       gh-app-key:
         required: false
         description: "Github App Private Key"
-        
+
     inputs:
       environment:
         required: false
@@ -40,7 +40,7 @@ on:
         description: "Terraform directory"
         default: "terraform"
         type: string
-      wif-provider: 
+      wif-provider:
         required: false
         description: "Workload Identity Federation provider"
         type: string
@@ -73,7 +73,7 @@ jobs:
     uses: .github/workflows/tflint.yaml@main
     with:
       terraform-path: ${{ inputs.path }}
-  
+
   trivy:
     permissions:
       contents: read
@@ -85,7 +85,7 @@ jobs:
     with:
       terraform-path: ${{ inputs.path }}
       terraform-version: ${{ inputs.terraform-version }}
-  
+
   get-phase:
     name: Determine if it's plan or apply
     runs-on: self-hosted

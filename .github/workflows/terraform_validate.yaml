@@ -12,7 +12,7 @@ on:
       gh-installation-id:
         required: false
         description: "Github Installation ID"
-      gh-app-key: 
+      gh-app-key:
         required: false
         description: "Github App Private Key"
 
@@ -48,7 +48,7 @@ jobs:
     - name: get Github App Key
       id: get-env
       shell: bash
-      run: |   
+      run: |
 
         if [[ "${{ secrets.gh-app-id }}" != '' && "${{ secrets.gh-installation-id }}" != '' ]]; then
           echo "GITHUB_APP_ID=${{ secrets.gh-app-id }}" >> $GITHUB_ENV;
@@ -56,11 +56,11 @@ jobs:
         elif [[ "${{ inputs.gh-app-id }}" != '0' && "${{ inputs.gh-installation-id }}" != '0' ]]; then
           echo "GITHUB_APP_ID=${{ inputs.gh-app-id }}" >> $GITHUB_ENV;
           echo "GITHUB_APP_INSTALLATION_ID=${{ inputs.gh-installation-id }}" >> $GITHUB_ENV;
-        else 
+        else
           echo "Missing Github App id and/or Github Installation ID"
           exit 1
         fi
-        
+
         if [[ "${{ secrets.gh-app-key }}" != '' ]]; then
           echo "GITHUB_APP_PEM_FILE<<EOF" >> $GITHUB_ENV
           echo  "${{ secrets.gh-app-key }}" >> $GITHUB_ENV
@@ -73,7 +73,7 @@ jobs:
           echo "Missing Github App Key"
           exit 1
         fi
-      
+
     - name: Get Terraform fetcher GitHub App token
       uses: tibdex/github-app-token@v1
       id: get_github_app_token
@@ -82,12 +82,12 @@ jobs:
         # installation_id not needed IF the app is installed on this current repo
         installation_id: ${{ env.GITHUB_APP_INSTALLATION_ID }}
         private_key: ${{ env.GITHUB_APP_PEM_FILE }}
-        
+
     - name: Setup node
       uses: actions/setup-node@v3
       with:
         node-version: 20
-        
+
     - name: Checkout source code
       uses: actions/checkout@v4.1.1
 
@@ -104,5 +104,5 @@ jobs:
 
     - name: Terraform validate
       working-directory: ${{ inputs.terraform-path }}/
-      run: terraform validate 
+      run: terraform validate
       continue-on-error: ${{ inputs.continue-on-error }}

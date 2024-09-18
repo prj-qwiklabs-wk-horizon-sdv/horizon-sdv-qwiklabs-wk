@@ -1,4 +1,4 @@
-name: Terraform 
+name: Terraform
 
 on:
   push:
@@ -24,7 +24,7 @@ jobs:
     uses: AGBG-ASG/terraform-workflows-template/.github/workflows/tflint.yaml@main
     with:
       terraform-path: terraform
-  
+
   trivy:
     permissions:
       contents: read

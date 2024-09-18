@@ -8,7 +8,7 @@ on:
       gcp-sa-key:
         required: false
         description: Google Service Account
-      wif-provider: 
+      wif-provider:
         required: false
         description: "Workload Identity Federation provider"
       gcp-sa:
@@ -45,7 +45,7 @@ on:
         description: "Terraform directory"
         default: "terraform"
         type: string
-      wif-provider: 
+      wif-provider:
         required: false
         description: "Workload Identity Federation provider"
         type: string
@@ -117,11 +117,11 @@ jobs:
         elif [[ "${{ inputs.gh-app-id }}" != '0' && "${{ inputs.gh-installation-id }}" != '0' ]]; then
           echo "GITHUB_APP_ID=${{ inputs.gh-app-id }}" >> $GITHUB_ENV;
           echo "GITHUB_APP_INSTALLATION_ID=${{ inputs.gh-installation-id }}" >> $GITHUB_ENV;
-        else 
+        else
           echo "Missing Github App id and/or Github Installation ID"
           exit 1
         fi
-        
+
         if [[ "${{ secrets.gh-app-key }}" != '' ]]; then
           echo "GITHUB_APP_PEM_FILE<<EOF" >> $GITHUB_ENV
           echo  "${{ secrets.gh-app-key }}" >> $GITHUB_ENV
@@ -149,7 +149,7 @@ jobs:
     - name: Get Terraform fetcher GitHub App token
       uses: tibdex/github-app-token@v1
       id: get_github_app_token
-      with: 
+      with:
         app_id: ${{ env.GITHUB_APP_ID }}
         installation_id: ${{ env.GITHUB_APP_INSTALLATION_ID}}
         private_key: ${{ env.GITHUB_APP_PEM_FILE }}
@@ -186,10 +186,10 @@ jobs:
           } >> $GITHUB_ENV
           unset $var_name
         done
-         
+
     - name: Checkout source code
       uses: actions/checkout@v4.1.1
-    
+
     - id: auth
       if: ${{ steps.gcp-secret-check.outputs.secrets != 'true' }}
       uses: google-github-actions/auth@v2
@@ -202,14 +202,14 @@ jobs:
       uses: hashicorp/setup-terraform@v3
       with:
         terraform_version: ${{ inputs.terraform-version }}
-  
+
     - name: terraform plan
       working-directory: ${{ inputs.directory }}/
       id: tfplan
       run: |
         git config --global url."https://x-access-token:${{steps.get_github_app_token.outputs.token}}@github.com".insteadOf https://github.com
         terraform init -input=false
-        terraform plan -parallelism=${{ inputs.parallelism }} -input=false -no-color -out=tfplan && terraform show -no-color tfplan          
+        terraform plan -parallelism=${{ inputs.parallelism }} -input=false -no-color -out=tfplan && terraform show -no-color tfplan
       continue-on-error: true
 
     - name: Reformat Plan
@@ -220,10 +220,10 @@ jobs:
       run: |
         if [[ "${{ steps.tfplan.outcome }}" == 'success' ]]; then
           printf '%s' "$TFPLAN_STDOUT" \
-          | sed -E 's/^([[:space:]]+)([-+])/\2\1/g' > plan.txt  
+          | sed -E 's/^([[:space:]]+)([-+])/\2\1/g' > plan.txt
         else
           printf '%s' "$TFPLAN_STDERR" \
-          | sed -E 's/^([[:space:]]+)([-+])/\2\1/g' > plan.txt  
+          | sed -E 's/^([[:space:]]+)([-+])/\2\1/g' > plan.txt
         fi
 
     - name: Put Plan in Env Var
@@ -233,7 +233,7 @@ jobs:
         echo "PLAN<<EOF" >> $GITHUB_ENV
         echo "$PLAN" >> $GITHUB_ENV
         echo "EOF" >> $GITHUB_ENV
-    
+
     - name: Post Plan to GitHub PR
       uses: mshick/add-pr-comment@v2
       if: github.ref != 'refs/heads/main'
@@ -246,8 +246,8 @@ jobs:
           ```diff
           ${{ env.PLAN }}
           ```
-      continue-on-error: true            
-    
+      continue-on-error: true
+
     - name: Check if Plan failed
       if: steps.tfplan.outcome == 'failure'
       uses: actions/github-script@v6
@@ -255,7 +255,6 @@ jobs:
         script: |
           core.setFailed('Terraform plan failed.')
 
-  
     - name: terraform apply
       working-directory: ${{ inputs.directory }}/
       id: tfapply

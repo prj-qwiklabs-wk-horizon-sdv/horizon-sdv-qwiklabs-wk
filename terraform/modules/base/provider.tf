@@ -1,8 +1,8 @@
 provider "google" {
   project = var.sdv_project
-  region  = "europe-west1"
+  region  = var.sdv_region
 }
 provider "google-beta" {
   project = var.sdv_project
-  region  = "europe-west1"
+  region  = var.sdv_region
 }
