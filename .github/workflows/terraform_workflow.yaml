@@ -12,7 +12,7 @@ on:
 
 jobs:
   checkov:
-    uses: AGBG-ASG/terraform-workflows-template/.github/workflows/checkov.yaml@main
+    uses: .github/workflows/checkov.yaml
     secrets:
       fetcher-key: "${{ secrets.GH_APP_KEY }}"
       gh-app-id: ${{ secrets.GH_APP_ID }}
@@ -21,7 +21,7 @@ jobs:
       directory: terraform
 
   tflint:
-    uses: AGBG-ASG/terraform-workflows-template/.github/workflows/tflint.yaml@main
+    uses: .github/workflows/tflint.yaml
     with:
       terraform-path: terraform
 
@@ -29,17 +29,17 @@ jobs:
     permissions:
       contents: read
       pull-requests: write
-    uses: AGBG-ASG/terraform-workflows-template/.github/workflows/trivy_secret_scan.yaml@main
+    uses: .github/workflows/trivy_secret_scan.yaml
 
   terraformfmt:
-    uses: AGBG-ASG/terraform-workflows-template/.github/workflows/terraform_fmt.yaml@main
+    uses: .github/workflows/terraform_fmt.yaml
     with:
       terraform-path: terraform
       terraform-version: 1.7.2
 
   terraform:
     needs: [terraformfmt,tflint,checkov,trivy]
-    uses: AGBG-ASG/terraform-workflows-template/.github/workflows/terraform.yaml@main
+    uses: .github/workflows/terraform.yaml
     concurrency:
       group: terraform
     permissions:
