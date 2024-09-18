@@ -63,3 +63,13 @@ variable "sdv_network_egress_router_name" {
   description = "Define the name of the egress router of the network"
   type        = string
 }
+
+variable "sdv_gcs_name" {
+  description = "Define the GC Storage name to save the state of terraform"
+  type        = string
+}
+
+variable "sdv_gcs_prefix" {
+  description = "Define the prefix for the directory"
+  type        = string
+}

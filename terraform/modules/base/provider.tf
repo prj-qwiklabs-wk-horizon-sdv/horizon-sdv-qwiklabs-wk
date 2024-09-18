@@ -1,8 +1,8 @@
 provider "google" {
-  project = "sdvc-2108202401"
+  project = var.sdv_project
   region  = "europe-west1"
 }
 provider "google-beta" {
-  project = "sdvc-2108202401"
+  project = var.sdv_project
   region  = "europe-west1"
 }

@@ -1,12 +1,12 @@
 
 
 module "base" {
-  source = "../../modules/base"
+  source = "https://github.com/AGBG-ASG/acn-horizon-sdv/modules/base@1.0.0"
 
-  sdv_gcs_name   = "prj-s-agbg-gcp-sdv-dev-tf-state"
-  sdv_gcs_prefix = "prj-s-agbg-gcp-sdv-dev-tf-state"
+  sdv_gcs_name   = "prj-s-agbg-gcp-sdv-sdx-tf-state"
+  sdv_gcs_prefix = "prj-s-agbg-gcp-sdv-sdx-tf-state"
 
-  sdv_project  = "sdva-2108202401"
+  sdv_project  = "sdvb-2108202401"
   sdv_location = "europe-west1"
   sdv_region   = "europe-west1"
   sdv_zone     = "europe-west1-d"
