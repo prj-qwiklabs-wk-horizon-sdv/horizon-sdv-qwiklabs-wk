@@ -59,7 +59,7 @@ on:
 
 jobs:
   checkov:
-    uses: .github/workflows/checkov.yaml
+    uses: ./.github/workflows/checkov.yaml
     secrets:
       gh-app-key: "${{ secrets.gh-app-key }}"
       gh-app-id: "${{ secrets.gh-app-id }}"
@@ -70,7 +70,7 @@ jobs:
       directory: ${{ inputs.path }}
 
   tflint:
-    uses: .github/workflows/tflint.yaml
+    uses: ./.github/workflows/tflint.yaml
     with:
       terraform-path: ${{ inputs.path }}
 
@@ -78,10 +78,10 @@ jobs:
     permissions:
       contents: read
       pull-requests: write
-    uses: .github/workflows/trivy_secret_scan.yaml
+    uses: ./.github/workflows/trivy_secret_scan.yaml
 
   terraformfmt:
-    uses: .github/workflows/terraform_fmt.yaml
+    uses: ./.github/workflows/terraform_fmt.yaml
     with:
       terraform-path: ${{ inputs.path }}
       terraform-version: ${{ inputs.terraform-version }}
@@ -104,7 +104,7 @@ jobs:
 
   terraform:
     needs: [terraformfmt,tflint,checkov,trivy,get-phase]
-    uses: .github/workflows/terraform.yaml
+    uses: ./.github/workflows/terraform.yaml
     concurrency:
       group: terraform-${{ inputs.environment }}
     permissions:
