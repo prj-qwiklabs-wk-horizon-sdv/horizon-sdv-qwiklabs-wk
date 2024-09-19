@@ -262,7 +262,7 @@ jobs:
       if: github.ref == 'refs/heads/main'
       run: |
         git config --global url."https://x-access-token:${{steps.get_github_app_token.outputs.token}}@github.com".insteadOf https://github.com
-        terraform apply -parallelism=${{ inputs.parallelism }} -input=false -no-color tfplan 
+        terraform apply -parallelism=${{ inputs.parallelism }} -input=false -no-color tfplan
       continue-on-error: true
 
     - name: Post Apply Success

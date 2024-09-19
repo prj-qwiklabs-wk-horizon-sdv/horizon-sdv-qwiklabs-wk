@@ -15,6 +15,19 @@ on:
 
 
 jobs:
+
+  get-env:
+    name: Get environment
+    runs-on: self-hosted
+    env:
+      TERRAFORM_DIR: ${{ vars.TERRAFORM_DIR }}
+    steps:
+    - name: get environment
+      id: get-env
+      shell: bash
+      run: |
+        echo "${{ env.TERRAFORM_DIR }}"
+
   checkov:
     uses: ./.github/workflows/checkov.yaml
     secrets:
