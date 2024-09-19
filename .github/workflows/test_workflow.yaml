@@ -1,13 +1,6 @@
 name: test-terraform
 
 on:
-  push:
-    paths:
-      - 'terraform/env/dev/*'
-      - 'terraform/modules/*'
-    branches: [
-      "feature/*"
-    ]
   workflow_call:
 
 jobs:
