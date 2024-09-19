@@ -12,29 +12,12 @@ on:
       gcp-sa:
         required: false
         description: "GCP Service account to impersonate"
-      gh-app-id:
-        required: false
-        description: "Github App ID"
-      gh-installation-id:
-        required: false
-        description: "Github Installation ID"
-      gh-app-key:
-        required: false
-        description: "Github App Private Key"
 
     inputs:
       environment:
         required: false
         description: "environment to use"
         type: string
-      gh-app-id:
-        required: false
-        description: "Github App ID"
-        type: number
-      gh-installation-id:
-        required: false
-        description: "Github Installation ID"
-        type: number
       path:
         required: false
         description: "Terraform directory"
@@ -58,27 +41,11 @@ on:
         type: boolean
 
 jobs:
-  checkov:
-    uses: ./.github/workflows/checkov.yaml
-    secrets:
-      gh-app-key: "${{ secrets.gh-app-key }}"
-      gh-app-id: "${{ secrets.gh-app-id }}"
-      gh-installation-id: "${{ secrets.gh-installation-id }}"
-    with:
-      gh-app-id: ${{ inputs.gh-app-id }}
-      gh-installation-id: ${{ inputs.gh-installation-id }}
-      directory: ${{ inputs.path }}
 
   tflint:
     uses: ./.github/workflows/tflint.yaml
     with:
       terraform-path: ${{ inputs.path }}
-
-  trivy:
-    permissions:
-      contents: read
-      pull-requests: write
-    uses: ./.github/workflows/trivy_secret_scan.yaml
 
   terraformfmt:
     uses: ./.github/workflows/terraform_fmt.yaml
@@ -103,7 +70,7 @@ jobs:
         fi
 
   terraform:
-    needs: [terraformfmt,tflint,checkov,trivy,get-phase]
+    needs: [terraformfmt,tflint,get-phase]
     uses: ./.github/workflows/terraform.yaml
     concurrency:
       group: terraform-${{ inputs.environment }}
@@ -112,14 +79,9 @@ jobs:
      id-token: 'write'
      pull-requests: 'write'
     secrets:
-      gh-app-id: "${{ secrets.gh-app-id }}"
-      gh-installation-id: "${{ secrets.gh-installation-id }}"
-      gh-app-key: "${{ secrets.gh-app-key }}"
       gcp-sa: "${{ secrets.gcp-sa }}"
       wif-provider: "${{ secrets.wif-provider }}"
     with:
-      gh-app-id: ${{ inputs.gh-app-id }}
-      gh-installation-id: ${{ inputs.gh-installation-id }}
       terraform-version: ${{ inputs.terraform-version }}
       directory: ${{ inputs.path }}
-      environment: ${{ inputs.environment }}-${{ needs.get-phase.outputs.phase }}
+      environment: ${{ inputs.environment }}
