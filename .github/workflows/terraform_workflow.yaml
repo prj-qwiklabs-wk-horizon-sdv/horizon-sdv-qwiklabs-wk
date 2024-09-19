@@ -2,9 +2,10 @@ name: Terraform Root Workflow
 
 on:
   push:
-    paths:
-      - 'terraform/env/dev/*'
-      - 'terraform/modules/*'
+    # paths:
+    #   - 'terraform/env/dev/*'
+    #   - 'terraform/modules/*'
+    #   - '.github/workflows/*'
     branches: [
       "feature/*"
       ]
