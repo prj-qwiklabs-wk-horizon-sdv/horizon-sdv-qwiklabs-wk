@@ -3,9 +3,6 @@ name: Terraform
 on:
   workflow_call:
     secrets:
-      gcp-sa-key:
-        required: false
-        description: Google Service Account
       wif-provider:
         required: false
         description: "Workload Identity Federation provider"
@@ -41,7 +38,6 @@ on:
         type: boolean
 
 jobs:
-
   tflint:
     uses: ./.github/workflows/tflint.yaml
     with:

@@ -3,18 +3,12 @@ name: terraform
 on:
   workflow_call:
     secrets:
-      gcp-sa-key:
-        required: false
-        description: Google Service Account
       wif-provider:
         required: false
         description: "Workload Identity Federation provider"
       gcp-sa:
         required: false
         description: "GCP Service account to impersonate"
-      json-secrets:
-        required: false
-        description: "secrets"
 
     inputs:
       environment:
@@ -81,8 +75,6 @@ jobs:
     - name: set environment variables
       id: set-vars
       shell: bash
-      env:
-        JSON_SECRETS: ${{ secrets.json-secrets }}
       run: |
         if [[ "${{ secrets.gcp-sa }}" != '' && "${{ secrets.wif-provider }}" != '' ]]; then
           echo "GCP_SA=${{ secrets.gcp-sa }}" >> $GITHUB_ENV;
@@ -92,56 +84,16 @@ jobs:
           echo "GCP_WIF=${{ inputs.wif-provider }}" >> $GITHUB_ENV;
         fi
 
-        if [[ ! -z "$JSON_SECRETS" ]]; then
-          echo "SECRETS=true" >> $GITHUB_ENV;
-        else
-          echo "SECRETS=false" >> $GITHUB_ENV;
-        fi
-
-        # if [[ "${{ vars }}" != '' && "${{ vars }}" != null ]]; then
-        #   echo "VARS=true" >> $GITHUB_ENV;
-        # else
-        #   echo "VARS=false" >> $GITHUB_ENV;
-        # fi
-
     - name: Setup node
       uses: actions/setup-node@v4
       with:
         node-version: 20
 
-    - name: export TFVARS in Github Secrets
-      uses: oNaiPs/secrets-to-env-action@v1.2
-      if: env.SECRETS == 'true'
-      with:
-        secrets: ${{ secrets.json-secrets }}
-        include: TF_VAR_*
-
-    - name: export TFVARS in Github Variables
-      uses: oNaiPs/secrets-to-env-action@v1.2
-      if: env.VARS == 'true'
-      with:
-        secrets: ${{ toJSON(vars) }}
-        include: TF_VAR_*
-
-    - name: convert TFVARS to lowercase
-      run: |
-        for var_name in $(env | grep -o '^TF_VAR_[^=]*'); do
-          suffix="${var_name#TF_VAR_}"
-          suffix_lowercase=$(echo "$suffix" | tr '[:upper:]' '[:lower:]')
-          new_var_name="TF_VAR_${suffix_lowercase}"
-          {
-            echo "$new_var_name<<EOF"
-            echo "${!var_name}"
-            echo "EOF"
-          } >> $GITHUB_ENV
-          unset $var_name
-        done
-
     - name: Checkout source code
       uses: actions/checkout@v4.1.1
 
     - id: auth
-      if: ${{ steps.gcp-secret-check.outputs.secrets != 'true' }}
+      # if: ${{ steps.gcp-secret-check.outputs.secrets != 'true' }}
       uses: google-github-actions/auth@v2
       with:
         credentials_json: '${{ secrets.gcp-sa-key }}'
