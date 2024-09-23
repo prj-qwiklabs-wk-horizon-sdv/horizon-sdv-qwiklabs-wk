@@ -1,10 +1,12 @@
-name: Terraform
+name: Terraform Workflow
+run-name: Running Terraform workflow by @${{ github.actor }}
 
 on:
   push:
     branches:
      - main
-     - feature/*
+     - 'feature/**'
+     - 'release/**'
   pull_request:
     branches:
       - main
