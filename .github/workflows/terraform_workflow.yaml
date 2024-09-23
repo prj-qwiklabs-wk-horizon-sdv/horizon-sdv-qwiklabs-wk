@@ -1,5 +1,5 @@
 name: Terraform Workflow
-run-name: Running Terraform workflow by @${{ github.actor }}
+run-name: Running Terraform Workflow by @${{ github.actor }}
 
 on:
   push:
