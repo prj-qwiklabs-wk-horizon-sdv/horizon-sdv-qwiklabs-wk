@@ -26,7 +26,7 @@ module "sdv_bastion_host" {
   subnetwork      = var.sdv_subnetwork
   zone            = var.sdv_zone
   members         = var.sdv_bastion_host_members
-  depends_on      = [sdv_network]
+  depends_on      = [module.sdv_network]
 }
 
 module "sdv_gke_cluster" {
@@ -37,6 +37,6 @@ module "sdv_gke_cluster" {
   network         = var.sdv_network
   subnetwork      = var.sdv_subnetwork
   service_account = var.sdv_default_computer_sa
-  depends_on      = [sdv_bastion_host]
+  depends_on      = [module.sdv_bastion_host]
 }
 
