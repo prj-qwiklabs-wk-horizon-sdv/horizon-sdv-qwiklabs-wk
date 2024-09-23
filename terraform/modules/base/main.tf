@@ -37,6 +37,8 @@ module "sdv_gke_cluster" {
   network         = var.sdv_network
   subnetwork      = var.sdv_subnetwork
   service_account = var.sdv_default_computer_sa
+  machine_type    = "n1-standard-4"
+  node_count      = 3
   depends_on      = [module.sdv_bastion_host]
 }
 
