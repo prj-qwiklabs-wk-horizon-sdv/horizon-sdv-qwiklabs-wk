@@ -84,9 +84,11 @@ jobs:
           echo "GCP_WIF=${{ inputs.wif-provider }}" >> $GITHUB_ENV;
         fi
 
-    - name: Get Terraform fetcher GitHub App token
-      uses: tibdex/github-app-token@v1
-      id: get_github_app_token
+    # - name: Get Terraform fetcher GitHub App token
+    #   uses: tibdex/github-app-token@v1
+    #   id: get_github_app_token
+    #   with:
+    #     app_id: ${{ env.GITHUB_APP_ID }}
 
     - name: Setup node
       uses: actions/setup-node@v4
@@ -113,7 +115,7 @@ jobs:
       working-directory: ${{ inputs.directory }}/
       id: tfplan
       run: |
-        git config --global url."https://x-access-token:${{steps.get_github_app_token.outputs.token}}@github.com".insteadOf https://github.com
+        # git config --global url."https://x-access-token:${{steps.get_github_app_token.outputs.token}}@github.com".insteadOf https://github.com
         terraform init -input=false
         terraform plan -parallelism=${{ inputs.parallelism }} -input=false -no-color -out=tfplan && terraform show -no-color tfplan
       continue-on-error: true
@@ -140,19 +142,19 @@ jobs:
         echo "$PLAN" >> $GITHUB_ENV
         echo "EOF" >> $GITHUB_ENV
 
-    - name: Post Plan to GitHub PR
-      uses: mshick/add-pr-comment@v2
-      if: github.ref != 'refs/heads/main'
-      with:
-        allow-repeats: false
-        repo-token: ${{steps.get_github_app_token.outputs.token}}
-        message-id: plan-${{ needs.get-env.outputs.environment }}
-        message: |
-          ## Terraform plan ${{ needs.get-env.outputs.env_only }}
-          ```diff
-          ${{ env.PLAN }}
-          ```
-      continue-on-error: true
+    # - name: Post Plan to GitHub PR
+    #   uses: mshick/add-pr-comment@v2
+    #   if: github.ref != 'refs/heads/main'
+    #   with:
+    #     allow-repeats: false
+    #     repo-token: ${{steps.get_github_app_token.outputs.token}}
+    #     message-id: plan-${{ needs.get-env.outputs.environment }}
+    #     message: |
+    #       ## Terraform plan ${{ needs.get-env.outputs.env_only }}
+    #       ```diff
+    #       ${{ env.PLAN }}
+    #       ```
+    #   continue-on-error: true
 
     - name: Check if Plan failed
       if: steps.tfplan.outcome == 'failure'
@@ -166,37 +168,37 @@ jobs:
       id: tfapply
       if: github.ref == 'refs/heads/main'
       run: |
-        git config --global url."https://x-access-token:${{steps.get_github_app_token.outputs.token}}@github.com".insteadOf https://github.com
+        # git config --global url."https://x-access-token:${{steps.get_github_app_token.outputs.token}}@github.com".insteadOf https://github.com
         terraform apply -parallelism=${{ inputs.parallelism }} -input=false -no-color tfplan
       continue-on-error: true
 
-    - name: Post Apply Success
-      if: github.ref == 'refs/heads/main' && steps.tfapply.outcome == 'success'
-      uses: mshick/add-pr-comment@v2
-      with:
-        allow-repeats: false
-        repo-token: ${{steps.get_github_app_token.outputs.token}}
-        message-id: apply-${{ needs.get-env.outputs.environment }}
-        message: |
-          ## Terraform Apply ${{ needs.get-env.outputs.env_only }} Succeeded
-          ```
-          ${{ steps.tfapply.outputs.stdout }}
-          ```
-      continue-on-error: true
+    # - name: Post Apply Success
+    #   if: github.ref == 'refs/heads/main' && steps.tfapply.outcome == 'success'
+    #   uses: mshick/add-pr-comment@v2
+    #   with:
+    #     allow-repeats: false
+    #     repo-token: ${{steps.get_github_app_token.outputs.token}}
+    #     message-id: apply-${{ needs.get-env.outputs.environment }}
+    #     message: |
+    #       ## Terraform Apply ${{ needs.get-env.outputs.env_only }} Succeeded
+    #       ```
+    #       ${{ steps.tfapply.outputs.stdout }}
+    #       ```
+    #   continue-on-error: true
 
-    - name: Post Apply Failure
-      if: github.ref == 'refs/heads/main' && steps.tfapply.outcome == 'failure'
-      uses: mshick/add-pr-comment@v2
-      with:
-        allow-repeats: false
-        repo-token: ${{steps.get_github_app_token.outputs.token}}
-        message-id: apply-${{ needs.get-env.outputs.environment }}
-        message: |
-          ## Terraform Apply ${{ needs.get-env.outputs.env_only }} Failed
-          ```
-          ${{ steps.tfapply.outputs.stderr }}
-          ```
-      continue-on-error: true
+    # - name: Post Apply Failure
+    #   if: github.ref == 'refs/heads/main' && steps.tfapply.outcome == 'failure'
+    #   uses: mshick/add-pr-comment@v2
+    #   with:
+    #     allow-repeats: false
+    #     repo-token: ${{steps.get_github_app_token.outputs.token}}
+    #     message-id: apply-${{ needs.get-env.outputs.environment }}
+    #     message: |
+    #       ## Terraform Apply ${{ needs.get-env.outputs.env_only }} Failed
+    #       ```
+    #       ${{ steps.tfapply.outputs.stderr }}
+    #       ```
+    #   continue-on-error: true
 
     - name: Fail if apply failed
       if: github.ref == 'refs/heads/main' && steps.tfapply.outcome == 'failure'
