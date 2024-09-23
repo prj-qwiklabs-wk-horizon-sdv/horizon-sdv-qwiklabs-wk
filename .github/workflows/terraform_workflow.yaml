@@ -1,5 +1,5 @@
 name: Terraform Workflow
-run-name: Running Terraform Workflow by @${{ github.actor }}
+# run-name: Running Terraform Workflow on ${{ inputs.deploy_target }} pushed by @${{ github.actor }}
 
 on:
   push:
