@@ -12,7 +12,6 @@ on:
         required: false
         description: "Artifact registry (can be passed as secret or input)"
 
-
     inputs:
       wif-provider:
         required: false
