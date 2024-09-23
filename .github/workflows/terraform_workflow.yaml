@@ -1,56 +1,43 @@
-name: Terraform 
+name: Terraform
 
 on:
   push:
-    paths:
-      - 'terraform/*'
-    branches: [ "main" ]
+    branches:
+     - main
+     - feature/*
   pull_request:
     branches:
       - main
-  workflow_dispatch:
 
 jobs:
-  checkov:
-    uses: AGBG-ASG/terraform-workflows-template/.github/workflows/checkov.yaml@main
-    secrets:
-      fetcher-key: "${{ secrets.GH_APP_KEY }}"
-      gh-app-id: ${{ secrets.GH_APP_ID }}
-      gh-installation-id: ${{ secrets.GH_INSTALLATION_ID }}
-    with:
-      directory: terraform
-
-  tflint:
-    uses: AGBG-ASG/terraform-workflows-template/.github/workflows/tflint.yaml@main
-    with:
-      terraform-path: terraform
-  
-  trivy:
-    permissions:
-      contents: read
-      pull-requests: write
-    uses: AGBG-ASG/terraform-workflows-template/.github/workflows/trivy_secret_scan.yaml@main
-
-  terraformfmt:
-    uses: AGBG-ASG/terraform-workflows-template/.github/workflows/terraform_fmt.yaml@main
-    with:
-      terraform-path: terraform
-      terraform-version: 1.7.2
+  generate-matrix:
+    name: Generate job matrices
+    runs-on: ubuntu-latest
+    # don't forget to declare outputs here!
+    outputs:
+      matrix-infrastructure: ${{ steps.neo-infrastructure.outputs.matrix }}
+    steps:
+      - name: Generate matrix | Infrastructure
+        id: neo-infrastructure
+        uses: hellofresh/action-changed-files@v3
+        with:
+            pattern: terraform/env/(?P<environment>[^/]+)
 
   terraform:
-    needs: [terraformfmt,tflint,checkov,trivy]
-    uses: AGBG-ASG/terraform-workflows-template/.github/workflows/terraform.yaml@main
-    concurrency:
-      group: terraform
+    needs: [ generate-matrix ] # don't forget this!
     permissions:
      contents: 'read'
      id-token: 'write'
      pull-requests: 'write'
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.generate-matrix.outputs.matrix-infrastructure) }}
+    if: ${{ fromJson(needs.generate-matrix.outputs.matrix-infrastructure).include[0] }} # skip if the matrix is empty!
+    uses: ./.github/workflows/terraform_dynamic_envs.yaml
     secrets:
-      gh-app-key: "${{ secrets.GH_APP_KEY }}"
       gcp-sa: "${{ secrets.GCP_SA }}"
       wif-provider: "${{ secrets.WIF_PROVIDER }}"
-      gh-app-id: ${{ secrets.GH_APP_ID }}
-      gh-installation-id: ${{ secrets.GH_INSTALLATION_ID }}
     with:
-      terraform-version: 1.7.2
+      path: terraform/env/${{ matrix.environment }}
+      environment: ${{ matrix.environment }}
+      terraform-version: 1.9.6

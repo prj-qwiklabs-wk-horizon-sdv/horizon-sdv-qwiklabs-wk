@@ -10,7 +10,7 @@ on:
       output-file:
         required: false
         default: "README.md"
-        type: string  
+        type: string
       output-method:
         required: false
         default : "inject"
@@ -23,13 +23,13 @@ on:
         required: false
         default : ".terraform-docs.yml"
         type: string
-jobs: 
+jobs:
   terraform-docs:
     name: terraform-docs
     runs-on: self-hosted
     permissions:
       contents: write
-    
+
     steps:
     - name: Checkout source code
       uses: actions/checkout@v4.1.1

@@ -1,10 +1,9 @@
 
-# add change
 
 module "base" {
-  source = "../../modules/base"
+  source = "https://github.com/AGBG-ASG/acn-horizon-sdv/modules/base@1.0.0"
 
-  sdv_project  = "sdva-2108202401"
+  sdv_project  = "sdvb-2108202401"
   sdv_location = "europe-west1"
   sdv_region   = "europe-west1"
   sdv_zone     = "europe-west1-d"
@@ -12,7 +11,7 @@ module "base" {
   sdv_network    = "sdv-network"
   sdv_subnetwork = "sdv-subnet"
 
-  sdv_default_computer_sa = "268541173342-compute@developer.gserviceaccount.com"
+  sdv_default_computer_sa = "966518152012-compute@developer.gserviceaccount.com"
 
   sdv_cluster_name           = "sdv-cluster"
   sdv_cluster_node_pool_name = "sdv-node-pool"

@@ -15,7 +15,7 @@ on:
 jobs:
   tflint:
     runs-on: self-hosted
-    name: tflint    
+    name: tflint
     steps:
     - name: Checkout source code
       uses: actions/checkout@v4.1.1
@@ -26,7 +26,7 @@ jobs:
         path: ~/.tflint.d/plugins
         key: ${{ matrix.os }}-tflint-${{ hashFiles('.tflint.hcl') }}
 
-    - name: Setup TFLint 
+    - name: Setup TFLint
       uses: terraform-linters/setup-tflint@v4.0.0
       with:
         tflint_version: ${{ inputs.version }}
