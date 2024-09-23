@@ -42,3 +42,9 @@ module "sdv_gke_cluster" {
   depends_on      = [module.sdv_bastion_host]
 }
 
+module "sdv_artifact_registry" {
+  source = "../sdv-artifact-registry"
+
+  repository_id = "horizon-sdv-dev"
+  location      = var.sdv_location
+}
