@@ -14,14 +14,23 @@ resource "google_container_cluster" "default" {
     enable_private_nodes   = true
     master_ipv4_cidr_block = "10.0.0.0/28"
   }
+
+  addons_config {
+    http_load_balancing {
+      disabled = false
+    }
+    gcp_filestore_csi_driver_config {
+      enabled = true
+    }
+  }
 }
 
 
 resource "google_container_node_pool" "primary_preemptible_nodes" {
-  name       = var.node_pool_name
-  location   = var.location
-  cluster    = google_container_cluster.default.name
-  node_count = 1
+  name           = var.node_pool_name
+  location       = var.location
+  cluster        = google_container_cluster.default.name
+  node_count     = var.node_count
   node_locations = var.node_locations
   node_config {
     preemptible  = true

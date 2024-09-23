@@ -44,6 +44,10 @@ variable "node_locations" {
   ]
 }
 
-
+variable "node_count" {
+  description = "Define the number of node count"
+  type        = number
+  default     = 1
+}
 
 
