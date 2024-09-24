@@ -44,6 +44,18 @@ variable "sdv_cluster_node_pool_name" {
   type        = string
 }
 
+variable "sdv_cluster_node_pool_machine_type" {
+  description = "Define the machine type of the node pool"
+  type        = string
+  default     = "n1-standard-4"
+}
+
+variable "sdv_cluster_node_pool_count" {
+  description = "Define the number of nodes for the node pool"
+  type        = number
+  default     = 1
+}
+
 variable "sdv_bastion_host_name" {
   description = "Name of the bastion host server"
   type        = string
@@ -61,5 +73,10 @@ variable "sdv_bastion_host_sa" {
 
 variable "sdv_network_egress_router_name" {
   description = "Define the name of the egress router of the network"
+  type        = string
+}
+
+variable "sdv_artifact_registry_repository_id" {
+  description = "Define the name of the artifactory registry repository name"
   type        = string
 }
