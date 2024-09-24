@@ -37,14 +37,14 @@ module "sdv_gke_cluster" {
   network         = var.sdv_network
   subnetwork      = var.sdv_subnetwork
   service_account = var.sdv_default_computer_sa
-  machine_type    = "n1-standard-4"
-  node_count      = 3
+  machine_type    = var.sdv_cluster_node_pool_machine_type
+  node_count      = var.sdv_cluster_node_pool_count
   depends_on      = [module.sdv_bastion_host]
 }
 
 module "sdv_artifact_registry" {
   source = "../sdv-artifact-registry"
 
-  repository_id = "horizon-sdv-dev"
+  repository_id = var.sdv_artifact_registry_repository_id
   location      = var.sdv_location
 }
