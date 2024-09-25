@@ -8,6 +8,11 @@ resource "google_project_service" "project_service" {
   service = "iap.googleapis.com"
 }
 
+resource "google_project_service" "certificate_manager_api" {
+  project = var.sdv_project
+  service = "certificatemanager.googleapis.com"
+}
+
 module "sdv_network" {
   source      = "../sdv-network"
   project     = var.sdv_project
