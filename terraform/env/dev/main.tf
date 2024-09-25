@@ -30,4 +30,6 @@ module "base" {
   sdv_network_egress_router_name = "sdv-egress-internet"
 
   sdv_artifact_registry_repository_id = "horizon-sdv-dev"
+
+  sdv_ssl_certificate_domain = "horizon-sdv-dev.scpmtk.com"
 }

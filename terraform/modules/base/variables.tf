@@ -80,3 +80,14 @@ variable "sdv_artifact_registry_repository_id" {
   description = "Define the name of the artifactory registry repository name"
   type        = string
 }
+
+variable "sdv_ssl_certificate_name" {
+  description = "Define the SSL Certificate name"
+  type        = string
+  default     = "horizon-sdv"
+}
+
+variable "sdv_ssl_certificate_domain" {
+  description = "Define the SSL Certificate domain name"
+  type        = string
+}
