@@ -48,3 +48,10 @@ module "sdv_artifact_registry" {
   repository_id = var.sdv_artifact_registry_repository_id
   location      = var.sdv_location
 }
+
+module "sdv_ssl_certificate" {
+  source  = "../sdv-ssl-certificate"
+  project = var.sdv_project
+  name    = var.sdv_ssl_certificate_name
+  domain  = var.sdv_ssl_certificate_domain
+}
