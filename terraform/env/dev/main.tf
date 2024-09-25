@@ -32,4 +32,5 @@ module "base" {
   sdv_artifact_registry_repository_id = "horizon-sdv-dev"
 
   sdv_ssl_certificate_domain = "horizon-sdv-dev.scpmtk.com"
+  sdv_ssl_certificate_name = "horizon-sdv-dev"
 }
