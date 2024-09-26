@@ -1,3 +1,4 @@
+
 resource "google_project_service" "project" {
   project = var.sdv_project
   service = "container.googleapis.com"
@@ -14,7 +15,8 @@ resource "google_project_service" "certificate_manager_api" {
 }
 
 module "sdv_network" {
-  source      = "../sdv-network"
+  source = "../sdv-network"
+
   project     = var.sdv_project
   network     = var.sdv_network
   subnetwork  = var.sdv_subnetwork
@@ -23,7 +25,8 @@ module "sdv_network" {
 }
 
 module "sdv_bastion_host" {
-  source          = "../sdv-bastion-host"
+  source = "../sdv-bastion-host"
+
   host_name       = var.sdv_bastion_host_name
   service_account = var.sdv_bastion_host_sa
   project         = var.sdv_project
@@ -35,7 +38,8 @@ module "sdv_bastion_host" {
 }
 
 module "sdv_gke_cluster" {
-  source          = "../sdv-gke-cluster"
+  source = "../sdv-gke-cluster"
+
   cluster_name    = var.sdv_cluster_name
   node_pool_name  = var.sdv_cluster_node_pool_name
   location        = var.sdv_location
@@ -55,8 +59,19 @@ module "sdv_artifact_registry" {
 }
 
 module "sdv_ssl_certificate" {
-  source  = "../sdv-ssl-certificate"
+  source = "../sdv-ssl-certificate"
+
   project = var.sdv_project
   name    = var.sdv_ssl_certificate_name
   domain  = var.sdv_ssl_certificate_domain
+}
+
+module "sdv_url_map" {
+  source = "../sdv-url-map"
+
+  target_https_proxy_name = var.sdv_target_https_proxy_name
+  url_map_name            = var.sdv_url_map_name
+  ssl_certificate_name    = var.sdv_ssl_certificate_name
+  domain                  = var.sdv_ssl_certificate_domain
+  depends_on              = [module.sdv_ssl_certificate]
 }

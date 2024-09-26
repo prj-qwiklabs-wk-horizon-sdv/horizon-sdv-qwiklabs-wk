@@ -91,3 +91,15 @@ variable "sdv_ssl_certificate_domain" {
   description = "Define the SSL Certificate domain name"
   type        = string
 }
+
+variable "sdv_url_map_name" {
+  description = "Define the URL map name"
+  type        = string
+  default     = "horizon-sdv-map"
+}
+
+variable "sdv_target_https_proxy_name" {
+  description = "Define the HTTPs proxy name"
+  type        = string
+  default     = "horizon-sdv-https-proxy"
+}
