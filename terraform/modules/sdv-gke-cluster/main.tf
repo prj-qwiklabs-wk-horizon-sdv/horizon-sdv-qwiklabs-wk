@@ -10,6 +10,10 @@ resource "google_container_cluster" "default" {
   # accidentally delete this instance by use of Terraform.
   deletion_protection = false
 
+  master_authorized_networks_config {
+    gcp_public_cidrs_access_enabled = false
+  }
+
   private_cluster_config {
     enable_private_nodes    = true
     enable_private_endpoint = true
