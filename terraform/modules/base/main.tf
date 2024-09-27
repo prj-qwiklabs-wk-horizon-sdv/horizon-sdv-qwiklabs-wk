@@ -15,7 +15,8 @@ module "sdv_network" {
 }
 
 module "sdv_bastion_host" {
-  source = "../sdv-bastion-host"
+  source     = "../sdv-bastion-host"
+  depends_on = [module.sdv_apis, module.sdv_network]
 
   host_name       = var.sdv_bastion_host_name
   service_account = var.sdv_bastion_host_sa
@@ -24,11 +25,11 @@ module "sdv_bastion_host" {
   subnetwork      = var.sdv_subnetwork
   zone            = var.sdv_zone
   members         = var.sdv_bastion_host_members
-  depends_on      = [module.sdv_network]
 }
 
 module "sdv_gke_cluster" {
-  source = "../sdv-gke-cluster"
+  source     = "../sdv-gke-cluster"
+  depends_on = [module.sdv_apis, module.sdv_bastion_host]
 
   cluster_name    = var.sdv_cluster_name
   node_pool_name  = var.sdv_cluster_node_pool_name
@@ -38,7 +39,6 @@ module "sdv_gke_cluster" {
   service_account = var.sdv_default_computer_sa
   machine_type    = var.sdv_cluster_node_pool_machine_type
   node_count      = var.sdv_cluster_node_pool_count
-  depends_on      = [module.sdv_bastion_host]
 }
 
 module "sdv_artifact_registry" {
@@ -49,26 +49,28 @@ module "sdv_artifact_registry" {
 }
 
 module "sdv_ssl_certificate" {
-  source = "../sdv-ssl-certificate"
+  source     = "../sdv-ssl-certificate"
+  depends_on = [module.sdv_apis]
 
   project = var.sdv_project
   name    = var.sdv_ssl_certificate_name
   domain  = var.sdv_ssl_certificate_domain
+
 }
 
 module "sdv_url_map" {
-  source = "../sdv-url-map"
+  source     = "../sdv-url-map"
+  depends_on = [module.sdv_ssl_certificate]
 
   target_https_proxy_name = var.sdv_target_https_proxy_name
   url_map_name            = var.sdv_url_map_name
   ssl_certificate_name    = var.sdv_ssl_certificate_name
   domain                  = var.sdv_ssl_certificate_domain
-  depends_on              = [module.sdv_ssl_certificate]
 }
 
-
 module "sdv_apis_services" {
-  source = "../sdv-apis-services"
+  source     = "../sdv-apis-services"
+  depends_on = [module.sdv_apis]
 
   auth_config_location     = var.sdv_location
   auth_config_display_name = var.sdv_auth_config_display_name
