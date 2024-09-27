@@ -16,5 +16,6 @@ resource "google_integrations_auth_config" "horizon_sdv_oauth_2" {
       auth_endpoint = var.auth_config_endpoint_uri
     }
   }
+  depends_on = [google_integrations_client.client]
 }
 
