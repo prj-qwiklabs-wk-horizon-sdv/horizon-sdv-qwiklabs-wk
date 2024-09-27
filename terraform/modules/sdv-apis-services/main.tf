@@ -1,11 +1,15 @@
 
-
+resource "google_integrations_client" "client" {
+  project  = var.project
+  location = var.auth_config_location
+}
 
 resource "google_integrations_auth_config" "horizon_sdv_oauth_2" {
   project      = var.project
   location     = var.auth_config_location
   display_name = var.auth_config_display_name
   description  = "OAuth 2 client id"
+
   decrypted_credential {
     credential_type = "oauth2_authorization_code"
     oauth2_authorization_code {
