@@ -1,4 +1,6 @@
 
+
+
 resource "google_integrations_auth_config" "horizon_sdv_oauth_2" {
   location     = var.auth_config_location
   display_name = var.auth_config_display_name

@@ -1,17 +1,7 @@
 
-resource "google_project_service" "project" {
+module "sdv_apis" {
+  source  = "../sdv-apis"
   project = var.sdv_project
-  service = "container.googleapis.com"
-}
-
-resource "google_project_service" "project_service" {
-  project = var.sdv_project
-  service = "iap.googleapis.com"
-}
-
-resource "google_project_service" "certificate_manager_api" {
-  project = var.sdv_project
-  service = "certificatemanager.googleapis.com"
 }
 
 module "sdv_network" {
