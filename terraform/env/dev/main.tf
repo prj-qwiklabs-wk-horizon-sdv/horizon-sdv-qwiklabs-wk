@@ -1,5 +1,5 @@
 
-# workflow build 016
+# workflow build 017
 
 module "base" {
   source = "../../modules/base"
@@ -33,4 +33,8 @@ module "base" {
 
   sdv_ssl_certificate_domain = "horizon-sdv-dev.scpmtk.com"
   sdv_ssl_certificate_name   = "horizon-sdv-dev"
+
+  # sdv-apis-services
+  sdv_auth_config_display_name = "horizon-sdv-dev-oauth-2"
+  sdv_auth_config_endpoint_uri = "https://horizon-sdv-dev.scpmtk.com/auth/realms/horizon/broker/google/endpoint"
 }
