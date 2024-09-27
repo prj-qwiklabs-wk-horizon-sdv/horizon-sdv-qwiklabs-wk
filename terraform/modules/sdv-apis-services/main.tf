@@ -6,9 +6,7 @@ resource "google_integrations_auth_config" "horizon_sdv_oauth_2" {
   decrypted_credential {
     credential_type = "oauth2_authorization_code"
     oauth2_authorization_code {
-      auth_endpoint = [
-        var.auth_config_endpoint_uri
-      ]
+      auth_endpoint = var.auth_config_endpoint_uri
     }
   }
 }
