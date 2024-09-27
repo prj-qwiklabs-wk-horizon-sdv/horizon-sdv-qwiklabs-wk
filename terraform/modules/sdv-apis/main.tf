@@ -1,21 +1,14 @@
 
-resource "google_project_service" "container_googleapis" {
-  project = var.project
-  service = "container.googleapis.com"
-}
+resource "google_project_service" "service" {
+  for_each = toset([
+    "container.googleapis.com",
+    "iap.googleapis.com",
+    "certificatemanager.googleapis.com",
+    "integrations.googleapis.com",
+  ])
 
-resource "google_project_service" "iap_googleapis" {
-  project = var.project
-  service = "iap.googleapis.com"
-}
+  service = each.key
 
-resource "google_project_service" "certificatemanager_googleapis" {
-  project = var.project
-  service = "certificatemanager.googleapis.com"
+  project            = var.project
+  disable_on_destroy = false
 }
-
-resource "google_project_service" "integrations_googleapis" {
-  project = var.project
-  service = "integrations.googleapis.com"
-}
-
