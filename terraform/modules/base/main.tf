@@ -75,3 +75,12 @@ module "sdv_url_map" {
   domain                  = var.sdv_ssl_certificate_domain
   depends_on              = [module.sdv_ssl_certificate]
 }
+
+
+module "sdv_apis_services" {
+  source = "../sdv-apis-services"
+
+  auth_config_location     = var.sdv_location
+  auth_config_display_name = var.sdv_auth_config_display_name
+  auth_config_endpoint_uri = var.sdv_auth_config_endpoint_uri
+}

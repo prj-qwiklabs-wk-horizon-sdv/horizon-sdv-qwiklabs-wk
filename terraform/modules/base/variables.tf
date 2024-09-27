@@ -103,3 +103,13 @@ variable "sdv_target_https_proxy_name" {
   type        = string
   default     = "horizon-sdv-https-proxy"
 }
+
+variable "sdv_auth_config_display_name" {
+  description = "Define the auth config display name"
+  type        = string
+}
+
+variable "sdv_auth_config_endpoint_uri" {
+  description = "Define the auth config endpont URI"
+  type        = string
+}
