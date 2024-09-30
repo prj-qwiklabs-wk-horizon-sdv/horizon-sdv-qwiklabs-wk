@@ -71,12 +71,12 @@ module "sdv_url_map" {
 #
 # Can create it only after deploy keycloack
 #
-module "sdv_apis_services" {
-  source     = "../sdv-apis-services"
-  depends_on = [module.sdv_apis]
+# module "sdv_apis_services" {
+#   source     = "../sdv-apis-services"
+#   depends_on = [module.sdv_apis]
 
-  project                  = var.sdv_project
-  auth_config_location     = var.sdv_location
-  auth_config_display_name = var.sdv_auth_config_display_name
-  auth_config_endpoint_uri = var.sdv_auth_config_endpoint_uri
-}
+#   project                  = var.sdv_project
+#   auth_config_location     = var.sdv_location
+#   auth_config_display_name = var.sdv_auth_config_display_name
+#   auth_config_endpoint_uri = var.sdv_auth_config_endpoint_uri
+# }
