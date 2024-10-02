@@ -28,6 +28,11 @@ resource "google_container_cluster" "default" {
       enabled = true
     }
   }
+
+  # Enable autoscaling
+  cluster_autoscaling {
+    enabled = true
+  }
 }
 
 
@@ -47,6 +52,50 @@ resource "google_container_node_pool" "primary_preemptible_nodes" {
     oauth_scopes = [
       "https://www.googleapis.com/auth/cloud-platform"
     ]
+  }
+
+  autoscaling {
+    min_node_count = 1
+    max_node_count = 3
+  }
+
+}
+
+resource "google_container_node_pool" "build_node_pool" {
+  name           = var.build_node_pool_name
+  location       = var.location
+  cluster        = google_container_cluster.default.name
+  node_count     = var.build_node_pool_node_count
+  node_locations = var.node_locations
+  node_config {
+    preemptible  = true
+    machine_type = var.build_node_pool_machine_type
+
+    # Google recommends custom service accounts that have cloud-platform
+    # scope and permissions granted via IAM Roles.
+    service_account = var.service_account
+    oauth_scopes = [
+      "https://www.googleapis.com/auth/cloud-platform"
+    ]
+
+    labels = {
+      workloadLabel = "android"
+    }
+
+    taint {
+      key    = "workloadType"
+      value  = "android"
+      effect = "NO_SCHEDULE"
+    }
+
+    metadata = {
+      disable-legacy-endpoints = "true"
+    }
+  }
+
+  autoscaling {
+    min_node_count = var.build_node_pool_min_node_count
+    max_node_count = var.build_node_pool_max_node_count
   }
 
 }

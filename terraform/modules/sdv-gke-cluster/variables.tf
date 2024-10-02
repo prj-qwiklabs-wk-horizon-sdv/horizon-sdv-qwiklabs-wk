@@ -9,6 +9,33 @@ variable "node_pool_name" {
   type        = string
 }
 
+variable "build_node_pool_name" {
+  description = "Name of the build node pool"
+  type        = string
+}
+
+variable "build_node_pool_node_count" {
+  description = "Number of nodes for the build node pool"
+  type        = number
+}
+
+variable "build_node_pool_machine_type" {
+  description = "Type fo the machine for the build node pool"
+  type        = string
+}
+
+variable "build_node_pool_min_node_count" {
+  description = "Number of minimum of nodes for the build node pool"
+  type        = number
+  default     = 0
+}
+
+variable "build_node_pool_max_node_count" {
+  description = "Number of max of nodes for the build node pool"
+  type        = number
+  default     = 3
+}
+
 variable "network" {
   description = "Name of the network"
   type        = string

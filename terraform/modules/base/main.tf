@@ -32,13 +32,22 @@ module "sdv_gke_cluster" {
   depends_on = [module.sdv_apis, module.sdv_bastion_host]
 
   cluster_name    = var.sdv_cluster_name
-  node_pool_name  = var.sdv_cluster_node_pool_name
   location        = var.sdv_location
   network         = var.sdv_network
   subnetwork      = var.sdv_subnetwork
   service_account = var.sdv_default_computer_sa
-  machine_type    = var.sdv_cluster_node_pool_machine_type
-  node_count      = var.sdv_cluster_node_pool_count
+
+  # Default node pool configuration
+  node_pool_name = var.sdv_cluster_node_pool_name
+  machine_type   = var.sdv_cluster_node_pool_machine_type
+  node_count     = var.sdv_cluster_node_pool_count
+
+  # build node pool configuration
+  build_node_pool_name           = var.sdv_build_node_pool_name
+  build_node_pool_node_count     = var.sdv_build_node_pool_node_count
+  build_node_pool_machine_type   = var.sdv_build_node_pool_machine_type
+  build_node_pool_min_node_count = var.sdv_build_node_pool_min_node_count
+  build_node_pool_max_node_count = var.sdv_build_node_pool_max_node_count
 }
 
 module "sdv_artifact_registry" {
