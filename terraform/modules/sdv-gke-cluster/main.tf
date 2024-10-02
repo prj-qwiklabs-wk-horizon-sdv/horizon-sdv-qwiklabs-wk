@@ -32,7 +32,20 @@ resource "google_container_cluster" "default" {
   # Enable autoscaling
   cluster_autoscaling {
     enabled = true
+    
+    resource_limits {
+      resource_type = "cpu"
+      minimum       = 1
+      maximum       = 8
+    }
+
+    resource_limits {
+      resource_type = "memory"
+      minimum       = 1
+      maximum       = 32
+    }
   }
+
 }
 
 
@@ -52,6 +65,7 @@ resource "google_container_node_pool" "primary_preemptible_nodes" {
     oauth_scopes = [
       "https://www.googleapis.com/auth/cloud-platform"
     ]
+
   }
 
   autoscaling {
