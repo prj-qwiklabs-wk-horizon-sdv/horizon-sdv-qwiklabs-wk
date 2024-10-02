@@ -113,3 +113,33 @@ variable "sdv_auth_config_endpoint_uri" {
   description = "Define the auth config endpont URI"
   type        = string
 }
+
+variable "sdv_build_node_pool_name" {
+  description = "Name of the build node pool"
+  type        = string
+  default     = "sdv-build-node-pool"
+}
+
+variable "sdv_build_node_pool_node_count" {
+  description = "Number of nodes for the build node pool"
+  type        = number
+  default     = 0
+}
+
+variable "sdv_build_node_pool_machine_type" {
+  description = "Type fo the machine for the build node pool"
+  type        = string
+  default     = "e2-medium"
+}
+
+variable "sdv_build_node_pool_min_node_count" {
+  description = "Number of minimum of nodes for the build node pool"
+  type        = number
+  default     = 0
+}
+
+variable "sdv_build_node_pool_max_node_count" {
+  description = "Number of max of nodes for the build node pool"
+  type        = number
+  default     = 3
+}
