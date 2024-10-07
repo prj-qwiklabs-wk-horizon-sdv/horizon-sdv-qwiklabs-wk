@@ -16,6 +16,19 @@ module "vpc" {
     }
   ]
 
+  secondary_ranges = {
+    "${var.subnetwork}" = [
+      {
+        range_name    = "pod-ranges"
+        ip_cidr_range = "10.10.0.0/20"
+      },
+      {
+        range_name    = "services-range"
+        ip_cidr_range = "10.10.16.0/20"
+      },
+    ]
+  }
+
   routes = [
     {
       name                     = var.router_name
