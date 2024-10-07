@@ -14,6 +14,12 @@ resource "google_container_cluster" "default" {
     gcp_public_cidrs_access_enabled = false
   }
 
+  ip_allocation_policy {
+    stack_type                    = "IPV4"
+    cluster_secondary_range_name  = "pod-ranges"
+    services_secondary_range_name = "services-range"
+  }
+
   private_cluster_config {
     enable_private_nodes    = true
     enable_private_endpoint = true
