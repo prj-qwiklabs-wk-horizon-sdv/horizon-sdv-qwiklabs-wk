@@ -19,6 +19,10 @@ module "vpc" {
   secondary_ranges = {
     "${var.subnetwork}" = [
       {
+        range_name = "gke-sdv-cluster-pods-756ba922"
+        ip_cidr_range = "10.116.0.0/14"
+      },
+      {
         range_name    = "pod-ranges"
         ip_cidr_range = "10.10.0.0/20"
       },
