@@ -32,7 +32,7 @@ resource "google_container_cluster" "default" {
   # Enable autoscaling
   cluster_autoscaling {
     enabled = true
-    
+
     resource_limits {
       resource_type = "cpu"
       minimum       = 1
