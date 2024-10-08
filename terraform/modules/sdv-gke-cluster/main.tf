@@ -71,14 +71,7 @@ resource "google_container_node_pool" "primary_preemptible_nodes" {
     oauth_scopes = [
       "https://www.googleapis.com/auth/cloud-platform"
     ]
-
   }
-
-  autoscaling {
-    min_node_count = 1
-    max_node_count = 3
-  }
-
 }
 
 resource "google_container_node_pool" "build_node_pool" {
