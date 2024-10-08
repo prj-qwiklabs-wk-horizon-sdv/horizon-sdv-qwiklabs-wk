@@ -129,7 +129,7 @@ variable "sdv_build_node_pool_node_count" {
 variable "sdv_build_node_pool_machine_type" {
   description = "Type fo the machine for the build node pool"
   type        = string
-  default     = "e2-medium"
+  default     = "c2d-highcpu-32"
 }
 
 variable "sdv_build_node_pool_min_node_count" {
