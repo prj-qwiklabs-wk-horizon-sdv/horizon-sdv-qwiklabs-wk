@@ -1,7 +1,8 @@
 
+data "google_project" "project" {}
 
 resource "google_service_account" "vm_sa" {
-  project      = var.project
+  project      = data.google_project.project.project_id
   account_id   = var.service_account
   display_name = "Service Account for the bastion host"
 }
@@ -11,7 +12,7 @@ module "instance_template" {
   source  = "terraform-google-modules/vm/google//modules/instance_template"
   version = "~> 12.0"
 
-  project_id   = var.project
+  project_id   = data.google_project.project.project_id
   machine_type = var.machine_type
   subnetwork   = var.subnetwork
   service_account = {
@@ -25,8 +26,8 @@ module "instance_template" {
 }
 
 resource "google_compute_instance_from_template" "vm" {
+  project = data.google_project.project.project_id
   name    = var.host_name
-  project = var.project
   zone    = var.zone
   network_interface {
     subnetwork = var.subnetwork
@@ -44,7 +45,7 @@ resource "google_service_account_iam_binding" "sa_user" {
 
 resource "google_project_iam_member" "os_admin_login_bindings" {
   for_each = toset(var.members)
-  project  = var.project
+  project  = data.google_project.project.id
   role     = "roles/compute.osAdminLogin"
   member   = each.key
 }
@@ -54,7 +55,7 @@ module "iap_tunneling" {
   version = "~> 7.0"
 
   fw_name_allow_ssh_from_iap = "bastion-allow-ssh-from-iap-to-tunnel"
-  project                    = var.project
+  project                    = data.google_project.project.project_id
   network                    = var.network
   service_accounts           = [google_service_account.vm_sa.email]
   instances = [{
@@ -68,7 +69,7 @@ module "iap_tunneling" {
 # Allows the bastion host SA to manage the GKE cluster
 #
 resource "google_project_iam_binding" "container-admin-iam" {
-  project = var.project
+  project = data.google_project.project.id
   role    = "roles/container.admin"
   members = [
     "serviceAccount:${google_service_account.vm_sa.email}",

@@ -1,9 +1,11 @@
 
+data "google_project" "project" {}
+
 module "vpc" {
   source  = "terraform-google-modules/network/google"
   version = "~> 9.1"
 
-  project_id   = var.project
+  project_id   = data.google_project.project.project_id
   network_name = var.network
   routing_mode = "GLOBAL"
 
@@ -13,6 +15,7 @@ module "vpc" {
       subnet_region            = var.region
       subnet_ip                = "10.1.0.0/24"
       enable_ula_internal_ipv6 = true
+      private_ip_google_access = false
     }
   ]
 

@@ -1,4 +1,8 @@
+
+data "google_project" "project" {}
+
 resource "google_container_cluster" "sdv_cluster" {
+  project                  = data.google_project.project.project_id
   name                     = var.cluster_name
   location                 = var.location
   network                  = var.network
@@ -59,7 +63,7 @@ resource "google_container_cluster" "sdv_cluster" {
 }
 
 
-resource "google_container_node_pool" "primary_preemptible_nodes" {
+resource "google_container_node_pool" "sdv_main_node_pool" {
   name           = var.node_pool_name
   location       = var.location
   cluster        = google_container_cluster.sdv_cluster.name
@@ -78,7 +82,7 @@ resource "google_container_node_pool" "primary_preemptible_nodes" {
   }
 }
 
-resource "google_container_node_pool" "build_node_pool" {
+resource "google_container_node_pool" "sdv_build_node_pool" {
   name           = var.build_node_pool_name
   location       = var.location
   cluster        = google_container_cluster.sdv_cluster.name

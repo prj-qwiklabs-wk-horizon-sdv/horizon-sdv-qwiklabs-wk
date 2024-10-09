@@ -1,9 +1,4 @@
 
-variable "project" {
-  description = "Define the GCP project id"
-  type        = string
-}
-
 variable "service_account" {
   description = "Define the Service account"
   type        = string
