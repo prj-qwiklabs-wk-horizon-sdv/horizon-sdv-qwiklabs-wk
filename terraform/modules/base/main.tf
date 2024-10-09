@@ -1,13 +1,12 @@
 
+
 module "sdv_apis" {
   source  = "../sdv-apis"
-  project = var.sdv_project
 }
 
 module "sdv_network" {
   source = "../sdv-network"
 
-  project     = var.sdv_project
   network     = var.sdv_network
   subnetwork  = var.sdv_subnetwork
   region      = var.sdv_region
@@ -20,7 +19,6 @@ module "sdv_bastion_host" {
 
   host_name       = var.sdv_bastion_host_name
   service_account = var.sdv_bastion_host_sa
-  project         = var.sdv_project
   network         = var.sdv_network
   subnetwork      = var.sdv_subnetwork
   zone            = var.sdv_zone
