@@ -1,4 +1,4 @@
-resource "google_container_cluster" "default" {
+resource "google_container_cluster" "sdv_cluster" {
   name                     = var.cluster_name
   location                 = var.location
   network                  = var.network
@@ -24,6 +24,10 @@ resource "google_container_cluster" "default" {
     enable_private_nodes    = true
     enable_private_endpoint = true
     master_ipv4_cidr_block  = "10.0.0.0/28"
+  }
+
+  secret_manager_config {
+    enabled = true
   }
 
   addons_config {
@@ -58,7 +62,7 @@ resource "google_container_cluster" "default" {
 resource "google_container_node_pool" "primary_preemptible_nodes" {
   name           = var.node_pool_name
   location       = var.location
-  cluster        = google_container_cluster.default.name
+  cluster        = google_container_cluster.sdv_cluster.name
   node_count     = var.node_count
   node_locations = var.node_locations
   node_config {
@@ -77,7 +81,7 @@ resource "google_container_node_pool" "primary_preemptible_nodes" {
 resource "google_container_node_pool" "build_node_pool" {
   name           = var.build_node_pool_name
   location       = var.location
-  cluster        = google_container_cluster.default.name
+  cluster        = google_container_cluster.sdv_cluster.name
   node_count     = var.build_node_pool_node_count
   node_locations = var.node_locations
   node_config {
