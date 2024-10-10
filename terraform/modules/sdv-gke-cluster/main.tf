@@ -79,7 +79,12 @@ resource "google_container_node_pool" "sdv_main_node_pool" {
     oauth_scopes = [
       "https://www.googleapis.com/auth/cloud-platform"
     ]
+
+    workload_metadata_config {
+      mode = "GKE_METADATA"
+    }
   }
+
 }
 
 resource "google_container_node_pool" "sdv_build_node_pool" {
@@ -111,6 +116,10 @@ resource "google_container_node_pool" "sdv_build_node_pool" {
 
     metadata = {
       disable-legacy-endpoints = "true"
+    }
+
+    workload_metadata_config {
+      mode = "GKE_METADATA"
     }
   }
 
