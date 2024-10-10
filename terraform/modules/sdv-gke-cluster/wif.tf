@@ -8,12 +8,12 @@ resource "google_service_account" "gke_jenkis_sa" {
 }
 
 resource "google_service_account_iam_binding" "jenkis_sa_wif_users" {
-  service_account_id = google_service_account.gke_jenkis_sa.email
+  service_account_id = google_service_account.gke_jenkis_sa.id
 
   role = "roles/iam.workloadIdentityUser"
 
   members = [
-    "serviceAccount:${data.google_project.project.id}.svc.id.goog[jenkis/jenkis-sa]",
+    "serviceAccount:${data.google_project.project.project_id}.svc.id.goog[jenkis/jenkis-sa]",
   ]
 
   depends_on = [
