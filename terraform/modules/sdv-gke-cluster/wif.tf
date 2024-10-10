@@ -7,12 +7,17 @@ resource "google_service_account" "gke_jenkis_sa" {
   description  = "the deployment of Jenkis in GKE cluster makes use of this account through WIF"
 }
 
-resource "google_service_account_iam_binding" "jenkis-sa-wi-users" {
+resource "google_service_account_iam_binding" "jenkis_sa_wif_users" {
   service_account_id = google_service_account.gke_jenkis_sa.email
 
   role = "roles/iam.workloadIdentityUser"
+
   members = [
     "serviceAccount:${data.google_project.project.id}.svc.id.goog[jenkis/jenkis-sa]",
+  ]
+
+  depends_on = [
+    google_service_account.gke_jenkis_sa
   ]
 }
 
