@@ -24,7 +24,11 @@ resource "google_service_account_iam_binding" "gke_jenkis_sa_wi_users" {
 resource "google_project_iam_binding" "gke_jenkis_sa_iam" {
   project = data.google_project.project.id
 
-  role = "roles/storage.objectUser"
+  for_each = toset([
+    "roles/storage.objectUser",
+    "roles/artifactregistry.writer",
+  ])
+  role = each.key
 
   members = [
     "serviceAccount:${google_service_account.gke_jenkis_sa.email}",
