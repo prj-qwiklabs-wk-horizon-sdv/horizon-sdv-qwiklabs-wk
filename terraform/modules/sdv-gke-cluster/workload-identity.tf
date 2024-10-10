@@ -1,12 +1,4 @@
 
-# data "google_project" "project" {}
-
-resource "google_iam_workload_identity_pool" "sdv_wi_pool" {
-  workload_identity_pool_id = "sdv-wi-pool"
-  display_name              = "SDV Workload Identity Pool"
-  description               = "A WIF pool for SDV cluster"
-}
-
 
 resource "google_service_account" "gke_jenkis_sa" {
   account_id   = "gke-jenkis-sa"
@@ -32,7 +24,11 @@ resource "google_service_account_iam_binding" "gke_jenkis_sa_wi_users" {
 resource "google_project_iam_binding" "gke_jenkis_sa_iam" {
   project = data.google_project.project.id
 
-  role = "roles/storage.objectUser"
+  for_each = toset([
+    "roles/storage.objectUser",
+    "roles/artifactregistry.writer",
+  ])
+  role = each.key
 
   members = [
     "serviceAccount:${google_service_account.gke_jenkis_sa.email}",
