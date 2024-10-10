@@ -1,12 +1,4 @@
 
-# data "google_project" "project" {}
-
-resource "google_iam_workload_identity_pool" "sdv_wi_pool" {
-  workload_identity_pool_id = "sdv-wi-pool"
-  display_name              = "SDV Workload Identity Pool"
-  description               = "A WIF pool for SDV cluster"
-}
-
 
 resource "google_service_account" "gke_jenkis_sa" {
   account_id   = "gke-jenkis-sa"
