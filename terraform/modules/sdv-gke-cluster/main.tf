@@ -14,6 +14,10 @@ resource "google_container_cluster" "sdv_cluster" {
   # accidentally delete this instance by use of Terraform.
   deletion_protection = false
 
+  workload_identity_config {
+      workload_pool = "${data.google_project.project.project_id}.svc.id.goog"
+  }
+
   master_authorized_networks_config {
     gcp_public_cidrs_access_enabled = false
   }
@@ -129,33 +133,3 @@ resource "google_container_node_pool" "sdv_build_node_pool" {
   }
 
 }
-
-
-
-
-
-
-# resource "google_iam_policy" "artifact_registry_policy" {
-#   project = google_container_cluster.sdv_cluster.project_id
-#   resource = module.sdv_artifact_registry.docker_repo.repository.name
-
-#   bindings = {
-#     "role": "roles/artifactregistry.reader",
-#     "members": [
-#       "serviceAccount:${google_container_cluster.sdv_cluster.location}/${google_container_cluster.sdv_cluster.project_id}.svc.id.goog/${google_container_cluster.sdv_cluster.name}-sa"
-#     ]
-#   }
-# }
-
-# resource "google_iam_policy" "storage_policy" {
-#   project = google_container_cluster.sdv_cluster.project_id
-#   resource = "${google_project.project.project_id}-aaos"
-
-#   bindings = {
-#     "role": "roles/storage.objectUser",
-#     "members": [
-#       "serviceAccount:${google_container_cluster.sdv_cluster.location}/${google_container_cluster.sdv_cluster.project_id}.svc.id.goog/${google_container_cluster.sdv_cluster.name}-sa"
-#     ]
-#   }
-# }
-
