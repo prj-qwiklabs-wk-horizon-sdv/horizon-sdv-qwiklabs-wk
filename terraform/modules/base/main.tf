@@ -1,7 +1,13 @@
 
 
 module "sdv_apis" {
-  source  = "../sdv-apis"
+  source = "../sdv-apis"
+}
+
+module "sdv_gcs" {
+  source = "../sdv-gcs"
+
+  location = var.sdv_location
 }
 
 module "sdv_network" {
@@ -14,8 +20,11 @@ module "sdv_network" {
 }
 
 module "sdv_bastion_host" {
-  source     = "../sdv-bastion-host"
-  depends_on = [module.sdv_apis, module.sdv_network]
+  source = "../sdv-bastion-host"
+  depends_on = [
+    module.sdv_apis,
+    module.sdv_network
+  ]
 
   host_name       = var.sdv_bastion_host_name
   service_account = var.sdv_bastion_host_sa
@@ -26,8 +35,12 @@ module "sdv_bastion_host" {
 }
 
 module "sdv_gke_cluster" {
-  source     = "../sdv-gke-cluster"
-  depends_on = [module.sdv_apis, module.sdv_bastion_host]
+  source = "../sdv-gke-cluster"
+  depends_on = [
+    module.sdv_apis,
+    module.sdv_bastion_host,
+    module.sdv_gcs
+  ]
 
   cluster_name    = var.sdv_cluster_name
   location        = var.sdv_location
