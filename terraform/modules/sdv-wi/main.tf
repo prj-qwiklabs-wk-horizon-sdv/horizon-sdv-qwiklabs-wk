@@ -61,6 +61,7 @@ locals {
       for role in local.sdv_sas[idx].roles : {
         sa_account_id      = local.sdv_sas[idx].account_id
         service_account_id = sdv_sa.id
+        email              = sdv_sa.email
         role               = role
       }
     ]
@@ -68,17 +69,17 @@ locals {
 }
 
 resource "google_project_iam_binding" "sdv_wi_sa_iam" {
+  project = data.google_project.project.project_id
+
   for_each = { for idx, sdv_sa_role in local.sdv_sas_with_roles : "${sdv_sa_role.sa_account_id}_${sdv_sa_role.role}" => sdv_sa_role }
 
-  project = data.google_project.project.project_id
-  role    = each.value.role
+  role = each.value.role
 
   members = [
-    "serviceAccount:${each.value.service_account_id}",
+    "serviceAccount:${each.value.email}",
   ]
 
   depends_on = [
     google_service_account.sdv_wi_sa
   ]
-
 }
