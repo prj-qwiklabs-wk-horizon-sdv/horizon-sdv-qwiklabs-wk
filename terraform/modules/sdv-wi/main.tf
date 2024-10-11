@@ -33,6 +33,7 @@ locals {
 resource "google_service_account" "sdv_wi_sa" {
   for_each = { for idx, sdv_sa in local.sdv_sas : idx => sdv_sa }
 
+  project      = data.google_project.project.project_id
   account_id   = each.value.account_id
   display_name = each.value.display_name
   description  = each.value.description
@@ -69,7 +70,7 @@ locals {
 resource "google_project_iam_binding" "sdv_wi_sa_iam" {
   for_each = { for idx, sdv_sa_role in local.sdv_sas_with_roles : "${sdv_sa_role.sa_account_id}_${sdv_sa_role.role}" => sdv_sa_role }
 
-  project = data.google_project.project.id
+  project = data.google_project.project.project_id
   role    = each.value.role
 
   members = [
