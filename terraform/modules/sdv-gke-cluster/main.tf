@@ -15,7 +15,7 @@ resource "google_container_cluster" "sdv_cluster" {
   deletion_protection = false
 
   workload_identity_config {
-      workload_pool = "${data.google_project.project.project_id}.svc.id.goog"
+      workload_pool = "${var.project_id}.svc.id.goog"
   }
 
   master_authorized_networks_config {

@@ -1,4 +1,5 @@
 
+data "google_project" "project" {}
 
 module "sdv_apis" {
   source = "../sdv-apis"
@@ -47,6 +48,7 @@ module "sdv_gke_cluster" {
     module.sdv_wi,
   ]
 
+  project_id      = data.google_project.project.project_id
   cluster_name    = var.sdv_cluster_name
   location        = var.sdv_location
   network         = var.sdv_network
