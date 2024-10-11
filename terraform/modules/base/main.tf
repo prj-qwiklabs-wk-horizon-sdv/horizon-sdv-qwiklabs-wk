@@ -4,6 +4,10 @@ module "sdv_apis" {
   source = "../sdv-apis"
 }
 
+module "sdv_wi" {
+  source = "../sdv-wi"
+}
+
 module "sdv_gcs" {
   source = "../sdv-gcs"
 
@@ -39,7 +43,8 @@ module "sdv_gke_cluster" {
   depends_on = [
     module.sdv_apis,
     module.sdv_bastion_host,
-    module.sdv_gcs
+    module.sdv_gcs,
+    module.sdv_wi,
   ]
 
   cluster_name    = var.sdv_cluster_name
