@@ -1,7 +1,12 @@
 
+data "google_project" "project" {}
 
 module "sdv_apis" {
   source = "../sdv-apis"
+}
+
+module "sdv_wi" {
+  source = "../sdv-wi"
 }
 
 module "sdv_gcs" {
@@ -39,9 +44,11 @@ module "sdv_gke_cluster" {
   depends_on = [
     module.sdv_apis,
     module.sdv_bastion_host,
-    module.sdv_gcs
+    module.sdv_gcs,
+    module.sdv_wi,
   ]
 
+  project_id      = data.google_project.project.project_id
   cluster_name    = var.sdv_cluster_name
   location        = var.sdv_location
   network         = var.sdv_network
