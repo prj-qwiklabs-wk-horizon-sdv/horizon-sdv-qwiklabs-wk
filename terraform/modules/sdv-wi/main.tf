@@ -1,6 +1,5 @@
 data "google_project" "project" {}
 
-
 locals {
   sdv_sas = {
     sa1 = {
@@ -78,7 +77,6 @@ resource "google_project_iam_binding" "sdv_wi_sa_iam" {
   ]
 
   depends_on = [
-    google_service_account_iam_binding.sdv_wi_sa_wi_users,
     google_service_account.sdv_wi_sa
   ]
 
