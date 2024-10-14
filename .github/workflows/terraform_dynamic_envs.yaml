@@ -9,6 +9,9 @@ on:
       gcp-sa:
         required: false
         description: "GCP Service account to impersonate"
+      sdv-secret:
+        required: true
+        description: "Define the SDV secret value"
 
     inputs:
       environment:
@@ -77,6 +80,7 @@ jobs:
     secrets:
       gcp-sa: "${{ secrets.gcp-sa }}"
       wif-provider: "${{ secrets.wif-provider }}"
+      sdv-secret: "${{ secrets.sdv-secret }}"
     with:
       terraform-version: ${{ inputs.terraform-version }}
       directory: ${{ inputs.path }}

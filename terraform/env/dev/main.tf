@@ -1,5 +1,5 @@
 
-# workflow build 047
+# workflow build 050
 
 module "base" {
   source = "../../modules/base"
@@ -65,8 +65,10 @@ module "base" {
 
       roles = toset([
         "roles/secretmanager.secretAccessor",
+        "roles/iam.serviceAccountTokenCreator",
       ])
     }
   }
 
+  sdv_secret = var.sdv_secret
 }

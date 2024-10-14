@@ -39,6 +39,7 @@ jobs:
     secrets:
       gcp-sa: "${{ secrets.GCP_SA }}"
       wif-provider: "${{ secrets.WIF_PROVIDER }}"
+      sdv-secret: "${{ secrets.SDV_SECRET }}"
     with:
       path: terraform/env/${{ matrix.environment }}
       environment: ${{ matrix.environment }}
