@@ -65,8 +65,10 @@ module "base" {
 
       roles = toset([
         "roles/secretmanager.secretAccessor",
+        "roles/iam.serviceAccountTokenCreator",
       ])
     }
   }
 
+  sdv_secret = var.sdv_secret
 }
