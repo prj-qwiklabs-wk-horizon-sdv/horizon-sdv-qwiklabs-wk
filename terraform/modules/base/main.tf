@@ -5,8 +5,16 @@ module "sdv_apis" {
   source = "../sdv-apis"
 }
 
+module "sdv_secrets" {
+  source = "../sdv-secrets"
+
+  sdv_secret = var.sdv_secret
+  location   = var.sdv_location
+}
+
 module "sdv_wi" {
   source = "../sdv-wi"
+
   wi_service_accounts = var.sdv_wi_service_accounts
 }
 
