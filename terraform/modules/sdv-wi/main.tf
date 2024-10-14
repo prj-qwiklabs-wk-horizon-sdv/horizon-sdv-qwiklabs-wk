@@ -1,33 +1,7 @@
 data "google_project" "project" {}
 
 locals {
-  sdv_sas = {
-    sa1 = {
-      account_id   = "gke-jenkis-sa"
-      display_name = "jenkis SA"
-      description  = "the deployment of Jenkis in GKE cluster makes use of this account through WIF"
-
-      gke_ns = "jenkis"
-      gke_sa = "jenkis-sa"
-
-      roles = toset([
-        "roles/storage.objectUser",
-        "roles/artifactregistry.writer",
-      ])
-    },
-    sa2 = {
-      account_id   = "gke-external-secrets-sa"
-      display_name = "external-secrets SA"
-      description  = "external-secrets/external-secrets-sa in GKE cluster makes use of this account through WI"
-
-      gke_ns = "external-secrets"
-      gke_sa = "external-secrets-sa"
-
-      roles = toset([
-        "roles/secretmanager.secretAccessor",
-      ])
-    }
-  }
+  sdv_sas = var.wi_service_accounts
 }
 
 resource "google_service_account" "sdv_wi_sa" {

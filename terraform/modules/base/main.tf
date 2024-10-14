@@ -7,6 +7,7 @@ module "sdv_apis" {
 
 module "sdv_wi" {
   source = "../sdv-wi"
+  wi_service_accounts = var.sdv_wi_service_accounts
 }
 
 module "sdv_gcs" {
