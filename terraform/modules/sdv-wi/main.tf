@@ -1,10 +1,5 @@
 data "google_project" "project" {}
 
-#
-# To create new SA that have access from GKE to GC, create a new saN block and
-# add the required gke ns and sa as the roles, the terraform blocks bellow 
-# will apply it to your project.
-#
 locals {
   sdv_sas = var.wi_service_accounts
 }
