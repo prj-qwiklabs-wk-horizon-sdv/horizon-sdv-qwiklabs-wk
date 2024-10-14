@@ -39,11 +39,8 @@ module "base" {
   sdv_auth_config_endpoint_uri = "https://horizon-sdv-dev.scpmtk.com/auth/realms/horizon/broker/google/endpoint"
 
   #
-  # To create new SA that have access from GKE to GC, create a new saN block and
-  # add the required gke ns and sa as the roles, the terraform blocks bellow 
-  # will apply it to your project.
+  # To create a new SA with access from GKE to GC, add a new saN block.
   #
-
   sdv_wi_service_accounts = {
     sa1 = {
       account_id   = "gke-jenkis-sa"
