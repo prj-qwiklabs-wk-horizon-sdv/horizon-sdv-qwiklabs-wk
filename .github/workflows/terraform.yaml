@@ -79,7 +79,7 @@ jobs:
       id: set-vars
       shell: bash
       run: |
-        echo "TF_VAR_sdv_secret: ${{ secrets.sdv-secret }}" >> $GITHUB_ENV;
+        echo "TF_VAR_sdv_secret=${{ secrets.sdv-secret }}" >> $GITHUB_ENV;
         if [[ "${{ secrets.gcp-sa }}" != '' && "${{ secrets.wif-provider }}" != '' ]]; then
           echo "GCP_SA=${{ secrets.gcp-sa }}" >> $GITHUB_ENV;
           echo "GCP_WIF=${{ secrets.wif-provider }}" >> $GITHUB_ENV;
