@@ -143,3 +143,16 @@ variable "sdv_build_node_pool_max_node_count" {
   type        = number
   default     = 3
 }
+
+
+variable "sdv_wi_service_accounts" {
+  description = "A map of service accounts and their configurations for WI"
+  type = map(object({
+    account_id   = string
+    display_name = string
+    description  = string
+    gke_ns       = string
+    gke_sa       = string
+    roles        = set(string)
+  }))
+}
