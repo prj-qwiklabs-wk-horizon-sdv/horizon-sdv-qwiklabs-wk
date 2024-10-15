@@ -1,4 +1,4 @@
-name: tf-lint
+name: Terraform lint
 
 on:
   workflow_call:

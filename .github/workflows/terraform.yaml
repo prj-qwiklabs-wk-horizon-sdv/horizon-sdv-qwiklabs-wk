@@ -46,6 +46,7 @@ on:
         type: number
 
 jobs:
+
   get-env:
     name: Get environment
     runs-on: self-hosted
