@@ -1,4 +1,4 @@
-name: Terraform dnamic envs
+name: used - Terraform dnamic envs
 
 on:
   workflow_call:
@@ -98,6 +98,7 @@ jobs:
       gcp-sa: "${{ secrets.gcp-sa }}"
       wif-provider: "${{ secrets.wif-provider }}"
       sdv-secret: "${{ secrets.sdv-secret }}"
+      gh-app-key: "${{ secrets.gh-app-key }}"
     with:
       terraform-version: ${{ inputs.terraform-version }}
       directory: ${{ inputs.path }}
