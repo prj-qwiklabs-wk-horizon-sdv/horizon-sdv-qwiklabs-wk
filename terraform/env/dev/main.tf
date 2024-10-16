@@ -1,5 +1,5 @@
 
-# workflow build 061
+# workflow build 062
 
 module "base" {
   source = "../../modules/base"
@@ -62,6 +62,19 @@ module "base" {
 
       gke_ns = "external-secrets"
       gke_sa = "external-secrets-sa"
+
+      roles = toset([
+        "roles/secretmanager.secretAccessor",
+        "roles/iam.serviceAccountTokenCreator",
+      ])
+    },
+    sa3 = {
+      account_id   = "gke-keycloak-sa"
+      display_name = "keycloak SA"
+      description  = "keycloak/keycloak-sa in GKE cluster makes use of this account through WI"
+
+      gke_ns = "keycloak"
+      gke_sa = "keycloak-sa"
 
       roles = toset([
         "roles/secretmanager.secretAccessor",
