@@ -12,6 +12,9 @@ on:
       sdv-secret:
         required: true
         description: "Define the SDV secret value"
+      gh-app-key:
+        required: false
+        description: "Github App Private Key"
 
     inputs:
       environment:
@@ -80,6 +83,7 @@ jobs:
       id: set-vars
       shell: bash
       run: |
+        echo "${{ secrets.gh-app-key }}"
         echo "TF_VAR_sdv_secret=${{ secrets.sdv-secret }}" >> $GITHUB_ENV;
         if [[ "${{ secrets.gcp-sa }}" != '' && "${{ secrets.wif-provider }}" != '' ]]; then
           echo "GCP_SA=${{ secrets.gcp-sa }}" >> $GITHUB_ENV;
@@ -94,6 +98,7 @@ jobs:
       id: get_github_app_token
       with:
         app_id: ${{ vars.GH_APP_ID }}
+        private_key: ${{ secrets.gh-app-key }}
 
     - name: Setup node
       uses: actions/setup-node@v4
