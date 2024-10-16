@@ -1,4 +1,4 @@
-name: tf-fmt
+name: used - Terraform fmt
 
 on:
   workflow_call:

@@ -1,4 +1,4 @@
-name: Terraform lint
+name: used - Terraform lint
 
 on:
   workflow_call:

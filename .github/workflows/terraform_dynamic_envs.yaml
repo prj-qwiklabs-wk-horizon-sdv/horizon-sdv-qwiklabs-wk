@@ -1,4 +1,4 @@
-name: Terraform dnamic envs
+name: used - Terraform dnamic envs
 
 on:
   workflow_call:

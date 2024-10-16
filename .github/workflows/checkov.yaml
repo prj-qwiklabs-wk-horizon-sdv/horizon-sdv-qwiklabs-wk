@@ -1,4 +1,4 @@
-name: checkov
+name: used - checkov
 
 on:
   workflow_call:
