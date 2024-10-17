@@ -9,9 +9,6 @@ on:
       gcp-sa:
         required: false
         description: "GCP Service account to impersonate"
-      sdv-secret:
-        required: true
-        description: "Define the SDV secret value"
       gh-app-key:
         required: false
         description: "Github App Private Key"
