@@ -40,7 +40,6 @@ jobs:
     secrets:
       gcp-sa: "${{ secrets.GCP_SA }}"
       wif-provider: "${{ secrets.WIF_PROVIDER }}"
-      sdv-secret: "${{ secrets.SDV_SECRET }}"
       gh-app-key: "${{ secrets.GH_APP_KEY }}"
     with:
       environment: ${{ matrix.environment }}

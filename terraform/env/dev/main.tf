@@ -83,5 +83,7 @@ module "base" {
     }
   }
 
-  sdv_secret = var.sdv_secret
+  sdv_gh_app_id          = var.sdv_gh_app_id
+  sdv_gh_installation_id = var.sdv_gh_installation_id
+
 }

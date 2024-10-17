@@ -157,7 +157,23 @@ variable "sdv_wi_service_accounts" {
   }))
 }
 
-variable "sdv_secret" {
-  description = "The value of the sdv-secret, the value is defined by the environment variable: TF_VAR_sdv_secret"
+#
+# Secrets variables
+variable "sdv_gh_app_id" {
+  description = "The gh_app_id secret"
   type        = string
 }
+
+variable "sdv_gh_installation_id" {
+  description = "The gh_installation_id secret"
+  type        = string
+}
+
+
+# variable "sdv_wi_service_accounts_roles" {
+#   description = "SA Roles"
+#   type = map(object({
+#     roles            = set(string)
+#     service_accounts = set(string)
+#   }))
+# }

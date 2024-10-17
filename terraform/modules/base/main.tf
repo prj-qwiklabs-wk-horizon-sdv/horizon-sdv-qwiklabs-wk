@@ -8,8 +8,9 @@ module "sdv_apis" {
 module "sdv_secrets" {
   source = "../sdv-secrets"
 
-  sdv_secret = var.sdv_secret
-  location   = var.sdv_location
+  location           = var.sdv_location
+  gh_app_id          = var.sdv_gh_app_id
+  gh_installation_id = var.sdv_gh_installation_id
 }
 
 module "sdv_wi" {
