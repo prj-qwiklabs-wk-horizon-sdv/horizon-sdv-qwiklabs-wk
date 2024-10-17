@@ -82,20 +82,8 @@ jobs:
           echo "phase=plan" >> $GITHUB_OUTPUT;
         fi
 
-  create-secrets-env:
-    name: Create env from secrets
-    runs-on: self-hosted
-    environment: ${{ inputs.environment }}
-    steps:
-    - name: create secrets phase
-      id: create-secrets-env
-      shell: bash
-      run: |
-        echo "TF_VAR_sdv_gh_app_id=${{ vars.GH_APP_ID }}" >> $GITHUB_ENV;
-        echo "TF_VAR_sdv_gh_installation_id=${{ vars.GH_INSTALLATION_ID }}" >> $GITHUB_ENV;
-
   terraform:
-    needs: [checkov,trivy,terraformfmt,tflint,get-phase,create-secrets-env]
+    needs: [checkov,trivy,terraformfmt,tflint,get-phase]
     uses: ./.github/workflows/terraform.yaml
     concurrency:
       group: terraform-${{ inputs.environment }}
