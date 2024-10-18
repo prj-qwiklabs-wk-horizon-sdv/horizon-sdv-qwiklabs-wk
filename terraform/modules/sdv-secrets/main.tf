@@ -20,7 +20,7 @@ resource "google_secret_manager_secret" "sdv_gsms" {
 }
 
 resource "google_secret_manager_secret_version" "sdv_gsmsv_use_github_value" {
-  for_each = { for idx, secret in local.sdv_secrets : idx => secret if !secret.use_github_value }
+  for_each = { for idx, secret in local.sdv_secrets : idx => secret if secret.use_github_value }
 
   secret      = google_secret_manager_secret.sdv_gsms[each.key].id
   secret_data = each.value.value
@@ -37,7 +37,7 @@ resource "google_secret_manager_secret_version" "sdv_gsmsv_use_github_value" {
 }
 
 resource "google_secret_manager_secret_version" "sdv_gsmsv_dont_use_github_value" {
-  for_each = { for idx, secret in local.sdv_secrets : idx => secret if secret.use_github_value }
+  for_each = { for idx, secret in local.sdv_secrets : idx => secret if !secret.use_github_value }
 
   secret      = google_secret_manager_secret.sdv_gsms[each.key].id
   secret_data = each.value.value
