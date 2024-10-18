@@ -18,7 +18,7 @@ on:
       gh-jenkins-initial-password:
         required: false
         description: "Github Secret JENKINS_INITIAL_PASSWORD"
-      gh-keycloak-initial-password: 
+      gh-keycloak-initial-password:
         required: false
         description: "Github Secret KEYCLOAK_INITIAL_PASSWORD"
 
@@ -105,6 +105,9 @@ jobs:
       wif-provider: "${{ secrets.wif-provider }}"
       sdv-secret: "${{ secrets.sdv-secret }}"
       gh-app-key: "${{ secrets.gh-app-key }}"
+      gh-argocd-initial-password: "${{ secrets.gh-argocd-initial-password }}"
+      gh-jenkins-initial-password: "${{ secrets.gh-jenkins-initial-password }}"
+      gh-keycloak-initial-password: "${{ secrets.gh-keycloak-initial-password }}"
     with:
       terraform-version: ${{ inputs.terraform-version }}
       directory: ${{ inputs.path }}
