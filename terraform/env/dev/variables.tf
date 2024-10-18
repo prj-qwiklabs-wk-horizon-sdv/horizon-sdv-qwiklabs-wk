@@ -13,3 +13,18 @@ variable "sdv_gh_app_key" {
   description = "The secret GH_APP_KEY value"
   type        = string
 }
+
+variable "sdv_gh_argocd_initial_password" {
+  description = "The secret ARGOCD_INITIAL_PASSWORD value"
+  type        = string
+}
+
+variable "sdv_gh_jenkins_initial_password" {
+  description = "The secret JENKINS_INITIAL_PASSWORD value"
+  type        = string
+}
+
+variable "sdv_gh_keycloak_initial_password" {
+  description = "The secret KEYCLOAK_INITIAL_PASSWORD value"
+  type        = string
+}

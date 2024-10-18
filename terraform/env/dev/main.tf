@@ -87,8 +87,9 @@ module "base" {
   # Define the secrets and values and gke access rules
   sdv_gcp_secrets_map = {
     s1 = {
-      secret_id = "githubAppID"
-      value     = var.sdv_gh_app_id
+      secret_id        = "githubAppID"
+      value            = var.sdv_gh_app_id
+      use_github_value = true
       gke_access = [
         {
           ns = "argocd"
@@ -97,16 +98,13 @@ module "base" {
         {
           ns = "jenkins"
           sa = "jenkins-sa"
-        },
-        {
-          ns = "keycloak"
-          sa = "keycloak-sa"
         }
       ]
     }
     s2 = {
-      secret_id = "githubAppInstallationID"
-      value     = var.sdv_gh_installation_id
+      secret_id        = "githubAppInstallationID"
+      value            = var.sdv_gh_installation_id
+      use_github_value = true
       gke_access = [
         {
           ns = "argocd"
@@ -115,29 +113,66 @@ module "base" {
         {
           ns = "jenkins"
           sa = "jenkins-sa"
+        }
+      ]
+    }
+    s3 = {
+      secret_id        = "githubAppPrivateKey"
+      value            = var.sdv_gh_app_key
+      use_github_value = true
+      gke_access = [
+        {
+          ns = "argocd"
+          sa = "argocd-sa"
         },
+        {
+          ns = "jenkins"
+          sa = "jenkins-sa"
+        }
+      ]
+    }
+    s4 = {
+      secret_id        = "keycloakIdpCredentials"
+      value            = "dummy"
+      use_github_value = false
+      gke_access = [
         {
           ns = "keycloak"
           sa = "keycloak-sa"
         }
       ]
     }
-    s3 = {
-      secret_id = "githubAppPrivateKey"
-      value     = var.sdv_gh_app_key
+    s5 = {
+      secret_id        = "argocdInitialPassword"
+      value            = var.sdv_gh_argocd_initial_password
+      use_github_value = true
       gke_access = [
         {
           ns = "argocd"
           sa = "argocd-sa"
         },
+      ]
+    }
+    s6 = {
+      secret_id        = "jenkinsInitialPassword"
+      value            = var.sdv_gh_jenkins_initial_password
+      use_github_value = true
+      gke_access = [
         {
           ns = "jenkins"
           sa = "jenkins-sa"
         },
+      ]
+    }
+    s7 = {
+      secret_id        = "keycloakInitialPassword"
+      value            = var.sdv_gh_keycloak_initial_password
+      use_github_value = true
+      gke_access = [
         {
           ns = "keycloak"
           sa = "keycloak-sa"
-        }
+        },
       ]
     }
   }
