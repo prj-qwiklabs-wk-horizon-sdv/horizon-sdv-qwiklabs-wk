@@ -13,7 +13,7 @@ on:
         required: true
         description: "Define the SDV secret value"
       gh-app-key:
-        required: false
+        required: true
         description: "Github App Private Key"
 
     inputs:
@@ -83,13 +83,9 @@ jobs:
       id: set-vars
       shell: bash
       run: |
-        #
-        # echo "Setting terraform variable using environment variables:"
         echo "TF_VAR_sdv_gh_app_id=${{ vars.GH_APP_ID }}" >> $GITHUB_ENV;
         echo "TF_VAR_sdv_gh_installation_id=${{ vars.GH_INSTALLATION_ID }}" >> $GITHUB_ENV;
         echo "TF_VAR_sdv_gh_app_key=${{ secrets.gh-app-key }}" >> $GITHUB_ENV;
-        #
-        #
         if [[ "${{ secrets.gcp-sa }}" != '' && "${{ secrets.wif-provider }}" != '' ]]; then
           echo "GCP_SA=${{ secrets.gcp-sa }}" >> $GITHUB_ENV;
           echo "GCP_WIF=${{ secrets.wif-provider }}" >> $GITHUB_ENV;
