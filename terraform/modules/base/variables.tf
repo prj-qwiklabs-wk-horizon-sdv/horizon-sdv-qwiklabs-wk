@@ -157,23 +157,17 @@ variable "sdv_wi_service_accounts" {
   }))
 }
 
+
 #
-# Secrets variables
-variable "sdv_gh_app_id" {
-  description = "The gh_app_id secret"
-  type        = string
+# Define Secrets map id and value
+variable "sdv_gcp_secrets_map" {
+  description = "A map of secrets with their IDs and values."
+  type = map(object({
+    secret_id = string
+    value     = string
+    gke_access = list(object({
+      ns = string
+      sa = string
+    }))
+  }))
 }
-
-variable "sdv_gh_installation_id" {
-  description = "The gh_installation_id secret"
-  type        = string
-}
-
-
-# variable "sdv_wi_service_accounts_roles" {
-#   description = "SA Roles"
-#   type = map(object({
-#     roles            = set(string)
-#     service_accounts = set(string)
-#   }))
-# }

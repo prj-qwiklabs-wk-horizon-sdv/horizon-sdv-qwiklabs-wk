@@ -4,16 +4,19 @@ variable "location" {
   type        = string
 }
 
-variable "gh_app_id" {
-  description = "The gh_app_id secret"
-  type        = string
+#
+# Define Secrets map id and value
+variable "gcp_secrets_map" {
+  description = "A map of secrets with their IDs and values."
+  type = map(object({
+    secret_id = string
+    value     = string
+    gke_access = list(object({
+      ns = string
+      sa = string
+    }))
+  }))
 }
-
-variable "gh_installation_id" {
-  description = "The gh_installation_id secret"
-  type        = string
-}
-
 
 # GITHUB/SECRET/ORG/APP_AGBG_ASG_TERRAFORM_FETCHER_PRIVATE_KEY -> not sync'ed to GCP
 # GITHUB/SECRET/ENV/GCP_SA -> not sync'ed to GCP
@@ -21,8 +24,8 @@ variable "gh_installation_id" {
 
 # GITHUB/VAR/ENV/GH_APP_ID -> GCP/SECRET/githubAppID
 # GITHUB/VAR/ENV/GH_INSTALLATION_ID -> GCP/SECRET/githubAppInstallationID
-
 # GITHUB/SECRET/ORG/GH_APP_KEY -> GCP/SECRET/githubAppPrivateKey
+
 # GITHUB/SECRET/ENV/ARGOCD_INITIAL_PASSWORD -> GCP/SECRET/argocdInitialPassword
 # GITHUB/SECRET/ENV/JENKINS_INITIAL_PASSWORD -> GCP/SECRET/jenkinsInitialPassword
 # GITHUB/SECRET/ENV/KEYCLOAK_INITIAL_PASSWORD -> GCP/SECRET/keycloakInitialPassword

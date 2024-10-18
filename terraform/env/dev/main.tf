@@ -83,7 +83,62 @@ module "base" {
     }
   }
 
-  sdv_gh_app_id          = var.sdv_gh_app_id
-  sdv_gh_installation_id = var.sdv_gh_installation_id
-
+  #
+  # Define the secrets and values and gke access rules
+  sdv_gcp_secrets_map = {
+    s1 = {
+      secret_id = "githubAppID"
+      value     = var.sdv_gh_app_id
+      gke_access = [
+        {
+          ns = "argocd"
+          sa = "argocd-sa"
+        },
+        {
+          ns = "jenkins"
+          sa = "jenkins-sa"
+        },
+        {
+          ns = "keycloak"
+          sa = "keycloak-sa"
+        }
+      ]
+    }
+    s2 = {
+      secret_id = "githubAppInstallationID"
+      value     = var.sdv_gh_installation_id
+      gke_access = [
+        {
+          ns = "argocd"
+          sa = "argocd-sa"
+        },
+        {
+          ns = "jenkins"
+          sa = "jenkins-sa"
+        },
+        {
+          ns = "keycloak"
+          sa = "keycloak-sa"
+        }
+      ]
+    }
+    s3 = {
+      secret_id = "githubAppPrivateKey"
+      value     = var.sdv_gh_app_key
+      gke_access = [
+        {
+          ns = "argocd"
+          sa = "argocd-sa"
+        },
+        {
+          ns = "jenkins"
+          sa = "jenkins-sa"
+        },
+        {
+          ns = "keycloak"
+          sa = "keycloak-sa"
+        }
+      ]
+    }
+  }
 }
