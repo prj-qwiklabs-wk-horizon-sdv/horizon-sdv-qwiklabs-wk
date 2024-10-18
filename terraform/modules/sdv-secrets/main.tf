@@ -5,6 +5,12 @@ locals {
   sdv_secrets = var.gcp_secrets_map
 }
 
+
+# Use to debug the secret values
+resource "terraform_data" "project_info" {
+  input = local.sdv_secrets
+}
+
 resource "google_secret_manager_secret" "sdv_gsms" {
   for_each = local.sdv_secrets
 
@@ -24,6 +30,7 @@ resource "google_secret_manager_secret_version" "sdv_gsmsv_use_github_value" {
 
   secret      = google_secret_manager_secret.sdv_gsms[each.key].id
   secret_data = each.value.value
+
 
   lifecycle {
     ignore_changes = [
