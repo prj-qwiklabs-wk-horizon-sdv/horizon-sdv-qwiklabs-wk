@@ -163,8 +163,9 @@ variable "sdv_wi_service_accounts" {
 variable "sdv_gcp_secrets_map" {
   description = "A map of secrets with their IDs and values."
   type = map(object({
-    secret_id = string
-    value     = string
+    secret_id        = string
+    value            = string
+    use_github_value = bool
     gke_access = list(object({
       ns = string
       sa = string

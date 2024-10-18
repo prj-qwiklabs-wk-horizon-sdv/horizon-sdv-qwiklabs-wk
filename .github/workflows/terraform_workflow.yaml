@@ -41,6 +41,9 @@ jobs:
       gcp-sa: "${{ secrets.GCP_SA }}"
       wif-provider: "${{ secrets.WIF_PROVIDER }}"
       gh-app-key: "${{ secrets.GH_APP_KEY }}"
+      gh-argocd-initial-password: "${{ secrets.ARGOCD_INITIAL_PASSWORD }}"
+      gh-jenkins-initial-password: "${{ secrets.JENKINS_INITIAL_PASSWORD }}"
+      gh-keycloak-initial-password: "${{ secrets.KEYCLOAK_INITIAL_PASSWORD }}"
     with:
       environment: ${{ matrix.environment }}
       path: terraform/env/${{ matrix.environment }}
