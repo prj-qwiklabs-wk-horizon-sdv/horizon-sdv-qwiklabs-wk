@@ -1,5 +1,5 @@
 
-# workflow build 077
+# workflow build 078
 
 module "base" {
   source = "../../modules/base"
@@ -53,6 +53,8 @@ module "base" {
       roles = toset([
         "roles/storage.objectUser",
         "roles/artifactregistry.writer",
+        "roles/secretmanager.secretAccessor",
+        "roles/iam.serviceAccountTokenCreator",
       ])
     },
     sa2 = {
