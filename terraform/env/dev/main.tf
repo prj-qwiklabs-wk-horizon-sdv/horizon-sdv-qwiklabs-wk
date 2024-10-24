@@ -56,12 +56,12 @@ module "base" {
       ])
     },
     sa2 = {
-      account_id   = "gke-external-secrets-sa"
-      display_name = "external-secrets SA"
-      description  = "external-secrets/external-secrets-sa in GKE cluster makes use of this account through WI"
+      account_id   = "gke-argocd-sa"
+      display_name = "gke-argocd SA"
+      description  = "argocd/argocd-sa in GKE cluster makes use of this account through WI"
 
-      gke_ns = "external-secrets"
-      gke_sa = "external-secrets-sa"
+      gke_ns = "argocd"
+      gke_sa = "argocd-sa"
 
       roles = toset([
         "roles/secretmanager.secretAccessor",
