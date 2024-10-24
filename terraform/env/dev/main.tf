@@ -53,6 +53,8 @@ module "base" {
       roles = toset([
         "roles/storage.objectUser",
         "roles/artifactregistry.writer",
+        "roles/secretmanager.secretAccessor",
+        "roles/iam.serviceAccountTokenCreator",
       ])
     },
     sa2 = {
