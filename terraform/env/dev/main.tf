@@ -43,12 +43,12 @@ module "base" {
   #
   sdv_wi_service_accounts = {
     sa1 = {
-      account_id   = "gke-jenkis-sa"
-      display_name = "jenkis SA"
-      description  = "the deployment of Jenkis in GKE cluster makes use of this account through WIF"
+      account_id   = "gke-jenkins-sa"
+      display_name = "jenkins SA"
+      description  = "the deployment of jenkins in GKE cluster makes use of this account through WIF"
 
-      gke_ns = "jenkis"
-      gke_sa = "jenkis-sa"
+      gke_ns = "jenkins"
+      gke_sa = "jenkins-sa"
 
       roles = toset([
         "roles/storage.objectUser",
