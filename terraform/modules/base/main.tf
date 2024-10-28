@@ -8,7 +8,7 @@ module "sdv_apis" {
 module "sdv_secrets" {
   source = "../sdv-secrets"
 
-  location    = var.sdv_location
+  location        = var.sdv_location
   gcp_secrets_map = var.sdv_gcp_secrets_map
 }
 
@@ -82,6 +82,7 @@ module "sdv_artifact_registry" {
 
   repository_id = var.sdv_artifact_registry_repository_id
   location      = var.sdv_location
+  members       = var.sdv_artifact_registry_repository_members
 }
 
 module "sdv_ssl_certificate" {

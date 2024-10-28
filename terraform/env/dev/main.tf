@@ -26,12 +26,17 @@ module "base" {
   sdv_bastion_host_members = [
     "user:edson.schlei@accenture.com",
     "user:wojciech.kobryn@accenture.com",
-    "user:marta.kania@accenture.com"
+    "user:marta.kania@accenture.com",
   ]
 
   sdv_network_egress_router_name = "sdv-egress-internet"
 
   sdv_artifact_registry_repository_id = "horizon-sdv-dev"
+  sdv_artifact_registry_repository_members = [
+    "user:edson.schlei@accenture.com",
+    "user:wojciech.kobryn@accenture.com",
+    "user:marta.kania@accenture.com",
+  ]
 
   sdv_ssl_certificate_domain = "horizon-sdv-dev.scpmtk.com"
   sdv_ssl_certificate_name   = "horizon-sdv-dev"

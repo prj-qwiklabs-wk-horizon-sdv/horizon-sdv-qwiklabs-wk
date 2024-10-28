@@ -5,6 +5,11 @@ variable "repository_id" {
 }
 
 variable "location" {
-  description = "Define the location of the artifactory registry"
+  description = "Define the location of the artifact registry"
   type        = string
+}
+
+variable "members" {
+  description = "Define the users that have write access to the artifact registry"
+  type         = list(string)
 }
