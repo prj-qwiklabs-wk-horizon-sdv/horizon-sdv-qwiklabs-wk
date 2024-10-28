@@ -77,8 +77,13 @@ variable "sdv_network_egress_router_name" {
 }
 
 variable "sdv_artifact_registry_repository_id" {
-  description = "Define the name of the artifactory registry repository name"
+  description = "Define the name of the artifact registry repository name"
   type        = string
+}
+
+variable "sdv_artifact_registry_repository_members" {
+  description = "List of members allowed to access the artifact registry"
+  type        = list(string)
 }
 
 variable "sdv_ssl_certificate_name" {
