@@ -105,6 +105,14 @@ module "sdv_url_map" {
   domain                  = var.sdv_ssl_certificate_domain
 }
 
+module "sdv_bash_on_bastion_host" {
+  source = "../sdv-bash-on-bastion-host"
+  depends_on = [
+    module.sdv_bastion_host,
+    module.sdv_gke_cluster,
+  ]
+}
+
 #
 # Can create it only after deploy keycloack
 #
