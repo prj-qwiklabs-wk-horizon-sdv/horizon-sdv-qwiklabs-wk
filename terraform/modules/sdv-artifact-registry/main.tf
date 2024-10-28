@@ -13,5 +13,5 @@ resource "google_project_iam_member" "artifact_registry_writer" {
 
   project = data.google_project.project.project_id
   role    = "roles/artifactregistry.writer"
-  member  = "user:${each.value}"
+  member  = "${each.value}"
 }
