@@ -9,45 +9,52 @@ resource "google_service_account" "sdv_wi_sa" {
   description  = each.value.description
 }
 
+# resource "terraform_data" "debug_wi_service_accounts" {
+#   input = var.wi_service_accounts
+# }
+
 locals {
-  # role with the list of SAs merged into one list of SAs
-  merged_roles_with_sa = {
-    for role in toset(flatten([for sa in values(var.wi_service_accounts) : sa.roles])) :
-    role => toset([for sa_key, sa in var.wi_service_accounts : sa_key if contains(sa.roles, role)])
+  flattened_roles_with_sa = flatten([
+    for sa_key, sa_value in var.wi_service_accounts : [
+      for role in sa_value.roles : {
+        sa_id      = sa_key
+        account_id = sa_value.account_id
+        role       = role
+      }
+    ]
+  ])
+
+  roles_with_sa_map = {
+    for item in local.flattened_roles_with_sa : "${item.role}-${item.sa_id}" => item
   }
 }
 
-# resource "terraform_data" "debug_merged_roles_with_sa" {
-#   input = local.merged_roles_with_sa
+# resource "terraform_data" "debug_flattened_roles_with_sa" {
+#   input = local.flattened_roles_with_sa
 # }
 
-resource "google_service_account_iam_binding" "sdv_wi_sa_wi_users" {
-  for_each = { for idx, sdv_sa in google_service_account.sdv_wi_sa : idx => sdv_sa }
+# resource "terraform_data" "debug_roles_with_sa_map" {
+#   input = local.roles_with_sa_map
+# }
 
-  service_account_id = each.value.id
+resource "google_project_iam_member" "sdv_wi_sa_iam_2" {
+  for_each = local.roles_with_sa_map
 
-  role = "roles/iam.workloadIdentityUser"
-
-  members = [
-    "serviceAccount:${data.google_project.project.project_id}.svc.id.goog[${var.wi_service_accounts[each.key].gke_ns}/${var.wi_service_accounts[each.key].gke_sa}]",
-  ]
+  project = data.google_project.project.project_id
+  role    = each.value.role
+  member  = "serviceAccount:${google_service_account.sdv_wi_sa[each.value.sa_id].email}"
 
   depends_on = [
     google_service_account.sdv_wi_sa
   ]
 }
 
-#
-# Add SAs to the Roles
-resource "google_project_iam_binding" "sdv_wi_sa_iam" {
-  for_each = local.merged_roles_with_sa
+resource "google_project_iam_member" "sdv_wi_sa_wi_users" {
+  for_each = { for idx, sdv_sa in google_service_account.sdv_wi_sa : idx => sdv_sa }
 
   project = data.google_project.project.project_id
-  role    = each.key
-
-  members = [
-    for sa in each.value : "serviceAccount:${google_service_account.sdv_wi_sa[sa].email}"
-  ]
+  role    = "roles/iam.workloadIdentityUser"
+  member  = "serviceAccount:${data.google_project.project.project_id}.svc.id.goog[${var.wi_service_accounts[each.key].gke_ns}/${var.wi_service_accounts[each.key].gke_sa}]"
 
   depends_on = [
     google_service_account.sdv_wi_sa
