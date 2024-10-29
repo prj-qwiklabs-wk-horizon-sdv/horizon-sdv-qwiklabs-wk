@@ -80,9 +80,10 @@ module "sdv_gke_cluster" {
 module "sdv_artifact_registry" {
   source = "../sdv-artifact-registry"
 
-  repository_id = var.sdv_artifact_registry_repository_id
-  location      = var.sdv_location
-  members       = var.sdv_artifact_registry_repository_members
+  repository_id  = var.sdv_artifact_registry_repository_id
+  location       = var.sdv_location
+  members        = var.sdv_artifact_registry_repository_members
+  reader_members = var.sdv_artifact_registry_repository_reader_members
 }
 
 module "sdv_ssl_certificate" {

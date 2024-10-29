@@ -37,10 +37,11 @@ resource "google_compute_instance_from_template" "vm" {
 
 # Additional OS login IAM bindings.
 # https://cloud.google.com/compute/docs/instances/managing-instance-access#granting_os_login_iam_roles
-resource "google_service_account_iam_binding" "sa_user" {
+resource "google_service_account_iam_member" "service_account_user" {
+  for_each           = toset(var.members)
   service_account_id = google_service_account.vm_sa.id
   role               = "roles/iam.serviceAccountUser"
-  members            = var.members
+  member             = each.key
 }
 
 resource "google_project_iam_member" "os_admin_login_bindings" {

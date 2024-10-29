@@ -13,3 +13,8 @@ variable "members" {
   description = "Define the users that have write access to the artifact registry"
   type         = list(string)
 }
+
+variable "reader_members" {
+  description = "Define the users that have reader access to the artifact registry"
+  type         = list(string)
+}
