@@ -61,8 +61,16 @@ module "base" {
       display_name = "jenkins SA"
       description  = "the deployment of jenkins in GKE cluster makes use of this account through WIF"
 
-      gke_ns = "jenkins"
-      gke_sa = "jenkins-sa"
+      gke_sas = [
+        {
+          gke_ns = "jenkins"
+          gke_sa = "jenkins-sa"
+        },
+        {
+          gke_ns = "jenkins"
+          gke_sa = "jenkins"
+        }
+      ]
 
       roles = toset([
         "roles/storage.objectUser",
@@ -76,9 +84,12 @@ module "base" {
       display_name = "gke-argocd SA"
       description  = "argocd/argocd-sa in GKE cluster makes use of this account through WI"
 
-      gke_ns = "argocd"
-      gke_sa = "argocd-sa"
-
+      gke_sas = [
+        {
+          gke_ns = "argocd"
+          gke_sa = "argocd-sa"
+        }
+      ]
       roles = toset([
         "roles/secretmanager.secretAccessor",
         "roles/iam.serviceAccountTokenCreator",
@@ -89,8 +100,12 @@ module "base" {
       display_name = "keycloak SA"
       description  = "keycloak/keycloak-sa in GKE cluster makes use of this account through WI"
 
-      gke_ns = "keycloak"
-      gke_sa = "keycloak-sa"
+      gke_sas = [
+        {
+          gke_ns = "keycloak"
+          gke_sa = "keycloak-sa"
+        }
+      ]
 
       roles = toset([
         "roles/secretmanager.secretAccessor",
