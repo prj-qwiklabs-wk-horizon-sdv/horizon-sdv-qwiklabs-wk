@@ -10,7 +10,8 @@ resource "null_resource" "execute_commands_on_bastion" {
       gcloud compute ssh sdv-bastion-host --zone=europe-west1-d --command="
         echo 'Executing commands on the bastion host...'
         touch ~/terraform-log.log
-        echo $(datetime) >> ~/terraform-log.log
+        echo $(date) >> ~/terraform-log.log
+        cat ~/terraform-log.log
       "
     EOT
   }
