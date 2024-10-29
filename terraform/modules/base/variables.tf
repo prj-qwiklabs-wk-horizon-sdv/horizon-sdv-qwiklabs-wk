@@ -82,7 +82,12 @@ variable "sdv_artifact_registry_repository_id" {
 }
 
 variable "sdv_artifact_registry_repository_members" {
-  description = "List of members allowed to access the artifact registry"
+  description = "List of members allowed to write access the artifact registry"
+  type        = list(string)
+}
+
+variable "sdv_artifact_registry_repository_reader_members" {
+  description = "List of members allowed to reader access the artifact registry"
   type        = list(string)
 }
 

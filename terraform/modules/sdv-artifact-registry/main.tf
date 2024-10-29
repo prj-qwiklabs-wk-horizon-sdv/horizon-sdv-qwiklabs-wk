@@ -15,3 +15,11 @@ resource "google_project_iam_member" "artifact_registry_writer" {
   role    = "roles/artifactregistry.writer"
   member  = each.value
 }
+
+resource "google_project_iam_member" "artifact_registry_reader" {
+  for_each = toset(var.reader_members)
+
+  project = data.google_project.project.project_id
+  role    = "roles/artifactregistry.reader"
+  member  = each.value
+}

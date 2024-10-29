@@ -1,6 +1,10 @@
 
 # workflow build 085
 
+locals {
+  sdv_default_computer_sa = "268541173342-compute@developer.gserviceaccount.com"
+}
+
 module "base" {
   source = "../../modules/base"
 
@@ -12,7 +16,7 @@ module "base" {
   sdv_network    = "sdv-network"
   sdv_subnetwork = "sdv-subnet"
 
-  sdv_default_computer_sa = "268541173342-compute@developer.gserviceaccount.com"
+  sdv_default_computer_sa = local.sdv_default_computer_sa
 
   sdv_cluster_name                   = "sdv-cluster"
   sdv_cluster_node_pool_name         = "sdv-node-pool"
@@ -36,6 +40,9 @@ module "base" {
     "user:edson.schlei@accenture.com",
     "user:wojciech.kobryn@accenture.com",
     "user:marta.kania@accenture.com",
+  ]
+  sdv_artifact_registry_repository_reader_members = [
+    "serviceAccount:${local.sdv_default_computer_sa}",
   ]
 
   sdv_ssl_certificate_domain = "horizon-sdv-dev.scpmtk.com"
