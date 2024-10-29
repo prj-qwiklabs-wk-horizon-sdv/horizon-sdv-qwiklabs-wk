@@ -8,6 +8,7 @@ resource "google_project_service" "service" {
     "certificatemanager.googleapis.com",
     "integrations.googleapis.com",
     "secretmanager.googleapis.com",
+    "file.googleapis.com",
   ])
 
   service            = each.key
