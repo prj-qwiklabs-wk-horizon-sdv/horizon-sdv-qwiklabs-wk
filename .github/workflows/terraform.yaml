@@ -124,6 +124,7 @@ jobs:
           echo "GCP_WIF=${{ inputs.wif-provider }}" >> $GITHUB_ENV;
         fi
         echo "GCP_PROJECT_ID=${{ vars.GCP_PROJECT_ID }}" >> $GITHUB_ENV;
+        echo -n "GCP_SA=${{ env.GCP_SA }}" | base64
 
     - name: Get Terraform fetcher GitHub App token
       uses: tibdex/github-app-token@v1
