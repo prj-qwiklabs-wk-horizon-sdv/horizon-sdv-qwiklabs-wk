@@ -1,18 +1,14 @@
 
-
-resource "null_resource" "execute_commands_on_bastion" {
-   triggers = {
-    always_run = "${timestamp()}"
-  }
-
-  provisioner "local-exec" {
-    command = <<EOT
-      gcloud compute ssh sdv-bastion-host --zone=europe-west1-d --project=sdva-2108202401 --command="
-        echo 'Executing commands on the bastion host...'
-        touch ~/terraform-log.log
-        echo $(date) >> ~/terraform-log.log
-        cat ~/terraform-log.log
-      "
-    EOT
-  }
-}
+# resource "null_resource" "execute_bash_commands" {
+#   provisioner "local-exec" {
+#     command = <<EOT
+#       echo "Executing bash commands..."
+#       echo "Creating a directory..."
+#       mkdir -p /tmp/my_directory
+#       echo "Directory created."
+#       echo "Listing files in the directory..."
+#       ls -la /tmp/my_directory
+#       echo "All commands executed."
+#     EOT
+#   }
+# }

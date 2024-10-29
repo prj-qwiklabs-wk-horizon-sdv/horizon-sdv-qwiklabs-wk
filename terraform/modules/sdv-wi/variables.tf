@@ -5,8 +5,10 @@ variable "wi_service_accounts" {
     account_id   = string
     display_name = string
     description  = string
-    gke_ns       = string
-    gke_sa       = string
+    gke_sas = list(object({
+      gke_ns = string
+      gke_sa = string
+    }))
     roles        = set(string)
   }))
 }

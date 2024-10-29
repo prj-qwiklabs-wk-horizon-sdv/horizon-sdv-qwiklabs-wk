@@ -27,6 +27,21 @@ locals {
   roles_with_sa_map = {
     for item in local.flattened_roles_with_sa : "${item.role}-${item.sa_id}" => item
   }
+
+  flattened_gke_sas = flatten([
+    for sa_key, sa_value in var.wi_service_accounts : [
+      for gke_sa in sa_value.gke_sas : {
+        sa_id      = sa_key
+        account_id = sa_value.account_id
+        gke_ns     = gke_sa.gke_ns
+        gke_sa     = gke_sa.gke_sa
+      }
+    ]
+  ])
+
+  gke_sas_with_sa_map = {
+    for item in local.flattened_gke_sas : "${item.sa_id}-${item.gke_ns}-${item.gke_sa}" => item
+  }
 }
 
 # resource "terraform_data" "debug_flattened_roles_with_sa" {
@@ -49,12 +64,12 @@ resource "google_project_iam_member" "sdv_wi_sa_iam_2" {
   ]
 }
 
-resource "google_project_iam_member" "sdv_wi_sa_wi_users" {
-  for_each = { for idx, sdv_sa in google_service_account.sdv_wi_sa : idx => sdv_sa }
+resource "google_project_iam_member" "sdv_wi_sa_wi_users_gke_ns_sa" {
+  for_each = local.gke_sas_with_sa_map
 
   project = data.google_project.project.project_id
   role    = "roles/iam.workloadIdentityUser"
-  member  = "serviceAccount:${data.google_project.project.project_id}.svc.id.goog[${var.wi_service_accounts[each.key].gke_ns}/${var.wi_service_accounts[each.key].gke_sa}]"
+  member  = "serviceAccount:${data.google_project.project.project_id}.svc.id.goog[${each.value.gke_ns}/${each.value.gke_sa}]"
 
   depends_on = [
     google_service_account.sdv_wi_sa
