@@ -1,5 +1,5 @@
 
-# workflow build 094
+# workflow build 101
 
 locals {
   sdv_default_computer_sa = "268541173342-compute@developer.gserviceaccount.com"
@@ -206,5 +206,17 @@ module "base" {
         },
       ]
     }
+    s8 = {
+      secret_id        = "githubAppPrivateKeyPKCS8"
+      value            = var.sdv_gh_app_key_pkcs8
+      use_github_value = true
+      gke_access = [
+        {
+          ns = "jenkins"
+          sa = "jenkins"
+        }
+      ]
+    }
+
   }
 }

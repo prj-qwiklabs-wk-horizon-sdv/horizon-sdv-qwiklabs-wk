@@ -88,6 +88,21 @@ jobs:
     environment: ${{ needs.get-env.outputs.environment }}
 
     steps:
+
+    - name: Convert key to PKCS#8 format
+      id: create-pkcs8
+      env:
+        GH_APP_KEY: ${{ secrets.gh-app-key }}
+      run: |
+        # Convert the key to PKCS#8 format
+        echo "$GH_APP_KEY" | openssl pkcs8 -topk8 -nocrypt -outform PEM > key.pem
+
+        # Read the converted key and set it as an environment variable
+        PKCS8_KEY=$(<key.pem)
+        echo "TF_VAR_sdv_gh_app_key_pkcs8<<EOF" >> $GITHUB_ENV
+        echo "$PKCS8_KEY" >> $GITHUB_ENV
+        echo "EOF" >> $GITHUB_ENV
+
     - name: set environment variables
       id: set-vars
       shell: bash
