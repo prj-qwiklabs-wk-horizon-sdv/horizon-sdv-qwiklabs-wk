@@ -15,7 +15,7 @@ resource "google_container_cluster" "sdv_cluster" {
   deletion_protection = false
 
   workload_identity_config {
-      workload_pool = "${var.project_id}.svc.id.goog"
+    workload_pool = "${var.project_id}.svc.id.goog"
   }
 
   master_authorized_networks_config {
@@ -48,21 +48,21 @@ resource "google_container_cluster" "sdv_cluster" {
   }
 
   # Enable autoscaling
-  cluster_autoscaling {
-    enabled = true
+  # cluster_autoscaling {
+  #   enabled = true
 
-    resource_limits {
-      resource_type = "cpu"
-      minimum       = 1
-      maximum       = 8
-    }
+  #   resource_limits {
+  #     resource_type = "cpu"
+  #     minimum       = 1
+  #     maximum       = 8
+  #   }
 
-    resource_limits {
-      resource_type = "memory"
-      minimum       = 1
-      maximum       = 32
-    }
-  }
+  #   resource_limits {
+  #     resource_type = "memory"
+  #     minimum       = 1
+  #     maximum       = 32
+  #   }
+  # }
 
 }
 
@@ -87,6 +87,11 @@ resource "google_container_node_pool" "sdv_main_node_pool" {
     workload_metadata_config {
       mode = "GKE_METADATA"
     }
+  }
+
+  autoscaling {
+    min_node_count = 1
+    max_node_count = 3
   }
 
 }
