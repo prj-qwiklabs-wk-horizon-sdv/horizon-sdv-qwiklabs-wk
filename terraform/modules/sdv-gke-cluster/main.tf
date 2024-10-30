@@ -48,21 +48,10 @@ resource "google_container_cluster" "sdv_cluster" {
   }
 
   # Enable autoscaling
-  # cluster_autoscaling {
-  #   enabled = true
-
-  #   resource_limits {
-  #     resource_type = "cpu"
-  #     minimum       = 1
-  #     maximum       = 8
-  #   }
-
-  #   resource_limits {
-  #     resource_type = "memory"
-  #     minimum       = 1
-  #     maximum       = 32
-  #   }
-  # }
+  cluster_autoscaling {
+    enabled             = false
+    autoscaling_profile = "OPTIMIZE_UTILIZATION"
+  }
 
 }
 
@@ -89,10 +78,10 @@ resource "google_container_node_pool" "sdv_main_node_pool" {
     }
   }
 
-  autoscaling {
-    min_node_count = 1
-    max_node_count = 3
-  }
+  # autoscaling {
+  #   min_node_count = 1
+  #   max_node_count = 3
+  # }
 
 }
 
