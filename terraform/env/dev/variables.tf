@@ -14,6 +14,11 @@ variable "sdv_gh_app_key" {
   type        = string
 }
 
+variable "sdv_gh_app_key_pkcs8" {
+  description = "The secret GH_APP_KEY converted to pkcs8 value"
+  type        = string
+}
+
 variable "sdv_gh_argocd_initial_password" {
   description = "The secret ARGOCD_INITIAL_PASSWORD value"
   type        = string
