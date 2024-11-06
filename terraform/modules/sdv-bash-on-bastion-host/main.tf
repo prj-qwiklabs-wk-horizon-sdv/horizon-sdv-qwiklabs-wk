@@ -12,7 +12,7 @@ resource "null_resource" "execute_bash_commands" {
       echo 'Executing commands on the bastion host...'
       touch ~/terraform-log.log
       echo $(date) >> ~/terraform-log.log
-      cat ~/terraform-log.log" --quiet
+      cat ~/terraform-log.log"
 
     EOT
   }
