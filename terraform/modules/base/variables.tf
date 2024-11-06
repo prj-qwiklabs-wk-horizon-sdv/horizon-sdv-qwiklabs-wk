@@ -184,3 +184,8 @@ variable "sdv_gcp_secrets_map" {
     }))
   }))
 }
+
+variable "sdv_bastion_host_bash_command" {
+  description = "Define the commands to run on the bastion host"
+  type        = string
+}
