@@ -32,6 +32,14 @@ module "base" {
     "user:wojciech.kobryn@accenture.com",
     "user:marta.kania@accenture.com",
   ]
+  sdv_bastion_host_bash_command = <<EOT
+
+    gcloud info
+    touch ~/terraform-log.log
+    echo $(date) >> ~/terraform-log.log
+    cat ~/terraform-log.log"
+
+  EOT
 
   sdv_network_egress_router_name = "sdv-egress-internet"
 

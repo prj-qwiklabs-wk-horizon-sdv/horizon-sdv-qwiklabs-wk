@@ -1,4 +1,10 @@
 
+data "google_project" "project" {}
+
+resource "terraform_data" "debug_google_project" {
+  input = data.google_project.project
+}
+
 resource "null_resource" "execute_bash_commands" {
   triggers = {
     always_run = "${timestamp()}"
@@ -7,12 +13,9 @@ resource "null_resource" "execute_bash_commands" {
   provisioner "local-exec" {
     command = <<EOT
       echo "Executing bash commands..."
-
-      gcloud beta compute ssh sdv-bastion-host --zone=europe-west1-d --project=sdva-2108202401 --command="
+      gcloud beta compute ssh ${var.bastion_host} --zone=${var.zone} --project=${data.google_project.project.project_id} --command="
       echo 'Executing commands on the bastion host...'
-      touch ~/terraform-log.log
-      echo $(date) >> ~/terraform-log.log
-      cat ~/terraform-log.log"
+      ${var.command}
 
     EOT
   }

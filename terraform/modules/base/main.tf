@@ -108,6 +108,11 @@ module "sdv_url_map" {
 
 module "sdv_bash_on_bastion_host" {
   source = "../sdv-bash-on-bastion-host"
+
+  bastion_host = var.sdv_bastion_host_name
+  zone         = var.sdv_zone
+  command      = var.sdv_bastion_host_bash_command
+
   depends_on = [
     module.sdv_bastion_host,
     module.sdv_gke_cluster,
