@@ -75,7 +75,7 @@ source "$(dirname "${BASH_SOURCE[0]}")"/cvd_environment.sh "$0"
 # Environment variables that can be overridden from command line.
 # android-cuttlefish revisions can be v0.9.29, v0.9.30, v0.9.31, main
 CUTTLEFISH_REVISION=${CUTTLEFISH_REVISION:-main}
-BOOT_DISK_SIZE=${BOOT_DISK_SIZE:-150GB}
+BOOT_DISK_SIZE=${BOOT_DISK_SIZE:-200GB}
 MACHINE_TYPE=${MACHINE_TYPE:-n1-standard-64}
 NETWORK=${NETWORK:-sdv-network}
 PROJECT=${PROJECT:-$(gcloud config list --format 'value(core.project)'|head -n 1)}

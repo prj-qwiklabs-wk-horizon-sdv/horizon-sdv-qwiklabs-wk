@@ -27,6 +27,8 @@
 # shellcheck disable=SC1091
 source "$(dirname "${BASH_SOURCE[0]}")"/cvd_environment.sh "$0"
 
+declare -r jenkins_user="jenkins"
+
 # Check virtualization enabled.
 function cuttlefish_virtualization() {
     if ! sudo find /dev -name kvm > /dev/null 2>&1; then
@@ -37,7 +39,7 @@ function cuttlefish_virtualization() {
 
 # Install additional packages.
 function cuttlefish_install_additional_packages() {
-    local -a package_list=("default-jdk" "adb" "git" "nodejs" "npm")
+    local -a package_list=("default-jdk" "adb" "git" "nodejs" "npm" "aapt")
 
     for package in "${package_list[@]}"; do
         if ! dpkg -s "${package}" > /dev/null 2>&1; then
@@ -47,6 +49,24 @@ function cuttlefish_install_additional_packages() {
             echo "${package} already installed"
         fi
     done
+}
+
+# Install CTS test harness on instance to avoid lengthy CTS runs.
+function cuttlefish_install_cts() {
+    local -r r15="https://dl.google.com/dl/android/cts/android-cts-15_r1-linux_x86-x86.zip"
+    local -r r14="https://dl.google.com/dl/android/cts/android-cts-14_r5-linux_x86-x86.zip"
+
+    su -l "${jenkins_user}" -c "mkdir -p android-cts_r15"
+    su -l "${jenkins_user}" -c "wget -nv ${r15} -O android-cts_r15.zip"
+    su -l "${jenkins_user}" -c "unzip android-cts_r15.zip -d android-cts_r15"
+    su -l "${jenkins_user}" -c "rm -f android-cts_r15.zip"
+
+    su -l "${jenkins_user}" -c "mkdir -p android-cts_r14"
+    su -l "${jenkins_user}" -c "wget -nv ${r14} -O android-cts_r14.zip"
+    su -l "${jenkins_user}" -c "unzip android-cts_r14.zip -d android-cts_r14"
+    su -l "${jenkins_user}" -c "rm -f android-cts_r14.zip"
+    # Force sync to ensure disk is updated.
+    sync
 }
 
 # Add the user to the CVD groups.
@@ -64,7 +84,6 @@ function cuttlefish_user_groups() {
 }
 
 function cuttlefish_jenkins_user() {
-    local -r jenkins_user="jenkins"
     sudo useradd -u 1000 -ms /bin/bash ${jenkins_user} > /dev/null 2>&1
     sudo passwd -d ${jenkins_user} > /dev/null 2>&1
     sudo usermod -aG google-sudoers ${jenkins_user} > /dev/null 2>&1
@@ -109,6 +128,14 @@ function cuttlefish_install() {
 
         # Add jenkins user
         cuttlefish_jenkins_user
+
+        # Install CTS
+        if [ "$(uname -s)" = "Darwin" ]; then
+            echo "This script is only supported on Linux"
+            echo "   Ignore CTS download and install"
+        else
+            cuttlefish_install_cts
+        fi
 
         # Reboot to install any additional kernel modules and apply udev rules.
         echo "Force reboot on change."

@@ -42,6 +42,33 @@ pipeline {
     string(name: 'VM_MEMORY_MB',
            defaultValue: '16384',
            description: '''launch_cvd --memory_mb: total memory available to guest.''')
+
+    string(name: 'CTS_DOWNLOAD_URL',
+           defaultValue: '',
+           description: '''CTS test harness download URL.
+           Use official CTS test harness (empty field) or one built from CTS Builder job and stored in GS Bucket.
+           eg gs://cts_builds/CTS_Builder/10/android-cts.zip''')
+
+    choice(name: 'CTS_VERSION',
+           choices: ['14', '15'],
+           description: '''Select CTS version: Android 14 or 15''')
+
+    string(name: 'CTS_TESTPLAN',
+           defaultValue: 'cts-virtual-device-stable',
+           description: '''Test plan.
+           The cts-virtual-device-stable test plan tracks the latest of what is stable on the virtual platform ''')
+
+    string(name: 'CTS_MODULE',
+           defaultValue: 'CtsPreferenceTestCases',
+           description: '''CTS module or empty if all modules are required''')
+
+    string(name: 'CTS_TEST',
+           defaultValue: '',
+           description: '''CTS test or empty to run all tests in the modules.''')
+
+    string(name: 'CTS_TIMEOUT',
+           defaultValue: '240',
+           description: "CTS Timeout in minutes for each test run")
   }
 
   agent { label "${CUTTLEFISH_VM_INSTANCE}" }
@@ -71,7 +98,11 @@ pipeline {
     stage ('CTS execution') {
       steps {
         sh '''
-            echo "NOOP: future"
+           ./workloads/pipelines/cts_execution/cts_initialise.sh
+           CTS_MODULE=${CTS_MODULE} \
+           CTS_TEST=${CTS_TEST} \
+           SHARD_COUNT=${NUM_INSTANCES} \
+           ./workloads/pipelines/cts_execution/cts_execution.sh
         '''
       }
     }
@@ -88,6 +119,7 @@ pipeline {
   post {
     always {
       archiveArtifacts artifacts: 'cvd*.log', followSymlinks: false, onlyIfSuccessful: false
+      archiveArtifacts artifacts: 'android-cts-results/*.zip', followSymlinks: false, onlyIfSuccessful: false
     }
   }
 }
