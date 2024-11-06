@@ -119,6 +119,11 @@ module "sdv_bash_on_bastion_host" {
   ]
 }
 
+
+module "sdv_custom_image" {
+  source = "../sdv-custom-image"
+}
+
 #
 # Can create it only after deploy keycloack
 #
