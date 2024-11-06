@@ -155,7 +155,7 @@ jobs:
         service_account: ${{ env.GCP_SA }}
         workload_identity_provider: ${{ env.GCP_WIF }}
 
-    - name: 'Use gcloud CLI'
+    - name: 'gcloud Info'
       run: 'gcloud info'
 
     - name: Setup terraform
