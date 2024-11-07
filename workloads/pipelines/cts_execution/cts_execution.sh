@@ -31,12 +31,9 @@ function cts_cleanup() {
 }
 
 function cts_info() {
-    printf "\nCTS Version:\n"
-    ./cts-tradefed version
-    printf "\nCTS Plans:\n"
-    ./cts-tradefed list plans
-    printf "\nCTS modules:\n"
-    ./cts-tradefed list modules
+    ./cts-tradefed version | grep "Android Compatibility Test Suite" > "${WORKSPACE}"/cts-version.txt
+    ./cts-tradefed list plans > "${WORKSPACE}"/cts-plans.txt
+    ./cts-tradefed list modules > "${WORKSPACE}"/cts-modules.txt
 }
 
 # Wait for timeout or tradefed completion.
@@ -58,7 +55,6 @@ function cts_wait_for_completion() {
 function cts_run() {
     # Run specific module and test if requested, else run all.
     cts_module=""
-    cts_test=""
     if [ -n "${CTS_MODULE}" ]; then
         cts_module="--module ${CTS_MODULE}"
     fi
@@ -79,8 +75,8 @@ function cts_run() {
         --no-enable-parameterized-modules --max-testcase-run-count 2 \
         --retry-strategy RETRY_ANY_FAILURE --reboot-at-last-retry \
         --shard-count ${shards} &"
-        # WARNING: do not quote, cts-tradefed is strange, so strange! Let globbing be.
-        #           And leave on a single line too!
+    # WARNING: do not quote, cts-tradefed is strange, so strange! Let globbing be.
+    #           And leave on a single line too!
     # shellcheck disable=SC2086
     ./cts-tradefed run commandAndExit ${CTS_TESTPLAN} ${cts_module} --no-enable-parameterized-modules --max-testcase-run-count 2 --retry-strategy RETRY_ANY_FAILURE --reboot-at-last-retry --shard-count "${shards}" &
     cts_wait_for_completion "$!"
@@ -89,11 +85,17 @@ function cts_run() {
 function cts_store_results() {
     # Place in WORKSPACE for Jenkins artifact archive to store with job!
     cp -rf "${HOME}"/android-cts/results  "${WORKSPACE}"/android-cts-results
+    cp -f "${HOME}"/android-cts/results/latest/invocation_summary.txt  "${WORKSPACE}"/android-cts-results
 }
 
 # Main
 cd "${HOME}"/android-cts/tools || exit
 cts_info
 cts_run
+RESULT="$?"
 cts_store_results
 cts_cleanup
+
+# Return result
+echo "Exit ${RESULT}"
+exit "${RESULT}"

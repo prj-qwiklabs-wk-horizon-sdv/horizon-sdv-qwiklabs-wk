@@ -319,7 +319,11 @@ function create_cuttlefish_boilerplate_template() {
     sleep 60
     echo -e "${ORANGE}Instance Template ${vm_cuttlefish_instance_template} created${NC}"
 
-    # Create a VM instance for local tests.
+    # Delete and Recreate a VM instance for local tests.
+    yes Y | gcloud compute instances delete "${vm_cuttlefish_instance}" \
+        --zone="${ZONE}" >/dev/null 2>&1 || true &
+    progress_spinner "$!"
+
     gcloud compute instances create "${vm_cuttlefish_instance}" \
         --source-instance-template "${vm_cuttlefish_instance_template}" \
         --zone="${ZONE}" > /dev/null 2>&1 &

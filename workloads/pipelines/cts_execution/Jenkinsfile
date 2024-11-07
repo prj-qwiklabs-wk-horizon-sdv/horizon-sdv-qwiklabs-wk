@@ -59,7 +59,7 @@ pipeline {
            The cts-virtual-device-stable test plan tracks the latest of what is stable on the virtual platform ''')
 
     string(name: 'CTS_MODULE',
-           defaultValue: 'CtsPreferenceTestCases',
+           defaultValue: 'CtsHostsideNumberBlockingTestCases',
            description: '''CTS module or empty if all modules are required''')
 
     string(name: 'CTS_TIMEOUT',
@@ -95,8 +95,8 @@ pipeline {
       steps {
         sh '''
            ./workloads/pipelines/cts_execution/cts_initialise.sh
+           CTS_TESTPLAN=${CTS_TESTPLAN} \
            CTS_MODULE=${CTS_MODULE} \
-           CTS_TEST=${CTS_TEST} \
            SHARD_COUNT=${NUM_INSTANCES} \
            ./workloads/pipelines/cts_execution/cts_execution.sh
         '''
@@ -115,6 +115,8 @@ pipeline {
   post {
     always {
       archiveArtifacts artifacts: 'cvd*.log', followSymlinks: false, onlyIfSuccessful: false
+      archiveArtifacts artifacts: 'cts*.txt', followSymlinks: false, onlyIfSuccessful: false
+      archiveArtifacts artifacts: 'android-cts-results/invocation_summary.txt', followSymlinks: false, onlyIfSuccessful: false
       archiveArtifacts artifacts: 'android-cts-results/*.zip', followSymlinks: false, onlyIfSuccessful: false
     }
   }
