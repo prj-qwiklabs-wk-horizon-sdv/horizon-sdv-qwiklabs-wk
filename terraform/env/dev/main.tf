@@ -1,5 +1,5 @@
 
-# workflow build 110
+# workflow build 111
 
 locals {
   sdv_default_computer_sa = "268541173342-compute@developer.gserviceaccount.com"
@@ -33,12 +33,10 @@ module "base" {
     "user:marta.kania@accenture.com",
   ]
   sdv_bastion_host_bash_command = <<EOT
-
-    gcloud info
+    # gcloud info
     touch ~/terraform-log.log
     echo $(date) >> ~/terraform-log.log
-    cat ~/terraform-log.log"
-
+    cat ~/terraform-log.log
   EOT
 
   sdv_network_egress_router_name = "sdv-egress-internet"

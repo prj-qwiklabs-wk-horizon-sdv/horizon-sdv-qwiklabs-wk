@@ -16,7 +16,7 @@ resource "null_resource" "execute_bash_commands" {
       gcloud beta compute ssh ${var.bastion_host} --zone=${var.zone} --project=${data.google_project.project.project_id} --command="
       echo 'Executing commands on the bastion host...'
       ${var.command}
-
+      "
     EOT
   }
 }
