@@ -62,10 +62,6 @@ pipeline {
            defaultValue: 'CtsPreferenceTestCases',
            description: '''CTS module or empty if all modules are required''')
 
-    string(name: 'CTS_TEST',
-           defaultValue: '',
-           description: '''CTS test or empty to run all tests in the modules.''')
-
     string(name: 'CTS_TIMEOUT',
            defaultValue: '240',
            description: "CTS Timeout in minutes for each test run")
