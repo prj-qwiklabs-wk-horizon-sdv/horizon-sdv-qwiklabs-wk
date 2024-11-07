@@ -141,12 +141,6 @@ jobs:
     - name: Checkout source code
       uses: actions/checkout@v4.1.1
 
-    - name: Setup gcloud SDK
-      uses: google-github-actions/setup-gcloud@v2
-      with:
-        install_components: 'beta'
-        project_id: "${{ env.GCP_PROJECT_ID }}" # consider adjusting to an env var.
-
     - id: auth
       # if: ${{ steps.gcp-secret-check.outputs.secrets != 'true' }}
       uses: google-github-actions/auth@v2
@@ -154,6 +148,12 @@ jobs:
         credentials_json: '${{ secrets.gcp-sa-key }}'
         service_account: ${{ env.GCP_SA }}
         workload_identity_provider: ${{ env.GCP_WIF }}
+
+    - name: Setup gcloud SDK
+      uses: google-github-actions/setup-gcloud@v2
+      with:
+        install_components: 'beta'
+        project_id: "${{ env.GCP_PROJECT_ID }}" # consider adjusting to an env var.
 
     - name: 'gcloud Info'
       run: 'gcloud info'
