@@ -169,7 +169,7 @@ jobs:
       run: |
         git config --global url."https://x-access-token:${{steps.get_github_app_token.outputs.token}}@github.com".insteadOf https://github.com
         terraform init -input=false
-        terraform plan -parallelism=${{ inputs.parallelism }} -input=false -no-color -out=tfplan && terraform show -no-color tfplan
+        terraform plan -lock=false -parallelism=${{ inputs.parallelism }} -input=false -no-color -out=tfplan && terraform show -no-color tfplan
       continue-on-error: true
 
     - name: Reformat Plan
