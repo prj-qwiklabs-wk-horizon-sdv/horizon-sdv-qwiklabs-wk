@@ -75,8 +75,8 @@ function cts_run() {
         --no-enable-parameterized-modules --max-testcase-run-count 2 \
         --retry-strategy RETRY_ANY_FAILURE --reboot-at-last-retry \
         --shard-count ${shards} &"
-    # WARNING: do not quote, cts-tradefed is strange, so strange! Let globbing be.
-    #           And leave on a single line too!
+    # WARNING: do not quote and leave on a single line to avoid strange
+    #          behaviour.
     # shellcheck disable=SC2086
     ./cts-tradefed run commandAndExit ${CTS_TESTPLAN} ${cts_module} --no-enable-parameterized-modules --max-testcase-run-count 2 --retry-strategy RETRY_ANY_FAILURE --reboot-at-last-retry --shard-count "${shards}" &
     cts_wait_for_completion "$!"

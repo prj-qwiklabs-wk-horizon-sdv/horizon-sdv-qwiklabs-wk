@@ -32,11 +32,11 @@ pipeline {
            Wait on VIRTUAL_DEVICE_BOOT_COMPLETED across devices''')
 
     string(name: 'NUM_INSTANCES',
-           defaultValue: '8',
+           defaultValue: '10',
            description: '''launch_cvd --num-instances: number of guest instances to launch.''')
 
     string(name: 'VM_CPUS',
-           defaultValue: '8',
+           defaultValue: '6',
            description: '''launch_cvd --cpus: virtual CPU count.''')
 
     string(name: 'VM_MEMORY_MB',
