@@ -96,15 +96,15 @@ module "sdv_ssl_certificate" {
 
 }
 
-module "sdv_url_map" {
-  source     = "../sdv-url-map"
-  depends_on = [module.sdv_ssl_certificate]
+# module "sdv_url_map" {
+#   source     = "../sdv-url-map"
+#   depends_on = [module.sdv_ssl_certificate]
 
-  target_https_proxy_name = var.sdv_target_https_proxy_name
-  url_map_name            = var.sdv_url_map_name
-  ssl_certificate_name    = var.sdv_ssl_certificate_name
-  domain                  = var.sdv_ssl_certificate_domain
-}
+#   target_https_proxy_name = var.sdv_target_https_proxy_name
+#   url_map_name            = var.sdv_url_map_name
+#   ssl_certificate_name    = var.sdv_ssl_certificate_name
+#   domain                  = var.sdv_ssl_certificate_domain
+# }
 
 module "sdv_bash_on_bastion_host" {
   source = "../sdv-bash-on-bastion-host"
