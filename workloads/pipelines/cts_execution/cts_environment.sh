@@ -23,8 +23,7 @@
 CTS_DOWNLOAD_URL=${CTS_DOWNLOAD_URL:-}
 CTS_PATHNAME=${CTS_PATHNAME:-android-cts}
 CTS_TESTPLAN=${CTS_TESTPLAN:-cts-virtual-device-stable}
-# Default to a simple module with a single test.
-CTS_MODULE=${CTS_MODULE:-CtsHostsideNumberBlockingTestCases}
+CTS_MODULE=${CTS_MODULE:-}
 # android.app.RemoteActionTest#testClone}
 CTS_TEST=${CTS_TEST:-}
 CTS_TIMEOUT=${CTS_TIMEOUT:-60}
