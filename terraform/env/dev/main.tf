@@ -1,5 +1,5 @@
 
-# workflow build 113
+# workflow build 114
 
 locals {
   sdv_default_computer_sa = "268541173342-compute@developer.gserviceaccount.com"
@@ -33,8 +33,8 @@ module "base" {
     "user:marta.kania@accenture.com",
   ]
   sdv_bastion_host_bash_command = <<EOT
-    # gcloud info
-    sudo apt update && sudo apt upgragde -y
+    gcloud info
+    sudo apt update && sudo apt upgrade -y
     touch ~/terraform-log.log
     echo $(date) >> ~/terraform-log.log
     cat ~/terraform-log.log
