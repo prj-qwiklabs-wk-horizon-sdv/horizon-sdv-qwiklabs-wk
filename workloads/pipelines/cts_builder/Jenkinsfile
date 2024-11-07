@@ -45,7 +45,7 @@ pipeline {
           serviceAccountName: ${JENKINS_SERVICE_ACCOUNT}
           containers:
           - name: builder
-            image: ${CLOUD_REGION}-docker.pkg.dev/${CLOUD_PROJECT}/${ANDROID_BUILD_DOCKER_ARTIFACT_PATH_NAME}:0.1
+            image: ${CLOUD_REGION}-docker.pkg.dev/${CLOUD_PROJECT}/${ANDROID_BUILD_DOCKER_ARTIFACT_PATH_NAME}:latest
             imagePullPolicy: IfNotPresent
             command:
             - sleep
