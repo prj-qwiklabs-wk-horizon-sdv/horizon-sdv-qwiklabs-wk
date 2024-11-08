@@ -38,4 +38,28 @@ resource "google_compute_image" "custom_image" {
   depends_on = [
     google_compute_instance.sdv_custom_image
   ]
+
+  provisioner "local-exec" {
+    command = "gcloud compute instances stop ${google_compute_instance.sdv_custom_image.name} --zone=${google_compute_instance.sdv_custom_image.zone}"
+  }
+}
+
+resource "google_compute_snapshot" "custom_snapshot" {
+  name        = "ubuntu-with-gcloud-snapshot"
+  source_disk = google_compute_instance.sdv_custom_image.boot_disk[0].source
+  zone        = google_compute_instance.sdv_custom_image.zone
+
+  depends_on = [
+    google_compute_instance.sdv_custom_image
+  ]
+}
+
+resource "google_compute_image" "custom_image" {
+  name        = "ubuntu-with-gcloud-image"
+  source_snapshot = google_compute_snapshot.custom_snapshot.self_link
+  family      = "ubuntu-with-gcloud"
+
+  depends_on = [
+    google_compute_snapshot.custom_snapshot
+  ]
 }
