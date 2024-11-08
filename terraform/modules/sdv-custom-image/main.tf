@@ -48,6 +48,7 @@ resource "google_compute_snapshot" "custom_snapshot" {
   name        = "ubuntu-with-gcloud-snapshot"
   source_disk = google_compute_instance.sdv_custom_image.boot_disk[0].source
   zone        = google_compute_instance.sdv_custom_image.zone
+  storage_locations = ["europe-west1"]
 
   depends_on = [
     google_compute_instance.sdv_custom_image
