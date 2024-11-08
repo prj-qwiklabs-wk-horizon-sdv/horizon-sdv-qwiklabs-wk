@@ -17,7 +17,8 @@ resource "google_compute_instance" "sdv_custom_image" {
   }
 
   network_interface {
-    network = "sdv-network"
+    network    = "sdv-network"
+    subnetwork = "sdv-subnet"
     access_config {}
   }
 
