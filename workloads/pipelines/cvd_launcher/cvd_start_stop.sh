@@ -126,9 +126,16 @@ function cuttlefish_stop() {
     HOME="${HOME}/cf" ./bin/stop_cvd
 }
 
+# Archive logs
+function cuttlefish_archive_logs() {
+    cd "${HOME}"/cf/cuttlefish_runtime.1/ || true
+    tar -czf "${WORKSPACE}"/cuttlefish_logs-"${BUILD_NUMBER}".tgz logs || true
+}
+
 case "${1}" in
     --stop)
         # Stop
+        cuttlefish_archive_logs
         cuttlefish_stop
         cuttlefish_cleanup
         ;;
@@ -151,6 +158,7 @@ case "${1}" in
         else
             echo "Device(s) not booted within ${CUTTLEFISH_MAX_BOOT_TIME} seconds"
             # Stop and clean up
+            cuttlefish_archive_logs
             cuttlefish_stop
             cuttlefish_cleanup
             sudo reboot

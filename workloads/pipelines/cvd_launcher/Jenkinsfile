@@ -95,6 +95,7 @@ pipeline {
   post {
     always {
       archiveArtifacts artifacts: 'cvd*.log', followSymlinks: false, onlyIfSuccessful: false
+      archiveArtifacts artifacts: 'cuttlefish*.tgz', followSymlinks: false, onlyIfSuccessful: false
     }
   }
 }
