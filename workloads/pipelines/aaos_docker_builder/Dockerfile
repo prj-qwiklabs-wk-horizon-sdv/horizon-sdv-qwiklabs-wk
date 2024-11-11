@@ -16,18 +16,19 @@
 FROM --platform=linux/amd64 debian:12
 
 # Install packages required for building AAOSP targets.
-RUN apt-get update -y
-RUN DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends apt-utils
-RUN DEBIAN_FRONTEND=noninteractive apt-get -y upgrade
-RUN DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+RUN apt-get update -y && \
+    apt-get install -y --no-install-recommends apt-utils && \
+    apt-get -y upgrade && \
+    apt-get install -y --no-install-recommends \
     apt-transport-https ca-certificates \
     git git-core gnupg flex bison build-essential zip unzip zlib1g-dev \
     libc6-dev libxml2-utils xsltproc unzip fontconfig gcc-multilib \
     g++-multilib libncurses5 libssl-dev python3 python3-setuptools python3-pip \
     python3-requests python3-venv python3-virtualenv procps \
     meson bc coreutils dosfstools e2fsprogs fdisk kpartx mtools ninja-build \
-    pkg-config rsync less curl sudo vim ssh findutils gawk
-RUN apt-get update -y
+    pkg-config rsync less curl sudo vim ssh findutils gawk && \
+    apt-get update -y && \
+    rm -rf /var/lib/apt/lists/*
 
 # The following installs gcloud sdk including gsutil required for uploading
 # artifacts to Google Cloud Storage. Remove if using alternative storage.
