@@ -59,6 +59,7 @@ resource "google_compute_image" "custom_image" {
   name        = "ubuntu-with-gcloud-image"
   source_snapshot = google_compute_snapshot.custom_snapshot.self_link
   family      = "ubuntu-with-gcloud"
+  storage_locations = ["europe-west1"]
 
   depends_on = [
     google_compute_snapshot.custom_snapshot
