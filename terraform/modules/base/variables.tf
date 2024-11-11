@@ -1,11 +1,15 @@
+variable "sdv_project" {
+  description = "Define the GCP project id"
+  type        = string
+}
 
 variable "sdv_network" {
   description = "Define the name of the VPC network"
   type        = string
 }
 
-variable "sdv_project" {
-  description = "Define the GCP project id"
+variable "sdv_subnetwork" {
+  description = "Define the subnet name"
   type        = string
 }
 
@@ -24,10 +28,6 @@ variable "sdv_zone" {
   type        = string
 }
 
-variable "sdv_subnetwork" {
-  description = "Define the subnet name"
-  type        = string
-}
 
 variable "sdv_default_computer_sa" {
   description = "The default Computer SA"
