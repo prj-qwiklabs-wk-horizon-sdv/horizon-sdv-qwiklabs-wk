@@ -49,7 +49,7 @@ resource "google_compute_image" "custom_image" {
 
 resource "null_resource" "delete_instance" {
   provisioner "local-exec" {
-    command = "gcloud compute instances delete ${google_compute_instance.sdv_custom_image.name} --zone=${google_compute_instance.sdv_custom_image.zone} --quiet"
+    command = "gcloud compute instances delete ${google_compute_instance.sdv_custom_image.name} --project=${google_compute_instance.sdv_custom_image.project} --zone=${google_compute_instance.sdv_custom_image.zone} --quiet"
   }
 
   depends_on = [
