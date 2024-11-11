@@ -65,6 +65,11 @@ pipeline {
     string(name: 'CTS_TIMEOUT',
            defaultValue: '240',
            description: "CTS Timeout in minutes for each test run")
+
+    booleanParam(name: 'MTK_CONNECT_ENABLE',
+                 defaultValue: false,
+                 description: '''Enable if wishing to use MTK Connect to view UI of CTS tests on virtual devices''')
+
   }
 
   agent { label "${CUTTLEFISH_VM_INSTANCE}" }
@@ -84,10 +89,22 @@ pipeline {
     }
 
     stage ('MTK Connect to Virtual Devices') {
+      when {
+        expression { env.MTK_CONNECT_ENABLE == 'true' }
+      }
       steps {
-        sh '''
-            echo "NOOP: future"
-        '''
+        withCredentials([usernamePassword(credentialsId: 'MTK_CONNECT_APIKEY', passwordVariable: 'MTK_CONNECT_PASSWORD', usernameVariable: 'MTK_CONNECT_USERNAME')]) {
+          sh '''
+            sudo \
+            MTK_CONNECT_DOMAIN=${HORIZON_DOMAIN} \
+            MTK_CONNECT_USERNAME=${MTK_CONNECT_USERNAME} \
+            MTK_CONNECT_PASSWORD=${MTK_CONNECT_PASSWORD} \
+            MTK_CONNECTED_DEVICES=${NUM_INSTANCES} \
+            MTK_CONNECT_TEST_ARTIFACT="${CUTTLEFISH_DOWNLOAD_URL}" \
+            MTK_CONNECT_TESTBENCH="${JOB_NAME}_Build-${BUILD_NUMBER}-aosp-cf" \
+            ./workloads/pipelines/cvd_launcher/cvd_mtk_connect.sh --start
+          '''
+        }
       }
     }
 
@@ -102,18 +119,22 @@ pipeline {
         '''
       }
     }
-
-    stage ('Stop Devices'){
-      steps {
-        sh '''
-          ./workloads/pipelines/cvd_launcher/cvd_start_stop.sh --stop
-        '''
-      }
-    }
   }
 
   post {
     always {
+      withCredentials([usernamePassword(credentialsId: 'MTK_CONNECT_APIKEY', passwordVariable: 'MTK_CONNECT_PASSWORD', usernameVariable: 'MTK_CONNECT_USERNAME')]) {
+        sh '''
+          sudo \
+          MTK_CONNECT_DOMAIN=${HORIZON_DOMAIN} \
+          MTK_CONNECT_USERNAME=${MTK_CONNECT_USERNAME} \
+          MTK_CONNECT_PASSWORD=${MTK_CONNECT_PASSWORD} \
+          MTK_CONNECTED_DEVICES=${NUM_INSTANCES} \
+          MTK_CONNECT_TESTBENCH="${JOB_NAME}-${BUILD_NUMBER}-aosp-cf" \
+          ./workloads/pipelines/cvd_launcher/cvd_mtk_connect.sh --stop || true
+          ./workloads/pipelines/cvd_launcher/cvd_start_stop.sh --stop || true
+        '''
+      }
       archiveArtifacts artifacts: 'cvd*.log', followSymlinks: false, onlyIfSuccessful: false
       archiveArtifacts artifacts: 'cuttlefish*.tgz', followSymlinks: false, onlyIfSuccessful: false
       archiveArtifacts artifacts: 'cts*.txt', followSymlinks: false, onlyIfSuccessful: false
