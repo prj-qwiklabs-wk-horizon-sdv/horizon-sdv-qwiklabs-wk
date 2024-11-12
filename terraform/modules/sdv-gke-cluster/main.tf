@@ -38,7 +38,7 @@ resource "google_container_cluster" "sdv_cluster" {
     enabled = true
   }
 
- # enable gateway api
+  # enable gateway api
   gateway_api_config {
     channel = "CHANNEL_STANDARD"
   }
@@ -56,6 +56,11 @@ resource "google_container_cluster" "sdv_cluster" {
   cluster_autoscaling {
     enabled             = false
     autoscaling_profile = "OPTIMIZE_UTILIZATION"
+  }
+
+  user_managed_keys_config {
+    service_account_signing_keys      = []
+    service_account_verification_keys = []
   }
 
 }
