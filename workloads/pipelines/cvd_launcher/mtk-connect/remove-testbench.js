@@ -19,7 +19,7 @@
  # -----------------------------------------------------
  # Description:
  #
- # Removes an MTK Connect agent based on its registration.
+ # Removes an MTK Connect agent and testbench based on its registration.
  #
  # 1. It loads environment variables from a .env file using dotenv.
  # 2. It sets up axios with a base URL and authentication credentials

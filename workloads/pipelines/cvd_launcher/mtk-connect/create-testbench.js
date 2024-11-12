@@ -20,7 +20,7 @@
  # Description:
  #
  # Automates the setup and configuration of an MTK Connect agent and
- # and testbench/device creation.
+ # testbench/device creation.
  #
  # 1. It loads environment variables from a .env file using dotenv.
  # 2. It sets up axios with a base URL and authentication credentials
