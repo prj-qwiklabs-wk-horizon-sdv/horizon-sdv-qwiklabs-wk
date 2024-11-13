@@ -1,11 +1,6 @@
 
 # workflow build 127
 
-data "google_project" "project" {}
-
-resource "terraform_data" "debug_google_project" {
-  input = data.google_project.project
-}
 
 locals {
   sdv_default_computer_sa = "268541173342-compute@developer.gserviceaccount.com"
@@ -14,15 +9,7 @@ locals {
 module "base" {
   source = "../../modules/base"
 
-  sdv_list_of_apis = toset([
-    "container.googleapis.com",
-    "iap.googleapis.com",
-    "certificatemanager.googleapis.com",
-    "integrations.googleapis.com",
-    "secretmanager.googleapis.com",
-    "file.googleapis.com",
-  ])
-
+  # The project is used by provider.tf to define the GCP project
   sdv_project  = "sdva-2108202401"
   sdv_location = "europe-west1"
   sdv_region   = "europe-west1"
@@ -32,6 +19,15 @@ module "base" {
   sdv_subnetwork = "sdv-subnet"
 
   sdv_default_computer_sa = local.sdv_default_computer_sa
+
+  sdv_list_of_apis = toset([
+    "container.googleapis.com",
+    "iap.googleapis.com",
+    "certificatemanager.googleapis.com",
+    "integrations.googleapis.com",
+    "secretmanager.googleapis.com",
+    "file.googleapis.com",
+  ])
 
   sdv_cluster_name                   = "sdv-cluster"
   sdv_cluster_node_pool_name         = "sdv-node-pool"
