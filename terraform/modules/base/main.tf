@@ -3,6 +3,8 @@ data "google_project" "project" {}
 
 module "sdv_apis" {
   source = "../sdv-apis"
+
+  list_of_apis = var.sdv_list_of_apis
 }
 
 module "sdv_secrets" {

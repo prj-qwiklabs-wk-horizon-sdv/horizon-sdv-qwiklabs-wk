@@ -189,3 +189,8 @@ variable "sdv_bastion_host_bash_command" {
   description = "Define the commands to run on the bastion host"
   type        = string
 }
+
+variable "sdv_list_of_apis" {
+  description = "List of APIs for the project"
+  type        = set(string)
+}
