@@ -3,6 +3,8 @@ data "google_project" "project" {}
 
 module "sdv_apis" {
   source = "../sdv-apis"
+
+  list_of_apis = var.sdv_list_of_apis
 }
 
 module "sdv_secrets" {
@@ -156,3 +158,11 @@ module "sdv_cuttlefish_image_template" {
 #   auth_config_display_name = var.sdv_auth_config_display_name
 #   auth_config_endpoint_uri = var.sdv_auth_config_endpoint_uri
 # }
+
+module "sdv_ssl_policy" {
+  source = "../sdv-ssl-policy"
+
+  name            = "gke-ssl-policy"
+  min_tls_version = "TLS_1_2"
+  profile         = "RESTRICTED"
+}
