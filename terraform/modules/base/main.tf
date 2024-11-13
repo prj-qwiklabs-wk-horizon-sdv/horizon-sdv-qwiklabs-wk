@@ -88,15 +88,18 @@ module "sdv_artifact_registry" {
   reader_members = var.sdv_artifact_registry_repository_reader_members
 }
 
-module "sdv_ssl_certificate" {
-  source     = "../sdv-ssl-certificate"
-  depends_on = [module.sdv_apis]
-
-  project = var.sdv_project
-  name    = var.sdv_ssl_certificate_name
-  domain  = var.sdv_ssl_certificate_domain
-
+module "sdv_certificate_manager" {
+  source = "../sdv-certificate-manager"
 }
+
+# module "sdv_ssl_certificate" {
+#   source     = "../sdv-ssl-certificate"
+#   depends_on = [module.sdv_apis]
+
+#   project = var.sdv_project
+#   name    = var.sdv_ssl_certificate_name
+#   domain  = var.sdv_ssl_certificate_domain
+# }
 
 # module "sdv_url_map" {
 #   source     = "../sdv-url-map"
