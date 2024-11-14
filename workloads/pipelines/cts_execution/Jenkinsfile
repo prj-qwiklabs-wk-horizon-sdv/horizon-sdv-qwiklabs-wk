@@ -76,6 +76,7 @@ pipeline {
 
   stages {
     stage ('Launch Virtual Devices') {
+      when { expression { env.BUILD_NUMBER.toInteger() > 1 } }
       steps {
         sh '''
           CUTTLEFISH_DOWNLOAD_URL="${CUTTLEFISH_DOWNLOAD_URL}" \
@@ -90,7 +91,10 @@ pipeline {
 
     stage ('MTK Connect to Virtual Devices') {
       when {
-        expression { env.MTK_CONNECT_ENABLE == 'true' }
+        allOf {
+          expression { env.MTK_CONNECT_ENABLE == 'true' }
+          expression { env.BUILD_NUMBER.toInteger() > 1 }
+        }
       }
       steps {
         withCredentials([usernamePassword(credentialsId: 'MTK_CONNECT_APIKEY', passwordVariable: 'MTK_CONNECT_PASSWORD', usernameVariable: 'MTK_CONNECT_USERNAME')]) {
@@ -109,11 +113,15 @@ pipeline {
     }
 
     stage ('CTS execution') {
+      when { expression { env.BUILD_NUMBER.toInteger() > 1 } }
       steps {
         sh '''
+           CTS_VERSION=${CTS_VERSION} \
+           CTS_DOWNLOAD_URL=${CTS_DOWNLOAD_URL} \
            ./workloads/pipelines/cts_execution/cts_initialise.sh
            CTS_TESTPLAN=${CTS_TESTPLAN} \
            CTS_MODULE=${CTS_MODULE} \
+           CTS_TIMEOUT=${CTS_TIMEOUT} \
            SHARD_COUNT=${NUM_INSTANCES} \
            ./workloads/pipelines/cts_execution/cts_execution.sh
         '''
@@ -125,21 +133,25 @@ pipeline {
     always {
       withCredentials([usernamePassword(credentialsId: 'MTK_CONNECT_APIKEY', passwordVariable: 'MTK_CONNECT_PASSWORD', usernameVariable: 'MTK_CONNECT_USERNAME')]) {
         sh '''
-          sudo \
-          MTK_CONNECT_DOMAIN=${HORIZON_DOMAIN} \
-          MTK_CONNECT_USERNAME=${MTK_CONNECT_USERNAME} \
-          MTK_CONNECT_PASSWORD=${MTK_CONNECT_PASSWORD} \
-          MTK_CONNECTED_DEVICES=${NUM_INSTANCES} \
-          MTK_CONNECT_TESTBENCH="${JOB_NAME}-${BUILD_NUMBER}-aosp-cf" \
-          ./workloads/pipelines/cvd_launcher/cvd_mtk_connect.sh --stop || true
-          ./workloads/pipelines/cvd_launcher/cvd_start_stop.sh --stop || true
+          if (( "${BUILD_NUMBER}" > "1" )); then
+            sudo \
+            MTK_CONNECT_DOMAIN=${HORIZON_DOMAIN} \
+            MTK_CONNECT_USERNAME=${MTK_CONNECT_USERNAME} \
+            MTK_CONNECT_PASSWORD=${MTK_CONNECT_PASSWORD} \
+            MTK_CONNECTED_DEVICES=${NUM_INSTANCES} \
+            MTK_CONNECT_TESTBENCH="${JOB_NAME}-${BUILD_NUMBER}-aosp-cf" \
+            ./workloads/pipelines/cvd_launcher/cvd_mtk_connect.sh --stop || true
+            ./workloads/pipelines/cvd_launcher/cvd_start_stop.sh --stop || true
+          else
+            echo "Post stage skipped due to conditional"
+          fi
         '''
       }
-      archiveArtifacts artifacts: 'cvd*.log', followSymlinks: false, onlyIfSuccessful: false
-      archiveArtifacts artifacts: 'cuttlefish*.tgz', followSymlinks: false, onlyIfSuccessful: false
-      archiveArtifacts artifacts: 'cts*.txt', followSymlinks: false, onlyIfSuccessful: false
-      archiveArtifacts artifacts: 'android-cts-results/invocation_summary.txt', followSymlinks: false, onlyIfSuccessful: false
-      archiveArtifacts artifacts: 'android-cts-results/*.zip', followSymlinks: false, onlyIfSuccessful: false
+      archiveArtifacts artifacts: 'cvd*.log', followSymlinks: false, onlyIfSuccessful: false, allowEmptyArchive: true
+      archiveArtifacts artifacts: 'cuttlefish*.tgz', followSymlinks: false, onlyIfSuccessful: false, allowEmptyArchive: true
+      archiveArtifacts artifacts: 'cts*.txt', followSymlinks: false, onlyIfSuccessful: false, allowEmptyArchive: true
+      archiveArtifacts artifacts: 'android-cts-results/invocation_summary.txt', followSymlinks: false, onlyIfSuccessful: false, allowEmptyArchive: true
+      archiveArtifacts artifacts: 'android-cts-results/*.zip', followSymlinks: false, onlyIfSuccessful: false, allowEmptyArchive: true
     }
   }
 }

@@ -122,9 +122,13 @@ pipeline {
 
   stages {
     stage ('Initialise') {
+      when { expression { env.BUILD_NUMBER.toInteger() > 1 } }
       steps {
         container(name: 'builder') {
           sh '''
+            AAOS_GERRIT_MANIFEST_URL="${AAOS_GERRIT_MANIFEST_URL}" \
+            AAOS_REVISION="${AAOS_REVISION}" \
+            AAOS_RPI_REVISION="${AAOS_RPI_REVISION}" \
             AAOS_LUNCH_TARGET="${AAOS_LUNCH_TARGET}" \
             AAOS_CLEAN_BUILD=${AAOS_CLEAN_BUILD} \
             ./workloads/pipelines/aaos_builder/aaos_initialise.sh
@@ -134,6 +138,7 @@ pipeline {
     }
 
     stage ('Build'){
+      when { expression { env.BUILD_NUMBER.toInteger() > 1 } }
       steps {
         container(name: 'builder') {
           sh '''
@@ -147,6 +152,7 @@ pipeline {
     }
 
     stage ('Storage'){
+      when { expression { env.BUILD_NUMBER.toInteger() > 1 } }
       steps {
         container(name: 'builder') {
           sh '''
@@ -154,11 +160,12 @@ pipeline {
             AAOS_BUILD_CTS=1 \
             AAOS_CLEAN_BUILD=0 \
             AAOS_ARTIFACT_ROOT_NAME="${AAOS_ARTIFACT_ROOT_NAME}" \
+            AAOS_ARTIFACT_STORAGE_SOLUTION="${AAOS_ARTIFACT_STORAGE_SOLUTION}" \
+            CLOUD_REGION="${CLOUD_REGION}" \
             ./workloads/pipelines/aaos_builder/aaos_storage.sh
           '''
         }
       }
     }
-
   }
 }

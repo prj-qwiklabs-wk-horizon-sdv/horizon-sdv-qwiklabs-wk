@@ -34,7 +34,7 @@
 #
 #  - CUTTLEFISH_REVISION: the branch/tag version of Android Cuttlefish
 #        to use. Default: main
-#  - BOOT_DISK_SIZE: Disk image size in GB. Default: 150GB
+#  - BOOT_DISK_SIZE: Disk image size in GB. Default: 200GB
 #  - MACHINE_TYPE: The machine type to create instance templates for. Default:
 #        n1-standard-64
 #  - NETWORK: The name of the VPC network. Default: sdv-network
@@ -351,7 +351,10 @@ function main() {
         3) install_host_tools ;;
         4) create_ssh_key ;;
         5) create_cuttlefish_boilerplate_template ;;
-        *h*) print_usage ;;
+        *h*)
+            print_usage
+            exit 0
+            ;;
         *) 
             create_base_template_instance
             create_vm_instance
