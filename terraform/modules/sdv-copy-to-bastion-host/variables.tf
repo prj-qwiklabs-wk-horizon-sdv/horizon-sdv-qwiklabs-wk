@@ -13,3 +13,8 @@ variable "destination_path" {
   description = "The destination path for the file"
   type        = string
 }
+
+variable "zone" {
+  description = "Define the region zone"
+  type        = string
+}
