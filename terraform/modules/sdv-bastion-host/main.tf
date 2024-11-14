@@ -69,10 +69,11 @@ module "iap_tunneling" {
 #
 # Allows the bastion host SA to manage the GKE cluster
 #
-resource "google_project_iam_binding" "container-admin-iam" {
+resource "google_project_iam_member" "container_admin_iam_member" {
+  for_each = toset([
+    "serviceAccount:${google_service_account.vm_sa.email}",
+  ])
   project = data.google_project.project.id
   role    = "roles/container.admin"
-  members = [
-    "serviceAccount:${google_service_account.vm_sa.email}",
-  ]
+  member  = each.key
 }
