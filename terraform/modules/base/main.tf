@@ -96,19 +96,6 @@ module "sdv_certificate_manager" {
   depends_on = [module.sdv_apis]
 }
 
-module "sdv_bash_on_bastion_host" {
-  source = "../sdv-bash-on-bastion-host"
-
-  bastion_host = var.sdv_bastion_host_name
-  zone         = var.sdv_zone
-  command      = var.sdv_bastion_host_bash_command
-
-  depends_on = [
-    module.sdv_bastion_host,
-    module.sdv_gke_cluster,
-  ]
-}
-
 module "sdv_cuttlefish_image_template" {
   source = "../sdv-custom-image"
 
@@ -153,4 +140,28 @@ module "sdv_ssl_policy" {
   name            = "gke-ssl-policy"
   min_tls_version = "TLS_1_2"
   profile         = "RESTRICTED"
+}
+
+module "sdv_copy_to_bastion_host" {
+  source = "../sdv-copy-to-bastion-host"
+
+  files             = var.sdv_bastion_host_files_to_copy
+  bastion_host_name = var.sdv_bastion_host_name
+  destination_path  = "~/."
+
+  depends_on = [module.sdv_bastion_host]
+}
+
+module "sdv_bash_on_bastion_host" {
+  source = "../sdv-bash-on-bastion-host"
+
+  bastion_host = var.sdv_bastion_host_name
+  zone         = var.sdv_zone
+  command      = var.sdv_bastion_host_bash_command
+
+  depends_on = [
+    module.sdv_bastion_host,
+    module.sdv_gke_cluster,
+    module.sdv_copy_to_bastion_host,
+  ]
 }
