@@ -62,8 +62,8 @@ module "base" {
     "serviceAccount:${local.sdv_default_computer_sa}",
   ]
 
-  sdv_ssl_certificate_domain = "horizon-sdv-dev.scpmtk.com"
-  sdv_ssl_certificate_name   = "horizon-sdv-dev"
+  sdv_ssl_certificate_name   = "horizon-sdv"
+  sdv_ssl_certificate_domain = "dev.horizon-sdv.scpmtk.com"
 
   # sdv-apis-services
   sdv_auth_config_display_name = "horizon-sdv-dev-oauth-2"
