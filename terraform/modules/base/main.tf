@@ -145,10 +145,11 @@ module "sdv_ssl_policy" {
 module "sdv_copy_to_bastion_host" {
   source = "../sdv-copy-to-bastion-host"
 
-  files             = var.sdv_bastion_host_files_to_copy
-  bastion_host_name = var.sdv_bastion_host_name
-  destination_path  = var.sdv_bastion_host_destination_dir
-  zone              = var.sdv_zone
+  bastion_host     = var.sdv_bastion_host_name
+  file             = "../../bash-scripts/horizon-stage-01.sh"
+  destination_path = "~/bash-scripts/horizon-stage-01.sh"
+  zone             = var.sdv_zone
+  location         = var.sdv_location
 
   depends_on = [
     module.sdv_bastion_host
