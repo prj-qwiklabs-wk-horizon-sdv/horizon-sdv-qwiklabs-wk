@@ -1,5 +1,5 @@
 
-# workflow build 136
+# workflow build 137
 
 locals {
   sdv_default_computer_sa = "268541173342-compute@developer.gserviceaccount.com"
@@ -229,12 +229,9 @@ module "base" {
     }
   }
 
-  sdv_bastion_host_files_to_copy = [
-    "../../bash-scripts/horizon-stage-01.sh"
-  ]
-  sdv_bastion_host_destination_dir = "~/."
-  sdv_bastion_host_bash_command    = <<EOT
+  sdv_bastion_host_bash_command = <<EOT
     chmod +x ~/horizon-stage-01.sh
     ~/horizon-stage-01.sh
   EOT
+
 }

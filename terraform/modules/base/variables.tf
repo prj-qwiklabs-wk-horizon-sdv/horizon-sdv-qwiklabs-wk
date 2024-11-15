@@ -195,12 +195,12 @@ variable "sdv_list_of_apis" {
   type        = set(string)
 }
 
-variable "sdv_bastion_host_files_to_copy" {
-  description = "List fo file that should be copied to the bastion host"
-  type        = list(string)
-}
+# variable "sdv_bastion_host_files_to_copy" {
+#   description = "List fo file that should be copied to the bastion host"
+#   type        = list(string)
+# }
 
-variable "sdv_bastion_host_destination_dir" {
-  description = "Destination dir on the bastion host"
-  type        = string
-}
+# variable "sdv_bastion_host_destination_dir" {
+#   description = "Destination dir on the bastion host"
+#   type        = string
+# }
