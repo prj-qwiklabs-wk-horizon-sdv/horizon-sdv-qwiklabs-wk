@@ -230,8 +230,10 @@ module "base" {
   }
 
   sdv_bastion_host_bash_command = <<EOT
-    chmod +x ~/horizon-stage-01.sh
-    ~/horizon-stage-01.sh
+    cd bash-scripts
+    chmod +x horizon-stage-01.sh
+    ./horizon-stage-01.sh
+    cd -
   EOT
 
 }
