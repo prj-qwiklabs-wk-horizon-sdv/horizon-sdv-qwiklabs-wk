@@ -1,12 +1,6 @@
 
 data "google_project" "project" {}
 
-resource "google_project_iam_member" "storage_object_viewer" {
-  project = data.google_project.project.project_id
-  role    = "roles/storage.objectViewer"
-  member  = "serviceAccount:${var.sdv_default_computer_sa}"
-}
-
 module "sdv_apis" {
   source = "../sdv-apis"
 
@@ -102,43 +96,6 @@ module "sdv_certificate_manager" {
   domain     = var.sdv_ssl_certificate_domain
   depends_on = [module.sdv_apis]
 }
-
-# module "sdv_cuttlefish_image_template" {
-#   source = "../sdv-custom-image"
-
-#   image_name            = "cuttlefish-image-template"
-#   compute_instance_name = "cuttlefish-image-template-ci"
-#   machine_type          = "n1-standard-1"
-#   zone                  = var.sdv_zone
-#   base_image            = "projects/ubuntu-os-cloud/global/images/family/ubuntu-2004-lts"
-#   network               = var.sdv_network
-#   subnetwork            = var.sdv_subnetwork
-#   snapshot_name         = "cuttlefish-image-template-snapshot"
-#   storage_locations     = ["europe-west1"]
-#   custom_image_family   = "ubuntu-with-gcloud"
-
-#   metadata_startup_script = <<-EOT
-#     #!/bin/bash
-#     echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
-#     curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key --keyring /usr/share/keyrings/cloud.google.gpg add -
-#     sudo apt-get update && sudo apt-get install google-cloud-sdk -y
-#     # TODO: Install Cuttlefish
-#   EOT
-
-# }
-
-#
-# Can create it only after deploy keycloack
-#
-# module "sdv_apis_services" {
-#   source     = "../sdv-apis-services"
-#   depends_on = [module.sdv_apis]
-
-#   project                  = var.sdv_project
-#   auth_config_location     = var.sdv_location
-#   auth_config_display_name = var.sdv_auth_config_display_name
-#   auth_config_endpoint_uri = var.sdv_auth_config_endpoint_uri
-# }
 
 module "sdv_ssl_policy" {
   source = "../sdv-ssl-policy"
