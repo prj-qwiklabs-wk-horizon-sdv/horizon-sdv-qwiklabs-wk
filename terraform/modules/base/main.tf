@@ -3,6 +3,8 @@ data "google_project" "project" {}
 
 module "sdv_apis" {
   source = "../sdv-apis"
+
+  list_of_apis = var.sdv_list_of_apis
 }
 
 module "sdv_secrets" {
@@ -21,7 +23,8 @@ module "sdv_wi" {
 module "sdv_gcs" {
   source = "../sdv-gcs"
 
-  location = var.sdv_location
+  bucket_name = "${data.google_project.project.project_id}-aaos"
+  location    = var.sdv_location
 }
 
 module "sdv_network" {
@@ -86,25 +89,45 @@ module "sdv_artifact_registry" {
   reader_members = var.sdv_artifact_registry_repository_reader_members
 }
 
-module "sdv_ssl_certificate" {
-  source     = "../sdv-ssl-certificate"
+module "sdv_certificate_manager" {
+  source = "../sdv-certificate-manager"
+
+  name       = var.sdv_ssl_certificate_name
+  domain     = var.sdv_ssl_certificate_domain
   depends_on = [module.sdv_apis]
-
-  project = var.sdv_project
-  name    = var.sdv_ssl_certificate_name
-  domain  = var.sdv_ssl_certificate_domain
-
 }
 
-# module "sdv_url_map" {
-#   source     = "../sdv-url-map"
-#   depends_on = [module.sdv_ssl_certificate]
+module "sdv_ssl_policy" {
+  source = "../sdv-ssl-policy"
 
-#   target_https_proxy_name = var.sdv_target_https_proxy_name
-#   url_map_name            = var.sdv_url_map_name
-#   ssl_certificate_name    = var.sdv_ssl_certificate_name
-#   domain                  = var.sdv_ssl_certificate_domain
-# }
+  name            = "gke-ssl-policy"
+  min_tls_version = "TLS_1_2"
+  profile         = "RESTRICTED"
+}
+
+module "sdv_gcs_scripts" {
+  source = "../sdv-gcs"
+
+  bucket_name = "${data.google_project.project.project_id}-scripts"
+  location    = var.sdv_location
+}
+
+module "sdv_copy_to_bastion_host" {
+  source = "../sdv-copy-to-bastion-host"
+
+  bastion_host            = var.sdv_bastion_host_name
+  file                    = "../../bash-scripts/horizon-stage-01.sh"
+  destination_path        = "~/bash-scripts/horizon-stage-01.sh"
+  zone                    = var.sdv_zone
+  location                = var.sdv_location
+  bucket_name             = "${data.google_project.project.project_id}-scripts"
+  bucket_destination_path = "bash-scripts/horizon-stage-01.sh"
+
+  depends_on = [
+    module.sdv_bastion_host,
+    module.sdv_gcs_scripts
+  ]
+}
 
 module "sdv_bash_on_bastion_host" {
   source = "../sdv-bash-on-bastion-host"
@@ -116,43 +139,6 @@ module "sdv_bash_on_bastion_host" {
   depends_on = [
     module.sdv_bastion_host,
     module.sdv_gke_cluster,
+    module.sdv_copy_to_bastion_host,
   ]
 }
-
-module "sdv_cuttlefish_image_template" {
-  source = "../sdv-custom-image"
-
-  image_name            = "cuttlefish-image-template"
-  compute_instance_name = "cuttlefish-image-template-ci"
-  machine_type          = "n1-standard-1"
-  zone                  = var.sdv_zone
-  base_image            = "projects/ubuntu-os-cloud/global/images/family/ubuntu-2004-lts"
-  network               = var.sdv_network
-  subnetwork            = var.sdv_subnetwork
-  snapshot_name         = "cuttlefish-image-template-snapshot"
-  storage_locations     = ["europe-west1"]
-  custom_image_family   = "ubuntu-with-gcloud"
-
-  metadata_startup_script = <<-EOT
-    #!/bin/bash
-    echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
-    curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key --keyring /usr/share/keyrings/cloud.google.gpg add -
-    sudo apt-get update && sudo apt-get install google-cloud-sdk -y
-    # TODO: Install Cuttlefish
-  EOT
-
-
-}
-
-#
-# Can create it only after deploy keycloack
-#
-# module "sdv_apis_services" {
-#   source     = "../sdv-apis-services"
-#   depends_on = [module.sdv_apis]
-
-#   project                  = var.sdv_project
-#   auth_config_location     = var.sdv_location
-#   auth_config_display_name = var.sdv_auth_config_display_name
-#   auth_config_endpoint_uri = var.sdv_auth_config_endpoint_uri
-# }

@@ -80,7 +80,7 @@ jobs:
 
   get-phase:
     name: Determine if it's plan or apply
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     outputs:
       phase: ${{ steps.get-env.outputs.phase }}
     steps:

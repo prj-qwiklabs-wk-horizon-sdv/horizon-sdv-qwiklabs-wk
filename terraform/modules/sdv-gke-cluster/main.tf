@@ -58,11 +58,6 @@ resource "google_container_cluster" "sdv_cluster" {
     autoscaling_profile = "OPTIMIZE_UTILIZATION"
   }
 
-  user_managed_keys_config {
-    service_account_signing_keys      = []
-    service_account_verification_keys = []
-  }
-
 }
 
 

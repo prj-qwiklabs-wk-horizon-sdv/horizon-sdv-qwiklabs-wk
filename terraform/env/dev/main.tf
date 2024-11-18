@@ -1,5 +1,5 @@
 
-# workflow build 131
+# workflow build 141
 
 locals {
   sdv_default_computer_sa = "268541173342-compute@developer.gserviceaccount.com"
@@ -8,6 +8,7 @@ locals {
 module "base" {
   source = "../../modules/base"
 
+  # The project is used by provider.tf to define the GCP project
   sdv_project  = "sdva-2108202401"
   sdv_location = "europe-west1"
   sdv_region   = "europe-west1"
@@ -17,6 +18,15 @@ module "base" {
   sdv_subnetwork = "sdv-subnet"
 
   sdv_default_computer_sa = local.sdv_default_computer_sa
+
+  sdv_list_of_apis = toset([
+    "container.googleapis.com",
+    "iap.googleapis.com",
+    "certificatemanager.googleapis.com",
+    "integrations.googleapis.com",
+    "secretmanager.googleapis.com",
+    "file.googleapis.com",
+  ])
 
   sdv_cluster_name                   = "sdv-cluster"
   sdv_cluster_node_pool_name         = "sdv-node-pool"
@@ -33,13 +43,6 @@ module "base" {
     "user:marta.kania@accenture.com",
     "user:lukasz.domke@accenture.com",
   ]
-  sdv_bastion_host_bash_command = <<EOT
-    gcloud info
-    sudo apt update && sudo apt upgrade -y
-    touch ~/terraform-log.log
-    echo $(date) >> ~/terraform-log.log
-    cat ~/terraform-log.log
-  EOT
 
   sdv_network_egress_router_name = "sdv-egress-internet"
 
@@ -54,8 +57,8 @@ module "base" {
     "serviceAccount:${local.sdv_default_computer_sa}",
   ]
 
-  sdv_ssl_certificate_domain = "horizon-sdv-dev.scpmtk.com"
-  sdv_ssl_certificate_name   = "horizon-sdv-dev"
+  sdv_ssl_certificate_name   = "horizon-sdv"
+  sdv_ssl_certificate_domain = "dev.horizon-sdv.scpmtk.com"
 
   # sdv-apis-services
   sdv_auth_config_display_name = "horizon-sdv-dev-oauth-2"
@@ -241,4 +244,12 @@ module "base" {
     }
 
   }
+
+  sdv_bastion_host_bash_command = <<EOT
+    cd bash-scripts
+    chmod +x horizon-stage-01.sh
+    ./horizon-stage-01.sh
+    cd -
+  EOT
+
 }

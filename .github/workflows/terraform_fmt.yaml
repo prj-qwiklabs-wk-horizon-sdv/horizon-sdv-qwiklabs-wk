@@ -19,7 +19,7 @@ on:
 jobs:
   terraformfmt:
     name: terraform fmt
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     steps:
 
     - name: Checkout source code

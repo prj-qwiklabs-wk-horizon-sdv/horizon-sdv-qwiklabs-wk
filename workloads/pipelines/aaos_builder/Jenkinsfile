@@ -118,7 +118,7 @@ pipeline {
     string(name: 'AAOS_ARTIFACT_ROOT_NAME', defaultValue: 'aaos_builds',
            description: 'Artifact storage root name')
 
-    // From trigger but also manual
+    // From manual upstream open review change.
     string(name: 'GERRIT_PROJECT', defaultValue: '',
            description: 'Gerrit Project with open review.')
     string(name: 'GERRIT_CHANGE_NUMBER', defaultValue: '',
@@ -133,9 +133,13 @@ pipeline {
 
   stages {
     stage ('Initialise') {
+      when { expression { env.BUILD_NUMBER.toInteger() > 1 } }
       steps {
         container(name: 'builder') {
           sh '''
+            AAOS_GERRIT_MANIFEST_URL="${AAOS_GERRIT_MANIFEST_URL}" \
+            AAOS_REVISION="${AAOS_REVISION}" \
+            AAOS_RPI_REVISION="${AAOS_RPI_REVISION}" \
             AAOS_LUNCH_TARGET="${AAOS_LUNCH_TARGET}" \
             AAOS_CLEAN_BUILD=${AAOS_CLEAN_BUILD} \
             ./workloads/pipelines/aaos_builder/aaos_initialise.sh
@@ -145,6 +149,7 @@ pipeline {
     }
 
     stage ('Build'){
+      when { expression { env.BUILD_NUMBER.toInteger() > 1 } }
       steps {
         container(name: 'builder') {
           sh '''
@@ -157,17 +162,19 @@ pipeline {
     }
 
     stage ('Storage'){
+      when { expression { env.BUILD_NUMBER.toInteger() > 1 } }
       steps {
         container(name: 'builder') {
           sh '''
             AAOS_LUNCH_TARGET="${AAOS_LUNCH_TARGET}" \
             AAOS_CLEAN_BUILD=0 \
             AAOS_ARTIFACT_ROOT_NAME="${AAOS_ARTIFACT_ROOT_NAME}" \
+            AAOS_ARTIFACT_STORAGE_SOLUTION="${AAOS_ARTIFACT_STORAGE_SOLUTION}" \
+            CLOUD_REGION="${CLOUD_REGION}" \
             ./workloads/pipelines/aaos_builder/aaos_storage.sh
           '''
         }
       }
     }
-
   }
 }
