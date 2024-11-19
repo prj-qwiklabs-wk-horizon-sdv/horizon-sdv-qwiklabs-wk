@@ -1,6 +1,16 @@
 
 # ACN Horizon SDV
 
+# Project directories and files
+
+Tje project is implemented in the following directories:
+
++ .github/workflows
++ terraform
++ workloads
+
+
+
 ## Feature branch name
 
 The format of a feature branch name should have the following format:
@@ -10,10 +20,6 @@ The format of a feature branch name should have the following format:
 Sample of a feature branch created by Edson for the Jira ticket TAA-001:
 
 + /feature/eds/taa-001
-
-## Deploy and test on dev
-
-When a feature is pushed the plan is executed, if no problem is found the apply is executed using the env/dev/main.tf file
 
 
 ## Release a new version
