@@ -1,3 +1,8 @@
 # SDV Bastion host
 
-Create the bastion host to use for the kubectl commands.
+This module creates a bastion host instance.
+
+# Terraform doc
+
+[Terraform-doc](terraform-doc.md)
+
