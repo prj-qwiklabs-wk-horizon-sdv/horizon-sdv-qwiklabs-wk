@@ -104,9 +104,6 @@ pipeline {
            GCS_BUCKET will store to cloud bucket storage
            Empty will result in nothing stored.''')
 
-    string(name: 'AAOS_ARTIFACT_ROOT_NAME', defaultValue: 'cts_builds',
-           description: 'Artifact storage root name')
-
     // From manual upstream open review change.
     string(name: 'GERRIT_PROJECT', defaultValue: '',
            description: 'Gerrit Project with open review.')
@@ -159,7 +156,7 @@ pipeline {
             AAOS_LUNCH_TARGET="${AAOS_LUNCH_TARGET}" \
             AAOS_BUILD_CTS=1 \
             AAOS_CLEAN_BUILD=0 \
-            AAOS_ARTIFACT_ROOT_NAME="${AAOS_ARTIFACT_ROOT_NAME}" \
+            AAOS_ARTIFACT_ROOT_NAME="${ANDROID_BUILD_BUCKET_ROOT_NAME}" \
             AAOS_ARTIFACT_STORAGE_SOLUTION="${AAOS_ARTIFACT_STORAGE_SOLUTION}" \
             CLOUD_REGION="${CLOUD_REGION}" \
             ./workloads/android/pipelines/aaos_builder/aaos_storage.sh
