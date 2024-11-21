@@ -158,3 +158,21 @@ module "sdv_sa_key_secret_gce_creds" {
     }
   ]
 }
+
+# assign role clound storage viewer to users
+# to assign write permission create another module with role = roles/storage.objectCreator
+module "sdv_iam_gcs_viewers" {
+  source = "../sdv-iam"
+
+  member = [
+    "user:wojciech.kobryn@accenture.com",
+    "user:lukasz.domke@accenture.com",
+    "user:edson.schlei@accenture.com",
+    "user:marta.kania@accenture.com",
+    "user:dave.m.smith@accenture.com",
+
+  ]
+
+  role = "roles/storage.objectViewer"
+
+}
