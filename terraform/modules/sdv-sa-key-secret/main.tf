@@ -24,10 +24,10 @@ resource "google_secret_manager_secret_version" "sa_key_secret_version" {
 }
 
 resource "google_secret_manager_secret_iam_member" "member" {
-  for_each ={ for idx, access in var.gke_access : idx => access }
-  project = google_secret_manager_secret.sa_key_secret.project
+  for_each  = { for idx, access in var.gke_access : idx => access }
+  project   = google_secret_manager_secret.sa_key_secret.project
   secret_id = google_secret_manager_secret.sa_key_secret.secret_id
-  role = "roles/secretmanager.secretAccessor"
+  role      = "roles/secretmanager.secretAccessor"
   ## ns/jenkins/jenkins-sa.
   member = "principal://iam.googleapis.com/projects/${data.google_project.project.number}/locations/global/workloadIdentityPools/${data.google_project.project.project_id}.svc.id.goog/subject/ns/${each.value.ns}/sa/${each.value.sa}"
 }
