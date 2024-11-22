@@ -40,7 +40,7 @@ sudo usermod -aG docker $USER
 echo ""
 echo "Docker configurations"
 gcloud auth configure-docker europe-west1-docker.pkg.dev --quiet
-cat .docker/config.json
+cat ~/.docker/config.json
 
 echo ""
 echo "Test the pull command with the current user."
