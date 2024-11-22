@@ -34,20 +34,23 @@ kubectl get nodes
 
 echo ""
 echo "Adding the current user to the docker group"
+echo "sudo usermod -aG docker $USER"
 sudo usermod -aG docker $USER
 
 echo ""
 echo "Docker configurations"
 gcloud auth configure-docker europe-west1-docker.pkg.dev --quiet
+cat .docker/config.json
 
 echo ""
 echo "Test the pull command with the current user."
-docker pull \
-    europe-west1-docker.pkg.dev/sdva-2108202401/horizon-sdv-dev/aaos_builder:latest
+docker pull europe-west1-docker.pkg.dev/sdva-2108202401/horizon-sdv-dev/aaos_builder:latest
 
 echo ""
 echo "Downloading github acn-horizon-sdv project"
-echo $GITHUB_ACCESS_TOKEN
+echo -n $GITHUB_ACCESS_TOKEN  | base64
 
 echo git config --global url."https://x-access-token:${GITHUB_ACCESS_TOKEN}@github.com".insteadOf https://github.com
+git config --global url."https://x-access-token:${GITHUB_ACCESS_TOKEN}@github.com".insteadOf https://github.com
+git clone git@github.com:AGBG-ASG/acn-horizon-sdv.git
 
