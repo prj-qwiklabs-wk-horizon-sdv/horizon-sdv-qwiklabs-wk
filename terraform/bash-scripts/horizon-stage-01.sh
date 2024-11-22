@@ -47,10 +47,15 @@ echo "Test the pull command with the current user."
 docker pull europe-west1-docker.pkg.dev/sdva-2108202401/horizon-sdv-dev/aaos_builder:latest
 
 echo ""
-echo "Downloading github acn-horizon-sdv project"
-echo -n $GITHUB_ACCESS_TOKEN  | base64
+echo "Removing old project"
+rm -rfv ~/acn-horizon-sdv
 
-echo git config --global url."https://x-access-token:${GITHUB_ACCESS_TOKEN}@github.com".insteadOf https://github.com
-git config --global url."https://x-access-token:${GITHUB_ACCESS_TOKEN}@github.com".insteadOf https://github.com
-git clone git@github.com:AGBG-ASG/acn-horizon-sdv.git
+echo ""
+echo "Cloning github acn-horizon-sdv project"
+git clone https://x-access-token:${GITHUB_ACCESS_TOKEN}@github.com/AGBG-ASG/acn-horizon-sdv.git ~/acn-horizon-sdv
+
+echo ""
+echo "List current branch and remote"
+cd ~/acn-horizon-sdv
+git branch -vva
 
