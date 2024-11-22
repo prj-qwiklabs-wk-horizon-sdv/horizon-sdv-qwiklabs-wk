@@ -124,6 +124,23 @@ module "base" {
         "roles/iam.serviceAccountTokenCreator",
       ])
     }
+     sa4 = {
+      account_id   = "gke-mtk-connect-sa"
+      display_name = "mtk-connect SA"
+      description  = "mtk-connect/mtk-connect-sa in GKE cluster makes use of this account through WI"
+
+      gke_sas = [
+        {
+          gke_ns = "mtk-connect"
+          gke_sa = "mtk-connect-sa"
+        }
+      ]
+
+      roles = toset([
+        "roles/secretmanager.secretAccessor",
+        "roles/iam.serviceAccountTokenCreator",
+      ])
+    }
   }
 
   #
