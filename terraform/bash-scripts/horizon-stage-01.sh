@@ -48,7 +48,7 @@ docker pull europe-west1-docker.pkg.dev/sdva-2108202401/horizon-sdv-dev/aaos_bui
 
 echo ""
 echo "Removing old project"
-rm -rfv ~/acn-horizon-sdv
+rm -rf ~/acn-horizon-sdv
 
 echo ""
 echo "Cloning github acn-horizon-sdv project"
