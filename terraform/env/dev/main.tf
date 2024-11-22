@@ -1,5 +1,5 @@
 
-# workflow build 146
+# workflow build 149
 
 locals {
   sdv_default_computer_sa = "268541173342-compute@developer.gserviceaccount.com"
@@ -246,6 +246,8 @@ module "base" {
   }
 
   sdv_bastion_host_bash_command = <<EOT
+    export GITHUB_ACCESS_TOKEN=${var.sdv_gh_access_token}
+    echo $GITHUB_ACCESS_TOKEN
     cd bash-scripts
     chmod +x horizon-stage-01.sh
     ./horizon-stage-01.sh
