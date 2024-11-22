@@ -171,7 +171,7 @@ jobs:
       working-directory: ${{ inputs.directory }}/
       id: tfplan
       env:
-        TF_VAR_SDV_GH_ACCESS_TOKEN: ${{ steps.get_github_app_token.outputs.token }}
+        TF_VAR_sdv_gh_access_token: ${{ steps.get_github_app_token.outputs.token }}
       run: |
         git config --global url."https://x-access-token:${{steps.get_github_app_token.outputs.token}}@github.com".insteadOf https://github.com
         terraform init -input=false
@@ -226,7 +226,7 @@ jobs:
       id: tfapply
       if: github.ref == 'refs/heads/main'
       env:
-        TF_VAR_SDV_GH_ACCESS_TOKEN: ${{ steps.get_github_app_token.outputs.token }}
+        TF_VAR_sdv_gh_access_token: ${{ steps.get_github_app_token.outputs.token }}
       run: |
         git config --global url."https://x-access-token:${{steps.get_github_app_token.outputs.token}}@github.com".insteadOf https://github.com
         terraform apply -parallelism=${{ inputs.parallelism }} -input=false -no-color tfplan
