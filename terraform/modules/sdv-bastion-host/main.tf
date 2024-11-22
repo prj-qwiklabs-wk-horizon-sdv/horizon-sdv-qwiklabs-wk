@@ -85,7 +85,7 @@ resource "google_project_iam_member" "storage_object_viewer" {
 }
 
 resource "google_project_iam_member" "artifact_registry_reader" {
-  project = "your-project-id"
+  project = data.google_project.project.project_id
   role    = "roles/artifactregistry.reader"
   member  = "serviceAccount:${google_service_account.vm_sa.email}"
 }
