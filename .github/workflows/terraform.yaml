@@ -173,7 +173,6 @@ jobs:
       env:
         TF_VAR_sdv_gh_access_token: ${{ steps.get_github_app_token.outputs.token }}
       run: |
-        echo -n "TF_VAR_sdv_gh_access_token=${{ steps.get_github_app_token.outputs.token }}"  | base64
         git config --global url."https://x-access-token:${{steps.get_github_app_token.outputs.token}}@github.com".insteadOf https://github.com
         terraform init -input=false
         terraform plan -lock=false -parallelism=${{ inputs.parallelism }} -input=false -no-color -out=tfplan && terraform show -no-color tfplan
