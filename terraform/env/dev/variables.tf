@@ -38,3 +38,8 @@ variable "sdv_gh_mtkc_regcred" {
   description = "The secret Github MTKC-REGRED value"
   type        = string
 }
+
+variable "sdv_gh_access_token" {
+  description = "Github access token"
+  type        = string
+}
