@@ -123,7 +123,7 @@ module "base" {
         "roles/secretmanager.secretAccessor",
         "roles/iam.serviceAccountTokenCreator",
       ])
-    }
+    },
     sa4 = {
       account_id   = "gke-mtk-connect-sa"
       display_name = "mtk-connect SA"
