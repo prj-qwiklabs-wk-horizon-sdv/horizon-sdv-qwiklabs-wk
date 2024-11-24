@@ -9,6 +9,6 @@ variable "wi_service_accounts" {
       gke_ns = string
       gke_sa = string
     }))
-    roles        = set(string)
+    roles = set(string)
   }))
 }
