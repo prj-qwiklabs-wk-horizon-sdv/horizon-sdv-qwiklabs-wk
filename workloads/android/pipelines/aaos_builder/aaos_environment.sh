@@ -105,6 +105,7 @@ AAOS_CACHE_DIRECTORY=${AAOS_CACHE_DIRECTORY:-/aaos-cache}
 if [ -z "${WORKSPACE}" ]; then
     WORKSPACE="${HOME}"/aaos_builds
     AAOS_CACHE_DIRECTORY="${WORKSPACE}"
+    EMPTY_DIR="${HOME}"/empty_dir
 else
     # Ensure PVC has correct privileges.
     # Note: builder Dockerfile defines USER name
@@ -116,12 +117,18 @@ else
         # Avoid RPI builds affecting standard android repos.
         WORKSPACE=/"${AAOS_CACHE_DIRECTORY}"/aaos_builds_rpi
     fi
+    EMPTY_DIR="${AAOS_CACHE_DIRECTORY}"/empty_dir
 fi
 
 # Clean build - remove workspace.
 if [[ "${AAOS_CLEAN_BUILD}" -eq 1 ]]; then
     echo "Clean workspace ${WORKSPACE} ..."
-    rm -rf "${WORKSPACE}" > /dev/null 2>&1
+    mkdir -p "${EMPTY_DIR}"
+    # Faster than rm -rf
+    rsync -aq --delete "${EMPTY_DIR}"/ "${WORKSPACE}"/
+    # Final, remove directories.
+    rm -rf "${EMPTY_DIR}"
+    rm -rf "${WORKSPACE}"
     echo "Cleaned workspace ${WORKSPACE}."
 fi
 
