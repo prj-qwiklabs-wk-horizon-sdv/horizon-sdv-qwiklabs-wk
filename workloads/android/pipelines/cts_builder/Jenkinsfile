@@ -149,7 +149,12 @@ pipeline {
     }
 
     stage ('Storage'){
-      when { expression { env.BUILD_NUMBER.toInteger() > 1 } }
+      when {
+        allOf {
+          expression { env.BUILD_NUMBER.toInteger() > 1 }
+          expression { env.AAOS_ARTIFACT_STORAGE_SOLUTION != '' }
+        }
+      }
       steps {
         container(name: 'builder') {
           sh '''

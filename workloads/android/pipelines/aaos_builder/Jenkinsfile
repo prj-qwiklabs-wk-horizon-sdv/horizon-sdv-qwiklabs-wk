@@ -107,8 +107,14 @@ pipeline {
            android-15.0.0.
            Pick the correct value that correlates to the AAOS_REVISION''')
 
+    choice(name: 'ANDROID_VERSION',
+           choices: ['14', '15'],
+           description: '''Android Version for AVD image builds.
+           Used to derive API level, eg. 14 is API Level 34, 15 is API Level 35''')
+
     booleanParam(name: 'AAOS_CLEAN_BUILD', defaultValue: false,
-                 description: 'Clean the build workspace.')
+                 description: '''Clean the build workspace.
+                 Warning: Only use when necessary.''')
 
     string(name: 'AAOS_ARTIFACT_STORAGE_SOLUTION', defaultValue: 'GCS_BUCKET',
            description: '''Android Artifact Storage:
@@ -159,10 +165,19 @@ pipeline {
     }
 
     stage ('Storage'){
-      when { expression { env.BUILD_NUMBER.toInteger() > 1 } }
+      when {
+        allOf {
+          expression { env.BUILD_NUMBER.toInteger() > 1 }
+          expression { env.AAOS_ARTIFACT_STORAGE_SOLUTION != '' }
+        }
+      }
       steps {
         container(name: 'builder') {
           sh '''
+            AAOS_LUNCH_TARGET="${AAOS_LUNCH_TARGET}" \
+            AAOS_REVISION="${AAOS_REVISION}" \
+            ./workloads/android/pipelines/aaos_builder/aaos_avd_sdk.sh || true
+
             AAOS_LUNCH_TARGET="${AAOS_LUNCH_TARGET}" \
             AAOS_CLEAN_BUILD=0 \
             AAOS_ARTIFACT_ROOT_NAME="${ANDROID_BUILD_BUCKET_ROOT_NAME}" \

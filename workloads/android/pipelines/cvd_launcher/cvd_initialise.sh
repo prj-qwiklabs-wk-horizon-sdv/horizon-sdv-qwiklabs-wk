@@ -53,16 +53,13 @@ function cuttlefish_install_additional_packages() {
 
 # Install CTS test harness on instance to avoid lengthy CTS runs.
 function cuttlefish_install_cts() {
-    local -r r15="https://dl.google.com/dl/android/cts/android-cts-15_r1-linux_x86-x86.zip"
-    local -r r14="https://dl.google.com/dl/android/cts/android-cts-14_r5-linux_x86-x86.zip"
-
     su -l "${jenkins_user}" -c "mkdir -p android-cts_r15"
-    su -l "${jenkins_user}" -c "wget -nv ${r15} -O android-cts_r15.zip"
+    su -l "${jenkins_user}" -c "wget -nv ${CTS_ANDROID_15_URL} -O android-cts_r15.zip"
     su -l "${jenkins_user}" -c "unzip android-cts_r15.zip -d android-cts_r15"
     su -l "${jenkins_user}" -c "rm -f android-cts_r15.zip"
 
     su -l "${jenkins_user}" -c "mkdir -p android-cts_r14"
-    su -l "${jenkins_user}" -c "wget -nv ${r14} -O android-cts_r14.zip"
+    su -l "${jenkins_user}" -c "wget -nv ${CTS_ANDROID_14_URL} -O android-cts_r14.zip"
     su -l "${jenkins_user}" -c "unzip android-cts_r14.zip -d android-cts_r14"
     su -l "${jenkins_user}" -c "rm -f android-cts_r14.zip"
     # Force sync to ensure disk is updated.

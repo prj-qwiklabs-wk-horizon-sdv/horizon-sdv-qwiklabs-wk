@@ -49,7 +49,10 @@ JOB_NAME=${JOB_NAME:-aaos}
 # minimal.
 unset BUILD_NUMBER
 # BUILD_HOSTNAME is defined by Android from hostname. Jenkinsfile now
-# defines a fixed hostname for the agent.
+# defines a fixed hostname for the agent rather than using default
+# agent hostname which changes per build and thus forcing Android
+# rebuild. See:
+# hostname: jenkins-aaos-build-pod
 
 # AAOS revisions: qpr1 for AVD etc, r22 for RPi HW.
 AAOS_DEFAULT_REVISION=${AAOS_DEFAULT_REVISION:-android14-qpr1-automotiveos-release}
@@ -72,12 +75,36 @@ if [ -z "${AAOS_LUNCH_TARGET}" ]; then
     exit 255
 fi
 
+# Android Version
+ANDROID_VERSION=${ANDROID_VERSION:-14}
+case "${ANDROID_VERSION}" in
+    15)
+        ANDROID_API_LEVEL=35
+        ;;
+    *)
+        # Deliberate fallthrough, 14 thus API level 34 minimum.
+        ANDROID_API_LEVEL=34
+        ;;
+esac
+
+# Adjust stat command for platform.
+if [ "$(uname -s)" = "Darwin" ]; then
+    STAT_CMD="stat -f%z "
+else
+    STAT_CMD="stat -c%s "
+fi
+
+# Android SDK addon file.
+AAOS_SDK_ADDON_FILE=${AAOS_SDK_ADDON_FILE:-horizon-sdv-aaos-sys-img2-1.xml}
+AAOS_SDK_SYSTEM_IMAGE_PREFIX=${AAOS_SDK_SYSTEM_IMAGE_PREFIX:-sdk-repo-linux-system-images}
+
 # Cache directory
 AAOS_CACHE_DIRECTORY=${AAOS_CACHE_DIRECTORY:-/aaos-cache}
 
 # AAOS workspace and artifact storage paths
 if [ -z "${WORKSPACE}" ]; then
     WORKSPACE="${HOME}"/aaos_builds
+    AAOS_CACHE_DIRECTORY="${WORKSPACE}"
 else
     # Ensure PVC has correct privileges.
     # Note: builder Dockerfile defines USER name
@@ -141,7 +168,8 @@ case "${AAOS_LUNCH_TARGET}" in
         AAOS_MAKE_CMDLINE="m && m emu_img_zip && m sbom"
         AAOS_ARTIFACT_LIST=(
             "out/target/product/emulator_car64_${AAOS_ARCH}/sbom.spdx.json"
-            "out/target/product/emulator_car64_${AAOS_ARCH}/sdk-repo-linux-system-images-${IMAGE_EXT}.zip"
+            "out/target/product/emulator_car64_${AAOS_ARCH}/${AAOS_SDK_SYSTEM_IMAGE_PREFIX}-${IMAGE_EXT}.zip"
+            "out/target/product/emulator_car64_${AAOS_ARCH}/${AAOS_SDK_ADDON_FILE}"
         )
         ;;
     aosp_cf*)
@@ -191,6 +219,9 @@ Environment:
     AAOS_RPI_REVISION=${AAOS_RPI_REVISION}
     AAOS_ARCH=${AAOS_ARCH}
     AAOS_MAKE_CMDLINE=${AAOS_MAKE_CMDLINE}
+
+    ANDROID_VERSION=${ANDROID_VERSION}
+    ANDROID_API_LEVEL=${ANDROID_API_LEVEL}
 
     hostname=$(hostname)
 

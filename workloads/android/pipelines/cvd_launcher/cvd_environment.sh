@@ -31,6 +31,9 @@ CUTTLEFISH_MAX_BOOT_TIME=${CUTTLEFISH_MAX_BOOT_TIME:-180}
 # Time (minutes) to wait for Virtual Device to boot.
 CUTTLEFISH_KEEP_ALIVE_TIME=${CUTTLEFISH_KEEP_ALIVE_TIME:-20}
 
+# Android CTS test harness URLs, installed on host.
+CTS_ANDROID_15_URL="https://dl.google.com/dl/android/cts/android-cts-15_r1-linux_x86-x86.zip"
+CTS_ANDROID_14_URL="https://dl.google.com/dl/android/cts/android-cts-14_r5-linux_x86-x86.zip"
 # Store logs in Bucket.
 CUTTLEFISH_ARTIFACT_REGION=${CLOUD_REGION:--europe-west1}
 CUTTLEFISH_ARTIFACT_ROOT_NAME=cuttlefish_logs
@@ -60,6 +63,10 @@ Environment:
 
     CUTTLEFISH_MAX_BOOT_TIME=${CUTTLEFISH_MAX_BOOT_TIME}
     CUTTLEFISH_KEEP_ALIVE_TIME=${CUTTLEFISH_KEEP_ALIVE_TIME}
+
+    CTS URLs (download and install on host):
+    CTS_ANDROID_15_URL=${CTS_ANDROID_15_URL}
+    CTS_ANDROID_14_URL=${CTS_ANDROID_14_URL}
 
     ARCHITECTURE=${ARCHITECTURE}
 

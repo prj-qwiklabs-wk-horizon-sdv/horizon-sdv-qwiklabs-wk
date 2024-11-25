@@ -53,19 +53,11 @@ function gcs_bucket() {
     local -r destination="${bucket_name}/${BUCKET_FOLDER}/${AAOS_BUILD_NUMBER}/"
     local -r cloud_url="https://storage.cloud.google.com"
 
-    # Check if the bucket exists
-    # If not, create it
-    if ! /usr/bin/gsutil ls -b "${bucket_name}"
-    then
-        echo "Creating bucket ${bucket_name}"
-        /usr/bin/gsutil mb -l "${AAOS_ARTIFACT_REGION}" "${bucket_name}"
-    fi
-
     # Copy artifacts to Google Cloud Storage bucket
     echo "Storing artifacts to bucket ${bucket_name}"
     for artifact in "${AAOS_ARTIFACT_LIST[@]}"; do
         # Copy the artifact to the bucket
-        /usr/bin/gsutil cp "${artifact}" "${destination}"
+        /usr/bin/gsutil cp "${artifact}" "${destination}" || true
         echo "Copied ${artifact} to ${destination}"
     done
 
