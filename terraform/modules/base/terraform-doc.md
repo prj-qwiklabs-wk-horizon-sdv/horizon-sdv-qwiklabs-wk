@@ -25,6 +25,7 @@
 | <a name="module_sdv_gcs"></a> [sdv\_gcs](#module\_sdv\_gcs) | ../sdv-gcs | n/a |
 | <a name="module_sdv_gcs_scripts"></a> [sdv\_gcs\_scripts](#module\_sdv\_gcs\_scripts) | ../sdv-gcs | n/a |
 | <a name="module_sdv_gke_cluster"></a> [sdv\_gke\_cluster](#module\_sdv\_gke\_cluster) | ../sdv-gke-cluster | n/a |
+| <a name="module_sdv_iam_gcs_viewers"></a> [sdv\_iam\_gcs\_viewers](#module\_sdv\_iam\_gcs\_viewers) | ../sdv-iam | n/a |
 | <a name="module_sdv_network"></a> [sdv\_network](#module\_sdv\_network) | ../sdv-network | n/a |
 | <a name="module_sdv_sa_key_secret_gce_creds"></a> [sdv\_sa\_key\_secret\_gce\_creds](#module\_sdv\_sa\_key\_secret\_gce\_creds) | ../sdv-sa-key-secret | n/a |
 | <a name="module_sdv_secrets"></a> [sdv\_secrets](#module\_sdv\_secrets) | ../sdv-secrets | n/a |
