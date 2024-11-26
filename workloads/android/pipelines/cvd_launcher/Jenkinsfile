@@ -24,7 +24,7 @@ pipeline {
            description: '''Android Cuttlefish VM instance based on Android Cuttlefish version.''')
 
     string(name: 'CUTTLEFISH_DOWNLOAD_URL',
-           defaultValue: 'gs://aaos_builds/AAOS_Builder/380',
+           defaultValue: 'gs://sdva-2108202401-aaos/AAOS_Builder/2',
            description: '''Storage URL for Cuttlefish Virtual Device images and CVD host packages.
            eg aosp_cf_xxx build artifacts.''')
 
