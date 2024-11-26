@@ -49,7 +49,7 @@ pipeline {
             command:
             - sleep
             args:
-            - 99d
+            - 4h
             resources:
               limits:
                 cpu: 96000m
