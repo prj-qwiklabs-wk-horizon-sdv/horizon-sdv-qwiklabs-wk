@@ -25,7 +25,7 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_wi_service_accounts"></a> [wi\_service\_accounts](#input\_wi\_service\_accounts) | A map of service accounts and their configurations | <pre>map(object({<br/>    account_id   = string<br/>    display_name = string<br/>    description  = string<br/>    gke_sas = list(object({<br/>      gke_ns = string<br/>      gke_sa = string<br/>    }))<br/>    roles        = set(string)<br/>  }))</pre> | n/a | yes |
+| <a name="input_wi_service_accounts"></a> [wi\_service\_accounts](#input\_wi\_service\_accounts) | A map of service accounts and their configurations | <pre>map(object({<br/>    account_id   = string<br/>    display_name = string<br/>    description  = string<br/>    gke_sas = list(object({<br/>      gke_ns = string<br/>      gke_sa = string<br/>    }))<br/>    roles = set(string)<br/>  }))</pre> | n/a | yes |
 
 ## Outputs
 
