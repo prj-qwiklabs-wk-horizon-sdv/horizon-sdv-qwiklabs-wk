@@ -54,9 +54,9 @@ unset BUILD_NUMBER
 # rebuild. See:
 # hostname: jenkins-aaos-build-pod
 
-# AAOS revisions: qpr1 for AVD etc, r22 for RPi HW.
+# AAOS revisions: qpr1 for AVD etc, Android 15 for RPi HW.
 AAOS_DEFAULT_REVISION=${AAOS_DEFAULT_REVISION:-android14-qpr1-automotiveos-release}
-AAOS_RPI_REVISION=${AAOS_RPI_REVISION:-android-14.0.0_r22}
+AAOS_RPI_REVISION=${AAOS_RPI_REVISION:-android-15.0}
 
 # Android branch/tag:
 AAOS_REVISION=${AAOS_REVISION:-${AAOS_DEFAULT_REVISION}}

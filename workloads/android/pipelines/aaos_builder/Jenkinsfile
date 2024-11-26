@@ -87,7 +87,7 @@ pipeline {
            defaultValue: 'android14-qpr1-automotiveos-release',
            description: '''Android revision tag/branch name, e.g:
            android14-qpr1-automotiveos-release
-           android-14.0.0_r22''')
+           android-15.0.0_r4''')
 
     string(name: 'AAOS_LUNCH_TARGET',
            defaultValue: 'sdk_car_x86_64-userdebug',
@@ -96,15 +96,15 @@ pipeline {
            sdk_car_arm64-userdebug
            aosp_cf_x86_64_auto-userdebug
            aosp_cf_arm64_auto-userdebug
-           aosp_rpi4_car-userdebug
-           aosp_rpi5_car-userdebug''')
+           aosp_rpi4_car-ap3a-userdebug
+           aosp_rpi5_car-ap3a-userdebug''')
 
     string(name: 'AAOS_RPI_REVISION',
-           defaultValue: 'android-14.0.0_r22',
+           defaultValue: 'android-15.0',
            description: '''Vanilla RPi tag/branch name.
            Only applicable for aosp_rpiX_car targets.
            raspberry-vanilla revisions do not always align with Google revisions, eg.
-           android-15.0.0.
+           android-15.0.0_r4.
            Pick the correct value that correlates to the AAOS_REVISION''')
 
     choice(name: 'ANDROID_VERSION',
