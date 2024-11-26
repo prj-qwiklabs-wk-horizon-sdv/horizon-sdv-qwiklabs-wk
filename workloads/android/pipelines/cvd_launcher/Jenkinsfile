@@ -70,7 +70,7 @@ pipeline {
     stage ('MTK Connect to Virtual Devices') {
       when { expression { env.BUILD_NUMBER.toInteger() > 1 } }
       steps {
-        withCredentials([usernamePassword(credentialsId: 'MTK_CONNECT_APIKEY', passwordVariable: 'MTK_CONNECT_PASSWORD', usernameVariable: 'MTK_CONNECT_USERNAME')]) {
+        withCredentials([usernamePassword(credentialsId: 'jenkins-mtk-connect-apikey', passwordVariable: 'MTK_CONNECT_PASSWORD', usernameVariable: 'MTK_CONNECT_USERNAME')]) {
           sh '''
             sudo \
             MTK_CONNECT_DOMAIN=${HORIZON_DOMAIN} \
@@ -98,7 +98,7 @@ pipeline {
 
   post {
     always {
-      withCredentials([usernamePassword(credentialsId: 'MTK_CONNECT_APIKEY', passwordVariable: 'MTK_CONNECT_PASSWORD', usernameVariable: 'MTK_CONNECT_USERNAME')]) {
+      withCredentials([usernamePassword(credentialsId: 'jenkins-mtk-connect-apikey', passwordVariable: 'MTK_CONNECT_PASSWORD', usernameVariable: 'MTK_CONNECT_USERNAME')]) {
         sh '''
           if (( "${BUILD_NUMBER}" > "1" )); then
             sudo \
