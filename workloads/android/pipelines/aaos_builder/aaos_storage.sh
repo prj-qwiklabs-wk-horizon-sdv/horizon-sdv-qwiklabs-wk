@@ -50,7 +50,7 @@ function gcs_bucket() {
     local -r bucket_name="gs://${AAOS_ARTIFACT_ROOT_NAME}"
     # Replace spaces in Jenkins Job Name
     BUCKET_FOLDER="${JOB_NAME// /_}"
-    local -r destination="${bucket_name}/${BUCKET_FOLDER}/${AAOS_BUILD_NUMBER}/"
+    local -r destination="${bucket_name}/${BUCKET_FOLDER}/${AAOS_BUILD_NUMBER}"
     local -r cloud_url="https://storage.cloud.google.com"
 
     # Copy artifacts to Google Cloud Storage bucket
