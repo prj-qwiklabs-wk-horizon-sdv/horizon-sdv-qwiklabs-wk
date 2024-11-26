@@ -26,6 +26,7 @@ module "base" {
     "integrations.googleapis.com",
     "secretmanager.googleapis.com",
     "file.googleapis.com",
+    "cloudresourcemanager.googleapis.com",
   ])
 
   sdv_cluster_name                   = "sdv-cluster"
