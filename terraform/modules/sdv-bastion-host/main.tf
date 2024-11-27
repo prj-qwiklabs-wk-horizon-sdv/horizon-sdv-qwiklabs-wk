@@ -79,19 +79,19 @@ resource "google_project_iam_member" "container_admin_iam_member" {
 }
 
 resource "google_project_iam_member" "storage_object_viewer" {
-  project = data.google_project.project.id
+  project = data.google_project.project.project_id
   role    = "roles/storage.objectViewer"
   member  = "serviceAccount:${google_service_account.vm_sa.email}"
 }
 
 resource "google_project_iam_member" "artifact_registry_writer" {
-  project = data.google_project.project.id
+  project = data.google_project.project.project_id
   role    = "roles/artifactregistry.writer"
   member  = "serviceAccount:${google_service_account.vm_sa.email}"
 }
 
 resource "google_project_iam_member" "artifact_secret_accessor" {
-  project = data.google_project.project.id
+  project = data.google_project.project.project_id
   role    = "roles/secretmanager.secretAccessor"
   member  = "serviceAccount:${google_service_account.vm_sa.email}"
 }
