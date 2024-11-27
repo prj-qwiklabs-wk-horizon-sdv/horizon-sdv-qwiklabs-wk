@@ -1,5 +1,5 @@
 
-# workflow build 156
+# workflow build 160
 
 locals {
   sdv_default_computer_sa = "268541173342-compute@developer.gserviceaccount.com"
@@ -26,6 +26,7 @@ module "base" {
     "integrations.googleapis.com",
     "secretmanager.googleapis.com",
     "file.googleapis.com",
+    "cloudresourcemanager.googleapis.com",
   ])
 
   sdv_cluster_name                   = "sdv-cluster"
