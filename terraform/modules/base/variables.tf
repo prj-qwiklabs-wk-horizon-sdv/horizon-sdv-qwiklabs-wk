@@ -28,7 +28,6 @@ variable "sdv_zone" {
   type        = string
 }
 
-
 variable "sdv_default_computer_sa" {
   description = "The default Computer SA"
   type        = string
