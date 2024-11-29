@@ -176,3 +176,14 @@ module "sdv_iam_gcs_viewers" {
   role = "roles/storage.objectViewer"
 
 }
+
+module "sdv_iam_gcs_users" {
+  source = "../sdv-iam"
+
+  member = [
+    "serviceAccount:${var.sdv_default_computer_sa}"
+  ]
+
+  role = "roles/storage.objectUser"
+
+}
