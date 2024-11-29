@@ -179,7 +179,6 @@ module "sdv_iam_gcs_viewers" {
 
 module "sdv_iam_gcs_users" {
   source = "../sdv-iam"
-
   member = [
     "serviceAccount:${var.sdv_default_computer_sa}"
   ]
@@ -187,3 +186,24 @@ module "sdv_iam_gcs_users" {
   role = "roles/storage.objectUser"
 
 }
+
+module "sdv_iam_compute_instance_admin" {
+  source = "../sdv-iam"
+  member = [
+    "serviceAccount:${var.sdv_default_computer_sa}"
+  ]
+
+  role = "roles/compute.instanceAdmin.v1"
+
+}
+
+module "sdv_iam_compute_network_admin" {
+  source = "../sdv-iam"
+  member = [
+    "serviceAccount:${var.sdv_default_computer_sa}"
+  ]
+
+  role = "roles/compute.networkAdmin"
+
+}
+
