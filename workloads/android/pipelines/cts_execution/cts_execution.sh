@@ -71,12 +71,8 @@ function cts_run() {
         echo "SHARD_COUNT (${SHARD_COUNT}) = num_instances (${num_instances})"
     fi
 
-    echo "./cts-tradefed run commandAndExit ${CTS_TESTPLAN} ${cts_module} \
-        --no-enable-parameterized-modules --max-testcase-run-count 2 \
-        --retry-strategy RETRY_ANY_FAILURE --reboot-at-last-retry \
-        --shard-count ${shards} &"
-    # WARNING: do not quote and leave on a single line to avoid strange
-    #          behaviour.
+    # WARNING: cts-tradefed does not work well with quotes. Also keep on single
+    #          line to avoid strange behaviour.
     # shellcheck disable=SC2086
     ./cts-tradefed run commandAndExit ${CTS_TESTPLAN} ${cts_module} --no-enable-parameterized-modules --max-testcase-run-count 2 --retry-strategy RETRY_ANY_FAILURE --reboot-at-last-retry --shard-count "${shards}" &
     cts_wait_for_completion "$!"
