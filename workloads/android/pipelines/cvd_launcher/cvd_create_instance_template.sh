@@ -405,8 +405,7 @@ function create_cuttlefish_boilerplate_template() {
 
     # Delete the base template
     yes Y | gcloud compute instance-templates delete \
-        "${vm_base_instance_template}" \
-        --region="${REGION}" >/dev/null 2>&1 || true
+        "${vm_base_instance_template}" >/dev/null 2>&1 || true &
     progress_spinner "$!"
 
 }
