@@ -41,14 +41,19 @@ function cuttlefish_virtualization() {
 function cuttlefish_install_additional_packages() {
     local -a package_list=("default-jdk" "adb" "git" "nodejs" "npm" "aapt")
 
+    # Ensure update to latest package list.
+    sudo apt update -y
     for package in "${package_list[@]}"; do
         if ! dpkg -s "${package}" > /dev/null 2>&1; then
             echo "Installing ${package}"
-            sudo apt install -y "${package}" > /dev/null 2>&1
+            sudo apt install -y "${package}"
         else
             echo "${package} already installed"
         fi
     done
+    # Show Java version and path.
+    which java
+    java -version
 }
 
 # Install CTS test harness on instance to avoid lengthy CTS runs.
