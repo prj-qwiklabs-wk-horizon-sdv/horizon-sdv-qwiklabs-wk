@@ -121,6 +121,9 @@ pipeline {
     stage ('Initialise') {
       when { expression { env.BUILD_NUMBER.toInteger() > 1 } }
       steps {
+        script {
+          currentBuild.description = "${env.AAOS_LUNCH_TARGET}"
+        }
         container(name: 'builder') {
           sh '''
             AAOS_GERRIT_MANIFEST_URL="${AAOS_GERRIT_MANIFEST_URL}" \
