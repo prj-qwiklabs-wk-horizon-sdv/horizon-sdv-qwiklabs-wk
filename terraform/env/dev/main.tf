@@ -3,7 +3,6 @@
 
 locals {
   sdv_default_computer_sa = "268541173342-compute@developer.gserviceaccount.com"
-
 }
 
 module "base" {
@@ -55,7 +54,6 @@ module "base" {
   ]
   sdv_artifact_registry_repository_reader_members = [
     "serviceAccount:${local.sdv_default_computer_sa}",
-    #"serviceAccount:${local.sdv_gke_jenkins_sa}",
   ]
 
   sdv_ssl_certificate_name   = "horizon-sdv"
