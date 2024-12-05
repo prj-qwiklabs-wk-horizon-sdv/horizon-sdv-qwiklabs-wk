@@ -88,7 +88,7 @@ module "base" {
         "roles/artifactregistry.writer",
         "roles/secretmanager.secretAccessor",
         "roles/iam.serviceAccountTokenCreator",
-        "roles/container.clusterAdmin",
+        "roles/container.admin",
         "roles/iam.securityReviewer",
         "roles/iap.tunnelResourceAccessor",
         "roles/iam.serviceAccountUser",

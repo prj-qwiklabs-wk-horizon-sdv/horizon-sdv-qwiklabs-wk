@@ -207,10 +207,13 @@ module "sdv_iam_compute_network_admin" {
 }
 
 # permission: IAP-secured Tunnel User (roles/iap.tunnelResourceAccessor) for 268541173342-compute
+# and Lukasz and Marta
 module "sdv_iam_secured_tunnel_user" {
   source = "../sdv-iam"
   member = [
-    "serviceAccount:${var.sdv_default_computer_sa}"
+    "serviceAccount:${var.sdv_default_computer_sa}",
+    "user:lukasz.domke@accenture.com",
+    "user:marta.kania@accenture.com",
   ]
 
   role = "roles/iap.tunnelResourceAccessor"
@@ -227,3 +230,29 @@ module "sdv_iam_service_account_user" {
   role = "roles/iam.serviceAccountUser"
 
 }
+
+# permission:Secret Manager Secret Accessor (roles/secretmanager.secretAccessor) for Lukasz and Marta
+module "sdv_iam_sceret_manager" {
+  source = "../sdv-iam"
+  member = [
+    "user:lukasz.domke@accenture.com",
+    "user:marta.kania@accenture.com",
+  ]
+
+  role = "roles/secretmanager.secretAccessor"
+
+}
+
+# permission: Security Reviewer (roles/iam.securityReviewer) for Lukasz and Marta
+module "sdv_iam_security_reviewer" {
+  source = "../sdv-iam"
+  member = [
+    "user:lukasz.domke@accenture.com",
+    "user:marta.kania@accenture.com",
+  ]
+
+  role = "roles/iam.securityReviewer"
+
+}
+
+
