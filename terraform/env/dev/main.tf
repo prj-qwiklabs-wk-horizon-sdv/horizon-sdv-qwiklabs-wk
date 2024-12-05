@@ -39,7 +39,6 @@ module "base" {
   sdv_bastion_host_name = "sdv-bastion-host"
   sdv_bastion_host_sa   = "sdv-bastion-host-sa-iap"
   sdv_bastion_host_members = [
-    "user:edson.schlei@accenture.com",
     "user:wojciech.kobryn@accenture.com",
     "user:marta.kania@accenture.com",
     "user:lukasz.domke@accenture.com",
@@ -49,7 +48,6 @@ module "base" {
 
   sdv_artifact_registry_repository_id = "horizon-sdv-dev"
   sdv_artifact_registry_repository_members = [
-    "user:edson.schlei@accenture.com",
     "user:wojciech.kobryn@accenture.com",
     "user:marta.kania@accenture.com",
     "user:lukasz.domke@accenture.com",
@@ -90,6 +88,11 @@ module "base" {
         "roles/artifactregistry.writer",
         "roles/secretmanager.secretAccessor",
         "roles/iam.serviceAccountTokenCreator",
+        "roles/container.clusterAdmin",
+        "roles/iam.securityReviewer",
+        "roles/iap.tunnelResourceAccessor",
+        "roles/iam.serviceAccountUser",
+        "roles/compute.instanceAdmin.v1"
       ])
     },
     sa2 = {

@@ -167,7 +167,6 @@ module "sdv_iam_gcs_viewers" {
   member = [
     "user:wojciech.kobryn@accenture.com",
     "user:lukasz.domke@accenture.com",
-    "user:edson.schlei@accenture.com",
     "user:marta.kania@accenture.com",
     "user:dave.m.smith@accenture.com",
 
@@ -207,3 +206,24 @@ module "sdv_iam_compute_network_admin" {
 
 }
 
+# permission: IAP-secured Tunnel User (roles/iap.tunnelResourceAccessor) for 268541173342-compute
+module "sdv_iam_secured_tunnel_user" {
+  source = "../sdv-iam"
+  member = [
+    "serviceAccount:${var.sdv_default_computer_sa}"
+  ]
+
+  role = "roles/iap.tunnelResourceAccessor"
+
+}
+
+# permission: Service Account User (roles/iam.serviceAccountUser) for 268541173342-compute
+module "sdv_iam_service_account_user" {
+  source = "../sdv-iam"
+  member = [
+    "serviceAccount:${var.sdv_default_computer_sa}"
+  ]
+
+  role = "roles/iam.serviceAccountUser"
+
+}

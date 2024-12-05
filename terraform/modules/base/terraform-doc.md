@@ -25,7 +25,12 @@
 | <a name="module_sdv_gcs"></a> [sdv\_gcs](#module\_sdv\_gcs) | ../sdv-gcs | n/a |
 | <a name="module_sdv_gcs_scripts"></a> [sdv\_gcs\_scripts](#module\_sdv\_gcs\_scripts) | ../sdv-gcs | n/a |
 | <a name="module_sdv_gke_cluster"></a> [sdv\_gke\_cluster](#module\_sdv\_gke\_cluster) | ../sdv-gke-cluster | n/a |
+| <a name="module_sdv_iam_compute_instance_admin"></a> [sdv\_iam\_compute\_instance\_admin](#module\_sdv\_iam\_compute\_instance\_admin) | ../sdv-iam | n/a |
+| <a name="module_sdv_iam_compute_network_admin"></a> [sdv\_iam\_compute\_network\_admin](#module\_sdv\_iam\_compute\_network\_admin) | ../sdv-iam | n/a |
+| <a name="module_sdv_iam_gcs_users"></a> [sdv\_iam\_gcs\_users](#module\_sdv\_iam\_gcs\_users) | ../sdv-iam | n/a |
 | <a name="module_sdv_iam_gcs_viewers"></a> [sdv\_iam\_gcs\_viewers](#module\_sdv\_iam\_gcs\_viewers) | ../sdv-iam | n/a |
+| <a name="module_sdv_iam_secured_tunnel_user"></a> [sdv\_iam\_secured\_tunnel\_user](#module\_sdv\_iam\_secured\_tunnel\_user) | ../sdv-iam | n/a |
+| <a name="module_sdv_iam_service_account_user"></a> [sdv\_iam\_service\_account\_user](#module\_sdv\_iam\_service\_account\_user) | ../sdv-iam | n/a |
 | <a name="module_sdv_network"></a> [sdv\_network](#module\_sdv\_network) | ../sdv-network | n/a |
 | <a name="module_sdv_sa_key_secret_gce_creds"></a> [sdv\_sa\_key\_secret\_gce\_creds](#module\_sdv\_sa\_key\_secret\_gce\_creds) | ../sdv-sa-key-secret | n/a |
 | <a name="module_sdv_secrets"></a> [sdv\_secrets](#module\_sdv\_secrets) | ../sdv-secrets | n/a |
