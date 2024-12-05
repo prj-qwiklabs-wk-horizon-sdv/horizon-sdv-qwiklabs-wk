@@ -33,11 +33,6 @@ variable "sdv_default_computer_sa" {
   type        = string
 }
 
-# variable "sdv_gke_jenkins_sa" {
-#   description = "gke-jenkins-sa"
-#   type        = string
-# }
-
 variable "sdv_cluster_name" {
   description = "Name of the cluster"
   type        = string

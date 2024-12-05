@@ -3,7 +3,6 @@
 
 locals {
   sdv_default_computer_sa = "268541173342-compute@developer.gserviceaccount.com"
-  # sdv_gke_jenkins_sa = "gke-jenkins-sa@sdva-2108202401.iam.gserviceaccount.com"
 
 }
 
@@ -20,8 +19,6 @@ module "base" {
   sdv_subnetwork = "sdv-subnet"
 
   sdv_default_computer_sa = local.sdv_default_computer_sa
-
-  #sdv_gke_jenkins_sa = local.sdv_gke_jenkins_sa
 
   sdv_list_of_apis = toset([
     "container.googleapis.com",
