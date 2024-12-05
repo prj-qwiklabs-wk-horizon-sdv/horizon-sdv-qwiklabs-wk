@@ -100,7 +100,7 @@ pipeline {
     always {
       withCredentials([usernamePassword(credentialsId: 'jenkins-mtk-connect-apikey', passwordVariable: 'MTK_CONNECT_PASSWORD', usernameVariable: 'MTK_CONNECT_USERNAME')]) {
         sh '''
-          if (( "${BUILD_NUMBER}" > "1" )); then
+          if [ $BUILD_NUMBER -gt 1 ]; then
             sudo \
             MTK_CONNECT_DOMAIN=${HORIZON_DOMAIN} \
             MTK_CONNECT_USERNAME=${MTK_CONNECT_USERNAME} \
