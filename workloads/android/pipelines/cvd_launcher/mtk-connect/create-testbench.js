@@ -126,6 +126,7 @@ async function configureDevice(i) {
     index: index
   }
 
+  console.log(`device ${index} ... `);
   // Delay randomly to try to avoid AXIOS 403 Forbidden Errors
   await delayMs(Math.floor(Math.random() * 2000));
 
@@ -205,6 +206,7 @@ async function configureDevice(i) {
 
 async function main()  {
   try {
+    console.log(`configureAgent`);
     await configureAgent();
   } catch (err) {
     throw err;
@@ -214,6 +216,7 @@ async function main()  {
    * Retry configureDevices up to 5 times on any error.
    * Note: This is a crude workaround for AXIOS 403 Forbidden Errors
    */
+  console.log(`configureDevices`);
   while(maxRetries-- > 0) {
     try {
       await configureDevices();

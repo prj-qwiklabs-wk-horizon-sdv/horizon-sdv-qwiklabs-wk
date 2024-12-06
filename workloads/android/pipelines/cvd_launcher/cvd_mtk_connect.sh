@@ -29,6 +29,8 @@
 #  - MTK_CONNECTED_DEVICES: the number of connected devices.
 #  - MTK_CONNECT_TESTBENCH: the name of the testbench to create in mtk-connect.
 #  - MTK_CONNECT_TEST_ARTIFACT: what is being tested.
+#  - MTK_CONNECT_NATIVE_LINUX_INSTALL: true if required to install on the
+#    native Linux host, false if installing in a container.
 
 # Example Usage:
 # sudo \
@@ -46,6 +48,7 @@ MTK_CONNECT_TESTBENCH=${MTK_CONNECT_TESTBENCH// /_}
 MTK_CONNECT_HOST=$(hostname -I | sed 's/ .*//')
 MTK_CONNECT_TEST_ARTIFACT=${MTK_CONNECT_TEST_ARTIFACT:-N/A}
 MTK_CONNECT_FILE_PATH="$(dirname "${BASH_SOURCE[0]}")"
+MTK_CONNECT_NATIVE_LINUX_INSTALL=${MTK_CONNECT_NATIVE_LINUX_INSTALL:-false}
 NODEJS_VERSION=${NODEJS_VERSION-20.9.0}
 
 declare -r scripts_path="/usr/src/scripts"
@@ -100,30 +103,48 @@ function mtkc_start() {
         echo "agent__log__appender=file"
     } >> "${app_path}"/.env
 
+    local -a mtkc_files=(create-testbench.js package.json remove-testbench.js)
+    if [[ "${MTK_CONNECT_NATIVE_LINUX_INSTALL}" == "false" ]]; then
+        mtkc_files+=(download-agent.js)
+    fi
+
     # Copy over the MTKC files.
-    local -a mtkc_files=(create-testbench.js download-agent.js package.json remove-testbench.js)
     for file in "${mtkc_files[@]}"; do
         cp -f "${MTK_CONNECT_FILE_PATH}"/mtk-connect/"${file}" "${scripts_path}"
     done
+
+    # Required for dotenv.
     cd "${scripts_path}" || exit # If fails, exit, don't continue!
     npm install
 
-    # Download the agent
-    node download-agent.js
-    unzip mtk-connect-agent.node.zip >/dev/null 2>&1
+    # If running on host then use native linux installer
+    if [[ "${MTK_CONNECT_NATIVE_LINUX_INSTALL}" == "true" ]]; then
+        # Local Linux host install.
+        AUTH=$(echo -n "${MTK_CONNECT_USERNAME}:${MTK_CONNECT_PASSWORD}" | base64)
+        sudo curl -sSL https://"${MTK_CONNECT_DOMAIN}"/mtk-connect/get-agent?platform=linux | sudo AUTH="${AUTH}" bash
+        rm -rf "${config_path}"
+        ln -sf /opt/mtk-connect-agent/config "${config_path}"
+    else
+        # Running in container.
 
-    # Reorganise the files
-    mv -f "${scripts_path}"/config ../
-    mv -f src/* "${app_path}"
-    cd "${app_path}" || exit
-    npm install
+        # Download the agent
+        node download-agent.js
+        unzip mtk-connect-agent.node.zip >/dev/null 2>&1
 
-    # Start the agent
-    pm2 start -f runAgent.js
+        # Reorganise the files
+        mv -f "${scripts_path}"/config ../
+        mv -f src/* "${app_path}"
+        cd "${app_path}" || exit
+        npm install
 
-    # Create the requisite testbench.
-    cd "${scripts_path}" || exit
+        # Start the agent
+        pm2 start -f runAgent.js
+
+        cd "${scripts_path}" || exit # If fails, exit, don't continue!
+    fi
+
     wait-on "${config_path}"/registration.name
+    # Create the requisite testbench.
     node create-testbench.js
 }
 
@@ -132,7 +153,9 @@ function mtkc_start() {
 function mtkc_stop() {
     cd "${scripts_path}" || exit
     node remove-testbench.js
-    pm2 stop all || true
+    if [[ "${MTK_CONNECT_NATIVE_LINUX_INSTALL}" == "false" ]]; then
+        pm2 stop all || true
+    fi
 }
 
 # Print a summary of the MTK Connect agent.
@@ -157,6 +180,7 @@ Environment:
     MTK_CONNECT_TESTBENCH=${MTK_CONNECT_TESTBENCH}
     MTK_CONNECT_HOST=${MTK_CONNECT_HOST}
     MTK_CONNECT_TEST_ARTIFACT=${MTK_CONNECT_TEST_ARTIFACT}
+    MTK_CONNECT_NATIVE_LINUX_INSTALL=${MTK_CONNECT_NATIVE_LINUX_INSTALL}
 
     Storage Usage (/dev/sda1): $(df -h /dev/sda1 | tail -1 | awk '{print "Used " $3 " of " $2}')
    "
@@ -170,7 +194,9 @@ case "${1}" in
         RESULT=0
         ;;
     --start|*)
-        mtkc_upgrades
+        if [[ "${MTK_CONNECT_NATIVE_LINUX_INSTALL}" == "false" ]]; then
+            mtkc_upgrades
+        fi
         mtkc_max_devices
         # Start
         mtkc_start
