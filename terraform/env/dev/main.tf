@@ -145,6 +145,23 @@ module "base" {
         "roles/iam.serviceAccountTokenCreator",
       ])
     }
+    sa5 = {
+      account_id   = "gke-gerrit-sa"
+      display_name = "gke-gerrit SA"
+      description  = "gke-gerrit/gke-gerrit-sa in GKE cluster makes use of this account through WI"
+
+      gke_sas = [
+        {
+          gke_ns = "gke-gerrit"
+          gke_sa = "gke-gerrit-sa"
+        }
+      ]
+
+      roles = toset([
+        "roles/secretmanager.secretAccessor",
+        "roles/iam.serviceAccountTokenCreator",
+      ])
+    }
   }
 
   #
@@ -260,6 +277,19 @@ module "base" {
         {
           ns = "mtk-connect"
           sa = "mtk-connect-sa"
+        }
+      ]
+    }
+    # GCP secret name:  gerrit-admin-initial-password
+    # WI to GKE at ns/gerrit/sa/gerrit-sa.
+    s10 = {
+      secret_id        = "gerritAdminInitialPassword"
+      value            = var.sdv_gh_gerrit_admin_initial_password
+      use_github_value = true
+      gke_access = [
+        {
+          ns = "gerrit"
+          sa = "gerrit-sa"
         }
       ]
     }
