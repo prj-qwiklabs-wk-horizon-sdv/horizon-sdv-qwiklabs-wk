@@ -147,7 +147,7 @@ async function configureDevice(i) {
       },
       'button': {
         'driver': 'adb',
-        'skin': 'button-skins/AndroidRemote.json'
+        'skin': 'Default Android'
       },
       'fs': {
         'types': [
@@ -158,11 +158,20 @@ async function configureDevice(i) {
           }
         ]
       },
+      'log': {
+        'types': [
+          {
+            'name': 'logcat',
+            'driver': 'logcat'
+          }
+        ]
+      },
       'mjpeg': {
         'types': [
           {
             'name': 'screen',
-            'driver': 'minicap'
+            'driver': 'minicap',
+            'scale': 1.0
           }
         ]
       },
@@ -176,7 +185,8 @@ async function configureDevice(i) {
         ]
       },
       'touch': {
-        'driver': 'adb'
+        'driver': 'adb',
+        'native': true
       },
       'tunnel': {
         'types': [
