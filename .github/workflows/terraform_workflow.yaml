@@ -49,6 +49,7 @@ jobs:
       gh-jenkins-initial-password: "${{ secrets.JENKINS_INITIAL_PASSWORD }}"
       gh-keycloak-initial-password: "${{ secrets.KEYCLOAK_INITIAL_PASSWORD }}"
       gh-mtkc-regcred: "${{ secrets.MTKC_REGCRED }}"
+      gh-gerrit-admin-initial-password: "${{ secrets.GERRIT_ADMIN_INITIAL_PASSWORD }}"
     with:
       environment: ${{ matrix.environment }}
       path: terraform/env/${{ matrix.environment }}

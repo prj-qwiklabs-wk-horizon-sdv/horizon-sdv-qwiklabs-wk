@@ -27,6 +27,9 @@ on:
       gh-mtkc-regcred:
         required: false
         description: "Github Secret MTKC-REGCRED"
+      gh-gerrit-admin-initial-password:
+        required: false
+        description: "Github Secret GERRIT_ADMIN_INITIAL_PASSWORD "
 
     inputs:
       environment:
@@ -119,6 +122,7 @@ jobs:
         echo "TF_VAR_sdv_gh_jenkins_initial_password=${{ secrets.gh-jenkins-initial-password }}" >> $GITHUB_ENV
         echo "TF_VAR_sdv_gh_keycloak_initial_password=${{ secrets.gh-keycloak-initial-password }}" >> $GITHUB_ENV
         echo "TF_VAR_sdv_gh_mtkc_regcred=${{ secrets.gh-mtkc-regcred }}" >> $GITHUB_ENV
+        echo "TF_VAR_sdv_gh_gerrit_admin_initial_password=${{ secrets.gh-gerrit-admin-initial-password }}" >> $GITHUB_ENV
 
         if [[ "${{ secrets.gcp-sa }}" != '' && "${{ secrets.wif-provider }}" != '' ]]; then
           echo "GCP_SA=${{ secrets.gcp-sa }}" >> $GITHUB_ENV;

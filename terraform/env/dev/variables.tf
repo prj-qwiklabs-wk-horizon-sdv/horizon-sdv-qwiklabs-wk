@@ -39,6 +39,11 @@ variable "sdv_gh_mtkc_regcred" {
   type        = string
 }
 
+variable "sdv_gh_gerrit_admin_initial_password" {
+  description = "The secret Github GERRIT_ADMIN_INITIAL_PASSWORD value"
+  type        = string
+}
+
 variable "sdv_gh_access_token" {
   description = "Github access token"
   type        = string

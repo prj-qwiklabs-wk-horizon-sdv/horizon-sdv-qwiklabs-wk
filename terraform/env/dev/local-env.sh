@@ -9,6 +9,7 @@ export TF_VAR_sdv_gh_argocd_initial_password="123"
 export TF_VAR_sdv_gh_jenkins_initial_password="123"
 export TF_VAR_sdv_gh_keycloak_initial_password="123"
 export TF_VAR_sdv_gh_mtkc_regcred="123"
+export TF_VAR_sdv_gh_gerrit_admin_initial_password="123"
 
 # Github access token
 export TF_VAR_sdv_gh_access_token="123"
