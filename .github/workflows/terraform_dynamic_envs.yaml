@@ -126,6 +126,9 @@ jobs:
       gh-mtkc-regcred: "${{ secrets.gh-mtkc-regcred }}"
       gh-gerrit-admin-initial-password: "${{ secrets.gh-gerrit-admin-initial-password }}"
       gh-gerrit-admin-private-key: "${{ secrets.gh-gerrit-admin-private-key }}"
+      gh-keycloak-horizon-admin-password: "${{ secrets.gh-keycloak-horizon-admin-password }}"
+      gh-cuttlefish-vm-ssh-private-key: "${{ secrets.gh-cuttlefish-vm-ssh-private-key }}"
+
     with:
       terraform-version: ${{ inputs.terraform-version }}
       directory: ${{ inputs.path }}
