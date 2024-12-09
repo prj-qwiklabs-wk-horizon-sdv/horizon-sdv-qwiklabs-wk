@@ -18,7 +18,7 @@ pipeline {
 
   parameters {
     choice(name: 'CUTTLEFISH_VM_INSTANCE',
-           choices: ['cuttlefish-vm-main', 'cuttlefish-vm-v0931', 'cuttlefish-vm-v0930', 'cuttlefish-vm-v0929'],
+           choices: ['cuttlefish-vm-v100', 'cuttlefish-vm-v0931', 'cuttlefish-vm-main'],
            description: '''Android Cuttlefish VM instance based on Android Cuttlefish version.''')
 
     string(name: 'CUTTLEFISH_DOWNLOAD_URL',

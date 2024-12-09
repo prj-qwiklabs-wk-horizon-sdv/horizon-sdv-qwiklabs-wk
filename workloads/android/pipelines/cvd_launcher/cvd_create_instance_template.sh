@@ -92,6 +92,7 @@ source "$(dirname "${BASH_SOURCE[0]}")"/cvd_environment.sh "$0"
 # Environment variables that can be overridden from command line.
 # android-cuttlefish revisions can be v0.9.29, v0.9.30, v0.9.31, main
 CUTTLEFISH_REVISION=${CUTTLEFISH_REVISION:-main}
+CUTTLEFISH_REVISION=$(echo "${CUTTLEFISH_REVISION}" | xargs)
 BOOT_DISK_SIZE=${BOOT_DISK_SIZE:-200GB}
 JENKINS_NAMESPACE=${JENKINS_NAMESPACE:-jenkins}
 JENKINS_PRIVATE_SSH_KEY_NAME=${JENKINS_PRIVATE_SSH_KEY_NAME:-jenkins-cuttlefish-vm-ssh-private-key}
