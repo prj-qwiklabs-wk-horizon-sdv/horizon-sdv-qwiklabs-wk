@@ -41,7 +41,7 @@ pipeline {
 
   // Block concurrent builds to avoid clashing.
   options {
-    buildBlocker (useBuildBlocker: true, blockLevel: 'GLOBAL', scanQueueFor: 'ALL', blockingJobs: '.*Docker.*')
+    buildBlocker (useBuildBlocker: true, blockLevel: 'GLOBAL', scanQueueFor: 'BUILDABLE', blockingJobs: '.*Docker.*')
   }
 
   parameters {
