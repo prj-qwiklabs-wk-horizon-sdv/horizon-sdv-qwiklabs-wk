@@ -296,7 +296,7 @@ module "base" {
     # GCP secret name:  gh-gerrit-admin-private-key
     # WI to GKE at ns/gerrit/sa/gerrit-sa.
     s11 = {
-      secret_id        = "gerritAdminInitialPassword"
+      secret_id        = "gerritAdminPrivateKey"
       value            = var.sdv_gh_gerrit_admin_private_key
       use_github_value = true
       gke_access = [
