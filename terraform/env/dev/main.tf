@@ -148,12 +148,12 @@ module "base" {
     sa5 = {
       account_id   = "gke-gerrit-sa"
       display_name = "gke-gerrit SA"
-      description  = "gke-gerrit/gke-gerrit-sa in GKE cluster makes use of this account through WI"
+      description  = "gerrit/gerrit-sa in GKE cluster makes use of this account through WI"
 
       gke_sas = [
         {
           gke_ns = "gerrit"
-          gke_sa = "gke-gerrit-sa"
+          gke_sa = "gerrit-sa"
         }
       ]
 
