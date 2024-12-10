@@ -1,5 +1,5 @@
 
-# workflow build 164
+# workflow build 165
 
 locals {
   sdv_default_computer_sa = "268541173342-compute@developer.gserviceaccount.com"
@@ -152,7 +152,7 @@ module "base" {
 
       gke_sas = [
         {
-          gke_ns = "gke-gerrit"
+          gke_ns = "gerrit"
           gke_sa = "gke-gerrit-sa"
         }
       ]
