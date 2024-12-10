@@ -58,7 +58,7 @@ pipeline {
 
   parameters {
     string(name: 'ANDROID_CUTTLEFISH_REVISION',
-           defaultValue: 'main',
+           defaultValue: 'v1.0.0',
            description: '''<p>The branch/tag version of Android Cuttlefish to use, e.g..</p>
            <ul>
              <li>v1.0.0</li>
