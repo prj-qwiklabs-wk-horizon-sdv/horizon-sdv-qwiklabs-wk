@@ -152,7 +152,7 @@ module "base" {
 
       gke_sas = [
         {
-          gke_ns = "gke-gerrit"
+          gke_ns = "gerrit"
           gke_sa = "gke-gerrit-sa"
         }
       ]
