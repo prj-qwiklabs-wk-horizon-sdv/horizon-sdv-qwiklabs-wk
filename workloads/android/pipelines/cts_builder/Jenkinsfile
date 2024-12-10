@@ -15,6 +15,10 @@
 // Description:
 // Build Android CTS for Cuttlefish. Only required if testing CTS changes
 // or requiring a new revision without updating the CTS on CF jobs.
+//
+// Note: we skip all stages if this is the 1st build because there are no
+//       parameters until the 1st declarative scm checkout has been run.
+//
 pipeline {
 
   agent {

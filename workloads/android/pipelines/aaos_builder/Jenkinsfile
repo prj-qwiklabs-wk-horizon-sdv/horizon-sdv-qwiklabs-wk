@@ -14,6 +14,10 @@
 
 // Description:
 // AAOS Build targets pipeline.
+//
+// Note: we skip all stages if this is the 1st build because there are no
+//       parameters until the 1st declarative scm checkout has been run.
+//
 pipeline {
 
   agent {
@@ -178,6 +182,7 @@ pipeline {
         container(name: 'builder') {
           sh '''
             AAOS_LUNCH_TARGET="${AAOS_LUNCH_TARGET}" \
+            AAOS_CLEAN_BUILD=0 \
             AAOS_REVISION="${AAOS_REVISION}" \
             ./workloads/android/pipelines/aaos_builder/aaos_avd_sdk.sh || true
 

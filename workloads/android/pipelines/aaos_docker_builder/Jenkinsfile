@@ -16,6 +16,9 @@
 // This pipeline builds the AAOS builder Docker image using Kaniko
 // rather than use a Docker to avoid docker in docker privilege issues.
 //
+// Note: we skip all stages if this is the 1st build because there are no
+//       parameters until the 1st declarative scm checkout has been run.
+//
 // References:
 //   * https://github.com/GoogleContainerTools/kaniko
 //
