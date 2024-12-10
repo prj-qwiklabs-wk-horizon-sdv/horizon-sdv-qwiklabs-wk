@@ -56,7 +56,7 @@ unset BUILD_NUMBER
 
 # AAOS revisions: qpr1 for AVD etc, Android 15 for RPi HW.
 AAOS_DEFAULT_REVISION=${AAOS_DEFAULT_REVISION:-android14-qpr1-automotiveos-release}
-AAOS_RPI_REVISION=${AAOS_RPI_REVISION:-android-15.0}
+AAOS_RPI_REVISION=${AAOS_RPI_REVISION:-android-15.0.0_r4}
 
 # Android branch/tag:
 AAOS_REVISION=${AAOS_REVISION:-${AAOS_DEFAULT_REVISION}}

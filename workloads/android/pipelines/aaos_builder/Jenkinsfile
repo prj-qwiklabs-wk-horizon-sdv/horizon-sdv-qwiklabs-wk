@@ -100,7 +100,7 @@ pipeline {
            aosp_rpi5_car-ap3a-userdebug''')
 
     string(name: 'AAOS_RPI_REVISION',
-           defaultValue: 'android-15.0',
+           defaultValue: 'android-15.0.0_r4',
            description: '''Vanilla RPi tag/branch name.
            Only applicable for aosp_rpiX_car targets.
            raspberry-vanilla revisions do not always align with Google revisions, eg.
