@@ -23,7 +23,7 @@ Sample of a feature branch created by Edson for the Jira ticket TAA-001:
 
 ## Release a new version
 
-TODO: update documentation
+TODO: update documentation 
 
 + on main branch
 + update env/(prod, staging, preprod, etc)/main.tf

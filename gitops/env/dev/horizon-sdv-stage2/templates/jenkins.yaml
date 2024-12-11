@@ -1,0 +1,356 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: jenkins
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "6"
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: horizon-sdv
+  source:
+    chart: jenkins
+    repoURL: https://charts.jenkins.io
+    targetRevision: 5.7.14
+    helm:
+      values: |
+        rbac:
+          readSecrets: true
+        controller:
+          jenkinsUriPrefix: /jenkins
+          admin:
+            createSecret: true
+            existingSecret: jenkins-initial-creds
+            userkey: jenkins-admin-user
+            passwordkey: jenkins-admin-password
+          jenkinsUrl: "https://dev.horizon-sdv.scpmtk.com/jenkins"
+          installPlugins:
+            - kubernetes:latest
+            - kubernetes-credentials-provider:latest
+            - configuration-as-code:latest
+            - configuration-as-code-groovy:latest
+            - workflow-aggregator:latest
+            - keycloak:latest
+            - role-strategy:latest
+            - job-dsl:latest
+            - git:latest
+            - github-branch-source:latest
+            - gerrit-trigger:latest
+            - gerrit-code-review:latest
+            - google-compute-engine:latest
+            - docker-workflow:latest
+            - ssh-slaves:latest
+            - google-kubernetes-engine:latest
+            - pipeline-stage-view:latest
+            - throttle-concurrents:latest
+            - build-blocker-plugin:latest
+          additionalExistingSecrets:
+            - name: jenkins-keycloak
+              keyName: keycloakJson
+            - name: jenkins-gerrit-ssh-private-key
+              keyName: privateKey
+            - name: jenkins-gce-creds
+              keyName: gce-creds-json
+            - name: jenkins-gerrit-http-password
+              keyName: password
+          javaOpts: "-Dcom.cloudbees.workflow.rest.external.JobExt.maxRunsPerJob=50"
+          enableRawHtmlMarkupFormatter: true
+          markupFormatter: rawHtml
+          JCasC:
+            enabled: true
+            securityRealm: |-
+              keycloak:
+                keycloakJson: ${jenkins-keycloak-keycloakJson}
+                keycloakRespectAccessTokenTimeout: false
+                keycloakValidate: false
+            authorizationStrategy: |-
+              loggedInUsersCanDoAnything:
+                allowAnonymousRead: false
+            defaultConfig: true
+            configScripts:
+              welcome-message: |
+                credentials:
+                  system:
+                    domainCredentials:
+                      - credentials:
+                        - googleRobotPrivateKey:
+                            description: "GCE Creds"
+                            id: "gce-creds"
+                            scope: GLOBAL
+                            projectId: "sdva-2108202401"
+                            serviceAccountConfig:
+                              json:
+                                filename: "sdva-2108202401.json"
+                                secretJsonKey: ${base64:${jenkins-gce-creds-gce-creds-json}}
+                jenkins:
+                  systemMessage: Welcome to Horizon SDV server.
+                  clouds:
+                    - computeEngine:
+                        cloudName: cuttlefish-vm-main
+                        configurations:
+                          - bootDiskAutoDelete: true
+                            bootDiskSizeGb: 10
+                            bootDiskSizeGbStr: "10"
+                            bootDiskType: "https://www.googleapis.com/compute/v1/projects/sdva-2108202401/zones/europe-west1-d/diskTypes/hyperdisk-balanced"
+                            description: "cuttlefish-vm-main"
+                            javaExecPath: "/usr/bin/java"
+                            labelSet:
+                              - name: "cuttlefish-vm-main"
+                            labelString: "cuttlefish-vm-main"
+                            labels: "cuttlefish-vm-main"
+                            launchTimeoutSeconds: 300
+                            launchTimeoutSecondsStr: "300"
+                            mode: NORMAL
+                            namePrefix: "cuttlefish-vm-main"
+                            numExecutors: 1
+                            numExecutorsStr: "1"
+                            oneShot: true
+                            region: "https://www.googleapis.com/compute/v1/projects/sdva-2108202401/regions/europe-west1"
+                            remoteFs: "/home/jenkins"
+                            retentionTimeMinutes: 6
+                            retentionTimeMinutesStr: "6"
+                            runAsUser: "jenkins"
+                            sshConfiguration:
+                              customPrivateKeyCredentialsId: "jenkins-cuttlefish-vm-ssh-private-key"
+                            template: "https://www.googleapis.com/compute/v1/projects/sdva-2108202401/global/instanceTemplates/instance-template-cuttlefish-vm-main-debian-12"
+                            useInternalAddress: true
+                            zone: "https://www.googleapis.com/compute/v1/projects/sdva-2108202401/zones/europe-west1-d"
+                        credentialsId: "gce-creds"
+                        instanceCapStr: "20"
+                        noDelayProvisioning: true
+                        projectId: "sdva-2108202401"
+                    - computeEngine:
+                        cloudName: "cuttlefish-vm-v100"
+                        configurations:
+                        - bootDiskAutoDelete: true
+                          bootDiskSizeGb: 10
+                          bootDiskSizeGbStr: "10"
+                          bootDiskType: "https://www.googleapis.com/compute/v1/projects/sdva-2108202401/zones/europe-west1-d/diskTypes/hyperdisk-balanced"
+                          description: "cuttlefish-vm-v100"
+                          javaExecPath: "/usr/bin/java"
+                          labelSet:
+                          - name: "cuttlefish-vm-v100"
+                          labelString: "cuttlefish-vm-v100"
+                          labels: "cuttlefish-vm-v100"
+                          launchTimeoutSeconds: 300
+                          launchTimeoutSecondsStr: "300"
+                          mode: NORMAL
+                          namePrefix: "cuttlefish-vm-v100"
+                          numExecutors: 1
+                          numExecutorsStr: "1"
+                          oneShot: true
+                          region: "https://www.googleapis.com/compute/v1/projects/sdva-2108202401/regions/europe-west1"
+                          remoteFs: "/home/jenkins"
+                          retentionTimeMinutes: 6
+                          retentionTimeMinutesStr: "6"
+                          runAsUser: "jenkins"
+                          sshConfiguration:
+                            customPrivateKeyCredentialsId: "jenkins-cuttlefish-vm-ssh-private-key"
+                          template: "https://www.googleapis.com/compute/v1/projects/sdva-2108202401/global/instanceTemplates/instance-template-cuttlefish-vm-v100-debian-12"
+                          useInternalAddress: true
+                          zone: "https://www.googleapis.com/compute/v1/projects/sdva-2108202401/zones/europe-west1-d"
+                        credentialsId: "gce-creds"
+                        instanceCapStr: "20"
+                        noDelayProvisioning: true
+                        projectId: "sdva-2108202401"
+                    - computeEngine:
+                        cloudName: "cuttlefish-vm-v0931"
+                        configurations:
+                        - bootDiskAutoDelete: true
+                          bootDiskSizeGb: 10
+                          bootDiskSizeGbStr: "10"
+                          bootDiskType: "https://www.googleapis.com/compute/v1/projects/sdva-2108202401/zones/europe-west1-d/diskTypes/hyperdisk-balanced"
+                          description: "cuttlefish-vm-v0931"
+                          javaExecPath: "/usr/bin/java"
+                          labelSet:
+                          - name: "cuttlefish-vm-v0931"
+                          labelString: "cuttlefish-vm-v0931"
+                          labels: "cuttlefish-vm-v0931"
+                          launchTimeoutSeconds: 300
+                          launchTimeoutSecondsStr: "300"
+                          mode: NORMAL
+                          namePrefix: "cuttlefish-vm-v0931"
+                          numExecutors: 1
+                          numExecutorsStr: "1"
+                          oneShot: true
+                          region: "https://www.googleapis.com/compute/v1/projects/sdva-2108202401/regions/europe-west1"
+                          remoteFs: "/home/jenkins"
+                          retentionTimeMinutes: 6
+                          retentionTimeMinutesStr: "6"
+                          runAsUser: "jenkins"
+                          sshConfiguration:
+                            customPrivateKeyCredentialsId: "jenkins-cuttlefish-vm-ssh-private-key"
+                          template: "https://www.googleapis.com/compute/v1/projects/sdva-2108202401/global/instanceTemplates/instance-template-cuttlefish-vm-v0931-debian-12"
+                          useInternalAddress: true
+                          zone: "https://www.googleapis.com/compute/v1/projects/sdva-2108202401/zones/europe-west1-d"
+                        credentialsId: "gce-creds"
+                        instanceCapStr: "20"
+                        noDelayProvisioning: true
+                        projectId: "sdva-2108202401"
+                  globalNodeProperties:
+                    - envVars:
+                        env:
+                        - key: "ANDROID_BUILD_DOCKER_ARTIFACT_PATH_NAME"
+                          value: "horizon-sdv-dev/aaos_builder"
+                        - key: "CLOUD_REGION"
+                          value: "europe-west1"
+                        - key: "CLOUD_ZONE"
+                          value: "europe-west1-d"
+                        - key: "CLOUD_PROJECT"
+                          value: "sdva-2108202401"
+                        - key: "HORIZON_DOMAIN"
+                          value: "dev.horizon-sdv.scpmtk.com"
+                        - key: "JENKINS_SERVICE_ACCOUNT"
+                          value: "jenkins-sa"
+                        - key: "JENKINS_CACHE_STORAGE_CLASS_NAME"
+                          value: "reclaimable-storage-class"
+                        - key: "ANDROID_BUILD_BUCKET_ROOT_NAME"
+                          value: "sdva-2108202401-aaos"
+                groovy:
+                  - script: >
+                      println("This is groovy !");
+                jobs:
+                  - script: >
+                      pipelineJob('AAOS Builder') {
+                        description('Android Automotive build pipeline')
+                        definition {
+                          cpsScm {
+                            lightweight()
+                            scm {
+                              git {
+                                remote {
+                                  url('https://github.com/AGBG-ASG/acn-horizon-sdv.git')
+                                  credentials('jenkins-github-agbg')
+                                }
+                                branch('*/main')
+                              }
+                            }
+                            scriptPath('workloads/android/pipelines/aaos_builder/Jenkinsfile')
+                          }
+                        }
+                      }
+                  - script: >
+                      pipelineJob('AAOS Docker Builder') {
+                        description('AAOS Docker build image for use in building AAOSP')
+                        definition {
+                          cpsScm {
+                            lightweight()
+                            scm {
+                              git {
+                                remote {
+                                  url('https://github.com/AGBG-ASG/acn-horizon-sdv.git')
+                                  credentials('jenkins-github-agbg')
+                                }
+                                branch('*/main')
+                              }
+                            }
+                            scriptPath('workloads/android/pipelines/aaos_docker_builder/Jenkinsfile')
+                          }
+                        }
+                      }
+                  - script: >
+                      pipelineJob('CF Instance Template') {
+                        description('Creates Goggle Cloude Engine (GCE) instance templates for use with CVD Launcher and CTS Execution jobs.')
+                        definition {
+                          cpsScm {
+                            lightweight()
+                            scm {
+                              git {
+                                remote {
+                                  url('https://github.com/AGBG-ASG/acn-horizon-sdv.git')
+                                  credentials('jenkins-github-agbg')
+                                }
+                                branch('*/main')
+                              }
+                            }
+                            scriptPath('workloads/android/pipelines/cf_instance_template/Jenkinsfile')
+                          }
+                        }
+                      }
+                  - script: >
+                      pipelineJob('CTS Builder') {
+                        description('Builds Android Compliance Test Suite rather than use standard Google release')
+                        definition {
+                          cpsScm {
+                            lightweight()
+                            scm {
+                              git {
+                                remote {
+                                  url('https://github.com/AGBG-ASG/acn-horizon-sdv.git')
+                                  credentials('jenkins-github-agbg')
+                                }
+                                branch('*/main')
+                              }
+                            }
+                            scriptPath('workloads/android/pipelines/cts_builder/Jenkinsfile')
+                          }
+                        }
+                      }
+                  - script: >
+                      pipelineJob('CTS Execution') {
+                        description('Run the CTS test harness against the Cuttlefish Virtual Devices')
+                        definition {
+                          cpsScm {
+                            lightweight()
+                            scm {
+                              git {
+                                remote {
+                                  url('https://github.com/AGBG-ASG/acn-horizon-sdv.git')
+                                  credentials('jenkins-github-agbg')
+                                }
+                                branch('*/main')
+                              }
+                            }
+                            scriptPath('workloads/android/pipelines/cts_execution/Jenkinsfile')
+                          }
+                        }
+                      }
+                  - script: >
+                      pipelineJob('CVD Launcher') {
+                        description('Launches Cuttlefish Virtual Devices (CVD) on the Cuttlefish Virtual Machine instances created by GCE from Cuttlefish instance templates')
+                        definition {
+                          cpsScm {
+                            lightweight()
+                            scm {
+                              git {
+                                remote {
+                                  url('https://github.com/AGBG-ASG/acn-horizon-sdv.git')
+                                  credentials('jenkins-github-agbg')
+                                }
+                                branch('*/main')
+                              }
+                            }
+                            scriptPath('workloads/android/pipelines/cvd_launcher/Jenkinsfile')
+                          }
+                        }
+                      }
+                unclassified:
+                  gerrit-trigger:
+                    servers:
+                      - name: "Gerrit"
+                        noConnectionOnStartup: false
+                        config:
+                          buildCurrentPatchesOnly:
+                            abortAbandonedPatchsets: false
+                            abortManualPatchsets: false
+                            abortNewPatchsets: false
+                            abortSameTopic: false
+                            enabled: false
+                          categories:
+                            - verdictDescription: "Code Review"
+                              verdictValue: "Code-Review"
+                            - verdictDescription: "Verified"
+                              verdictValue: "Verified"
+                          gerritAuthKeyFile: "/run/secrets/additional/jenkins-gerrit-ssh-private-key-privateKey"
+                          gerritFrontEndUrl: "https://dev.horizon-sdv.scpmtk.com/"
+                          gerritHostName: "gerrit-service.gerrit.svc.cluster.local"
+                          gerritUserName: "gerrit-admin"
+                          useRestApi: false
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: jenkins
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
+    automated: {}

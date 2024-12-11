@@ -1,0 +1,6 @@
+apiVersion: v2
+name: gerrit
+description: Gerrit
+version: 0.0.1
+type: application
+appVersion: 0.0.1

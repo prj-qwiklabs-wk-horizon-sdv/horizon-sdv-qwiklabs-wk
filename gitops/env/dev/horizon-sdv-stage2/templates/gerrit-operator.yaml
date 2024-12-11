@@ -1,0 +1,28 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: gerrit-operator
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: horizon-sdv
+  source:
+    repoURL: https://github.com/GerritCodeReview/k8s-gerrit/
+    targetRevision: master
+    path: helm-charts/gerrit-operator
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: gerrit-operator
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
+      - RespectIgnoreDifferences=true
+    automated: {}
+  ignoreDifferences:
+    - group: apps
+      kind: Deployment
+      jqPathExpressions:
+        - .spec.template.spec.strategy

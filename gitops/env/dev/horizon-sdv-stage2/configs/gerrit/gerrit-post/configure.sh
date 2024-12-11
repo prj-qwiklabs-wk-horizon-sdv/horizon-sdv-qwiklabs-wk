@@ -1,0 +1,382 @@
+#!/usr/bin/env bash
+
+# Important delay ! Actions below cannot be done while Init stage is ongoing
+sleep 30
+
+APISERVER=https://kubernetes.default.svc
+SERVICEACCOUNT=/var/run/secrets/kubernetes.io/serviceaccount
+NAMESPACE=$(cat ${SERVICEACCOUNT}/namespace)
+TOKEN=$(cat ${SERVICEACCOUNT}/token)
+CACERT=${SERVICEACCOUNT}/ca.crt
+
+STAGE1_COMPLETED=false
+STAGE2_COMPLETED=false
+STAGE3_COMPLETED=false
+STAGE4_COMPLETED=false
+STAGE5_COMPLETED=false
+
+HTTP_PASSWORD=""
+retVal=""
+
+function initialize() {
+  git config --global user.email "gerrit@gerrit"
+  git config --global user.name "Gerrit Gerrit"
+}
+
+function gerrit-test-connection() {
+  retVal="RETVAL_NOK"
+  echo "Testing the SSH connection to Gerrit."
+  n=1
+  until [ "$n" -ge 10 ]; do
+    ERR_MSG=$(ssh -o LogLevel=ERROR -o ConnectTimeout=1 -o BatchMode=yes -o UserKnownHostsFile=/dev/null -o StrictHostKeychecking=no -p 29418 -i /root/.ssh/privatekey gerrit-admin@gerrit-service gerrit version 2>&1)
+    if [[ $ERR_MSG == *"gerrit version"* ]]; then
+      echo "SSH connection worked, no need to craft All-Users repository. Just retrieve HTTP PASSWORD"
+      HTTP_PASSWORD=$(kubectl get secrets -n gerrit gerrit-http-password -o json | jq -r ".data[]" | base64 -d)
+      if [ -z "${HTTP_PASSWORD}" ]; then
+        echo "ERROR: HTTP_PASSWORD is empty."
+        retVal="RETVAL_OK"
+        return
+      else
+        retVal="RETVAL_OK"
+        return
+      fi
+    else
+      echo "No SSH connection, retrying... #$n"
+      n=$((n + 1))
+      sleep 1
+    fi
+  done
+  retVal="RETVAL_OK"
+  return
+}
+
+function gerrit-craft-all-users() {
+  retVal="RETVAL_NOK"
+  rm -rf /mnt/git/tmp
+  mkdir /mnt/git/tmp
+  cd /mnt/git
+
+  git config --global --add safe.directory /mnt/git/All-Users.git
+  git clone All-Users.git /mnt/git/tmp/All-Users
+  cd /mnt/git/tmp/All-Users
+
+  RES=$(git ls-remote origin | grep "refs/users/00/1000000")
+  if [[ "${RES}" != *"refs/users/00/1000000"* ]]; then
+    echo "File does not exists. Adding gerrit-admin user to the repository."
+    git checkout -b refs/users/00/1000000
+    rm -f *
+    cp /root/account.config .
+
+    ssh-keygen -f /root/.ssh/privatekey -y >./authorized_keys
+    git add .
+    git commit -m "gerrit-admin"
+    git push -f origin refs/users/00/1000000:refs/users/00/1000000
+
+    STAGE1_COMPLETED=true
+  else
+    echo "File exists. Checking if authorized_keys are there. If not - adding."
+    git fetch origin refs/users/00/1000000:refs/users/00/1000000
+    git checkout refs/users/00/1000000
+
+    F1=account.config
+    if [[ -f "$F1" ]]; then
+      if grep -q "fullName = Gerrit Gerrit" $F1; then
+        echo "Contents of account.config is correct."
+      else
+        echo "ERROR: Contents of account.config is incorrect."
+        retVal="RETVAL_NOK"
+        return
+      fi
+    fi
+
+    F2=authorized_keys
+    if [[ -f "$F2" ]]; then
+      if grep -q gerrit-admin $F2; then
+        echo "gerrit-admin ssh public key exists and contents is correct."
+      else
+        echo "File exists but missing gerrit-admin public key."
+        cat /root/$F2 >>$F2
+        git add $F2
+        git commit -m "gerrit-admin"
+        git push origin refs/users/00/1000000:refs/users/00/1000000
+      fi
+    else
+      cp /root/$F2 .
+      git add $F2
+      git commit -m "gerrit-admin"
+      git push origin refs/users/00/1000000:refs/users/00/1000000
+    fi
+
+    STAGE1_COMPLETED=true
+  fi
+
+  RES=$(git ls-remote origin | grep "refs/meta/external-ids")
+  if [[ "${RES}" != *"refs/meta/external-ids"* ]]; then
+    echo "File does not exists. Adding external-ids to the repository."
+    git checkout -b refs/meta/external-ids
+    rm -f *
+    F1=$(echo -n "username:gerrit-admin" | sha1sum | cut -f 1 -d ' ')
+    F2=$(echo -n "keycloak-oauth:gerrit-admin" | sha1sum | cut -f 1 -d ' ')
+    cp /root/externalId-username-gerrit-admin ./$F1
+    cp /root/externalId-keycloak-oauth-gerrit-admin ./$F2
+    git add .
+    git commit -m "gerrit-admin"
+    git push origin refs/meta/external-ids:refs/meta/external-ids
+
+    STAGE2_COMPLETED=true
+  else
+    echo "ExternalIds are there. Checking if externalIds are correct. If not - error."
+    git fetch origin refs/meta/external-ids:refs/meta/external-ids
+    git checkout refs/meta/external-ids
+    F1=$(echo -n "username:gerrit-admin" | sha1sum | cut -f 1 -d ' ')
+    F2=$(echo -n "keycloak-oauth:gerrit-admin" | sha1sum | cut -f 1 -d ' ')
+    if [[ -f "$F1" ]]; then
+      if grep -q "username:gerrit-admin" $F1; then
+        echo "$F1 is correct."
+      else
+        echo "ERROR $F1 is incorrect."
+        retVal="RETVAL_NOK"
+        return
+      fi
+    else
+      echo "ERROR: $F1 doesn't exist."
+      retVal="RETVAL_NOK"
+      return
+    fi
+    if [[ -f "$F2" ]]; then
+      if grep -q "keycloak-oauth:gerrit-admin" $F2; then
+        echo "$F2 is correct."
+      else
+        echo "ERROR $F2 is incorrect."
+        retVal="RETVAL_NOK"
+        return
+      fi
+    else
+      echo "ERROR: $F2 doesn't exist."
+      retVal="RETVAL_NOK"
+      return
+    fi
+
+    STAGE2_COMPLETED=true
+  fi
+
+  RES=$(git ls-remote origin | grep "refs/meta/group-names")
+  if [[ "${RES}" != *"refs/meta/group-names"* ]]; then
+    echo "ERROR: group-names must exist by default"
+    retVal="RETVAL_NOK"
+    return
+  else
+    echo "group-names are there. Changing membership."
+    git fetch origin refs/meta/group-names:refs/meta/group-names
+    git checkout refs/meta/group-names
+    FILE=$(grep "name = Administrators" * | awk -F':' '{print $1}')
+    UUID=$(cat ${FILE} | grep "uuid" | awk '{print $3}')
+    UUID_SHORT=$(echo ${UUID} | cut -c1-2)
+    git fetch origin refs/groups/${UUID_SHORT}/${UUID}:refs/groups/${UUID_SHORT}/${UUID}
+    git checkout refs/groups/${UUID_SHORT}/${UUID}
+    echo "1000000" >members
+    git add members
+    git commit -m "Updating members"
+    git push origin HEAD:refs/groups/${UUID_SHORT}/${UUID}
+
+    STAGE3_COMPLETED=true
+  fi
+
+  if [[ "$STAGE1_COMPLETED" != true || "$STAGE2_COMPLETED" != true || "$STAGE3_COMPLETED" != true ]]; then
+    echo "ERROR: STAGE 1 or 2 or 3 failed"
+    retVal="RETVAL_NOK"
+    return
+  fi
+
+  rm -rf /mnt/git/tmp
+  echo "Testing SSH connection..."
+
+  n=1
+  until [ "$n" -ge 10 ]; do
+    ERR_MSG=$(ssh -o LogLevel=ERROR -o ConnectTimeout=1 -o BatchMode=yes -o UserKnownHostsFile=/dev/null -o StrictHostKeychecking=no -p 29418 -i /root/.ssh/privatekey gerrit-admin@gerrit-service gerrit version 2>&1)
+    if [[ $ERR_MSG == *"gerrit version"* ]]; then
+      echo "SSH connection worked !!!"
+      STAGE4_COMPLETED=true
+      break
+    else
+      echo "No SSH connection, retrying... #$n"
+      n=$((n + 1))
+      sleep 1
+    fi
+  done
+
+  if [[ "$STAGE4_COMPLETED" != true ]]; then
+    # Restart gerrit to refresh external-ids and make it possible to generate the HTTP token, getting SSH to work again requires around 300 seconds.
+    echo "Restarting Gerrit..."
+    kubectl delete pod gerrit-0 -n gerrit
+    echo "Testing SSH connection again (after restart)..."
+
+    n=1
+    until [ "$n" -ge 600 ]; do
+      ERR_MSG=$(ssh -o LogLevel=ERROR -o ConnectTimeout=1 -o BatchMode=yes -o UserKnownHostsFile=/dev/null -o StrictHostKeychecking=no -p 29418 -i /root/.ssh/privatekey gerrit-admin@gerrit-service gerrit version 2>&1)
+      if [[ $ERR_MSG == *"gerrit version"* ]]; then
+        echo "SSH connection worked !!!"
+        STAGE5_COMPLETED=true
+        break
+      else
+        echo "No SSH connection, retrying... #$n"
+        n=$((n + 1))
+        sleep 1
+      fi
+    done
+  else
+    echo "No need to restart Gerrit, SSH connection works."
+    STAGE5_COMPLETED=true
+  fi
+
+  if [[ "$STAGE5_COMPLETED" != true ]]; then
+    echo "ERROR: Can't connect to SSH server..."
+    retVal="RETVAL_NOK"
+    return
+  else
+    HTTP_PASSWORD=$(cat /root/.ssh/privatekey | head -2 | tail -1 | cut -c1-30)
+    ERR_MSG=$(ssh -q -o LogLevel=ERROR -o BatchMode=yes -o UserKnownHostsFile=/dev/null -o StrictHostKeychecking=no -p 29418 -i /root/.ssh/privatekey gerrit-admin@gerrit-service gerrit set-account gerrit-admin --http-password ${HTTP_PASSWORD})
+    if [ -z "${HTTP_PASSWORD}" ]; then
+      echo "ERROR: HTTP_PASSWORD is empty."
+      retVal="RETVAL_NOK"
+      return
+    else
+      cd /root
+      HTTP_PASSWORD_BASE64=$(echo $HTTP_PASSWORD | base64 -w0)
+      sed -i "s/##HTTP_PASSWORD##/${HTTP_PASSWORD_BASE64}/g" ./secret.json
+
+      curl --cacert ${CACERT} --header "Authorization: Bearer ${TOKEN}" -X DELETE ${APISERVER}/api/v1/namespaces/jenkins/secrets/jenkins-gerrit-http-password
+      curl --cacert ${CACERT} --header "Authorization: Bearer ${TOKEN}" -H 'Accept: application/json' -H 'Content-Type: application/json' -X POST ${APISERVER}/api/v1/namespaces/jenkins/secrets -d @secret.json
+      echo "HTTP PASSWORD saved into secrets"
+      retVal="RETVAL_OK"
+      return
+    fi
+  fi
+}
+
+function gerrit-disable-anonymous-access() {
+  retVal="RETVAL_NOK"
+  cd /root
+  mkdir -p /root/tmp
+  cd /root/tmp
+  git config --global --add safe.directory /mnt/git/All-Projects.git
+  git clone /mnt/git/All-Projects.git
+  cd All-Projects
+  if grep -q "Anonymous-Users" groups; then
+    echo "Removing anonymous access"
+    sed -i '/read = group Anonymous Users$/d' project.config
+    sed -i '/\[access \"refs\/meta\/version\"\]$/d' project.config
+    sed -i '/^global:Anonymous-Users/d' groups
+    git add .
+    git commit -m "Disable anonymous access"
+    git push origin HEAD:refs/meta/config
+    echo "Anonymous access is now disabled"
+  else
+    echo "Anonymous access is already disabled"
+  fi
+  cd /root
+  rm -rf /root/tmp
+  retVal="RETVAL_OK"
+  return
+}
+
+function gerrit-create-projects() {
+  retVal="RETVAL_NOK"
+  ERR_MSG=$(ssh -q -o LogLevel=ERROR -o BatchMode=yes -o UserKnownHostsFile=/dev/null -o StrictHostKeychecking=no -p 29418 -i /root/.ssh/privatekey gerrit-admin@gerrit-service gerrit ls-projects | grep "android/platform/manifest")
+  if [[ $ERR_MSG == *"android/platform/manifest"* ]]; then
+    echo "Project exists."
+    retVal="RETVAL_OK"
+    return
+  else
+    echo "Create android/platform/manifest project."
+    ssh -q -o LogLevel=ERROR -o BatchMode=yes -o UserKnownHostsFile=/dev/null -o StrictHostKeychecking=no -p 29418 -i /root/.ssh/privatekey gerrit-admin@gerrit-service gerrit create-project android/platform/manifest
+    retVal="RETVAL_OK"
+  fi
+}
+
+function gerrit-mirror-android() {
+  retVal="RETVAL_NOK"
+  git config --global --add safe.directory /mnt/git/.mirror/android/platform/manifest.git
+
+  if [ ! -d "/mnt/git/.mirror/android/platform/" ]; then
+    mkdir -p /mnt/git/.mirror/android/platform/
+    cd /mnt/git/.mirror/android/platform/
+    git clone --mirror https://android.googlesource.com/platform/manifest
+    cd manifest.git
+    git config --global --add safe.directory /mnt/git/android/platform/manifest.git
+    git remote add gerrit /mnt/git/android/platform/manifest.git/
+    chown -R 1000:users /mnt/git/.mirror/
+  else
+    cd /mnt/git/.mirror/android/platform/manifest.git
+    git fetch origin
+    chown -R 1000:users /mnt/git/.mirror/
+    git config --global --add safe.directory /mnt/git/android/platform/manifest.git
+  fi
+  git fetch gerrit
+  git push gerrit refs/heads/*:refs/heads/*
+  git push gerrit refs/tags/*:refs/tags/*
+
+  rm -rf /root/manifest
+  mkdir -p /root/manifest
+  cd /root/manifest
+  git clone /mnt/git/android/platform/manifest.git .
+  git checkout -t origin/android14-qpr1-automotiveos-release
+  git config --global --add safe.directory /mnt/git/android/platform/manifest.git
+
+  NUM=$(xq-python '.manifest.project | length' ./default.xml)
+  n=1
+
+  NUM=10
+  echo "Showing only 10 first repositories to be sync'ed:"
+  until [ "$n" -ge $NUM ]; do
+    REPO_NAME=$(xq-python ".manifest.project[$n]" ./default.xml | grep "name" | awk -F'\"' '{print $4}')
+    REPO_URL="https://android.googlesource.com/$REPO_NAME"
+    echo $REPO_URL
+    n=$((n + 1))
+  done
+
+  #export APP_ID=$(cat githubAppID)
+  #export APP_SECRET=$(cat githubAppPrivateKey)
+  #export GH_REPO=AGBG-ASG/acn-horizon-sdv-android-platform-manifest
+  #TOKEN=$(./get_github_app_token.sh)
+  #git clone --mirror https://git:${TOKEN}@github.com/${GH_REPO}
+
+  retVal="RETVAL_OK"
+  return
+}
+
+function main() {
+  initialize
+
+  gerrit-test-connection
+  if [[ "${retVal}" == "RETVAL_NOK" ]]; then
+    echo "gerrit-test-connection failed"
+    exit 1
+  fi
+
+  gerrit-craft-all-users
+  if [[ "${retVal}" == "RETVAL_NOK" ]]; then
+    echo "gerrit-craft-all-users failed"
+    exit 1
+  fi
+
+  gerrit-disable-anonymous-access
+  if [[ "${retVal}" == "RETVAL_NOK" ]]; then
+    echo "gerrit-disable-anonymous-access failed"
+    exit 1
+  fi
+
+  gerrit-create-projects
+  if [[ "${retVal}" == "RETVAL_NOK" ]]; then
+    echo "gerrit-create-projects failed"
+    exit 1
+  fi
+
+  gerrit-mirror-android
+  if [[ "${retVal}" == "RETVAL_NOK" ]]; then
+    echo "gerrit-mirror-android failed"
+    exit 1
+  fi
+}
+
+main
