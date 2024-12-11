@@ -251,7 +251,7 @@ spec:
                       }
                   - script: >
                       pipelineJob('CF Instance Template') {
-                        description('Creates Goggle Cloude Engine (GCE) instance templates for use with CVD Launcher and CTS Execution jobs.')
+                        description('Pipeline for creating and managing GCE instance templates optimized for Cuttlefish-based workflows, such as CVD Launcher and CTS Execution.<br/>Includes an option to delete outdated instances and artifacts.')
                         definition {
                           cpsScm {
                             lightweight()
