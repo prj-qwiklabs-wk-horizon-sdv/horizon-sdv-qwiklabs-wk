@@ -252,6 +252,13 @@ function create_vm_instance() {
 function install_host_tools() {
     echo_formatted "3. Populate Cuttlefish Host tools/packages on VM instance"
 
+    # https://cloud.google.com/compute/docs/troubleshooting/troubleshoot-os-login#invalid_argument
+    # Clean old SSH keys
+    echo -e "${ORANGE}Remove old SSH keys${NC}"
+    gcloud compute os-login describe-profile | \
+        awk -v username="$(whoami)" '/fingerprint:/{f=$2} $0 ~ username && /instance/{print f}' | \
+        xargs -I {} gcloud compute os-login ssh-keys remove --key={} || true
+
     gcloud compute ssh --zone "${ZONE}" "${vm_base_instance}" --tunnel-through-iap --project "${PROJECT}" \
         --command='mkdir -p cvd' >/dev/null 2>&1 &
     progress_spinner "$!"
