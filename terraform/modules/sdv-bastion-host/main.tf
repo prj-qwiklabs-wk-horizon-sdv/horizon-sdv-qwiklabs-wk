@@ -51,6 +51,13 @@ resource "google_project_iam_member" "os_admin_login_bindings" {
   member   = each.key
 }
 
+resource "google_project_iam_member" "kubernetes_engine_admin" {
+  for_each = toset(var.members)
+  project  = data.google_project.project.id
+  role     = "roles/container.admin"
+  member   = each.key
+}
+
 module "iap_tunneling" {
   source  = "terraform-google-modules/bastion-host/google//modules/iap-tunneling"
   version = "~> 7.0"
