@@ -89,7 +89,6 @@ module "base" {
         "roles/secretmanager.secretAccessor",
         "roles/iam.serviceAccountTokenCreator",
         "roles/container.admin",
-        "roles/iam.securityReviewer",
         "roles/iap.tunnelResourceAccessor",
         "roles/iam.serviceAccountUser",
         "roles/compute.instanceAdmin.v1"

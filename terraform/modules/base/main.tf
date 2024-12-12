@@ -243,16 +243,5 @@ module "sdv_iam_sceret_manager" {
 
 }
 
-# permission: Security Reviewer (roles/iam.securityReviewer) for Lukasz and Marta
-module "sdv_iam_security_reviewer" {
-  source = "../sdv-iam"
-  member = [
-    "user:lukasz.domke@accenture.com",
-    "user:marta.kania@accenture.com",
-  ]
-
-  role = "roles/iam.securityReviewer"
-
-}
 
 
