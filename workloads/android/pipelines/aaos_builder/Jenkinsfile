@@ -109,8 +109,8 @@ pipeline {
            defaultValue: 'android-15.0.0_r4',
            description: '''<p>RPi tag/branch name.<br/>
            Only applicable for aosp_rpiX_car targets.<br/>
-           &bull;Reference: <a href="https://github.com/raspberry-vanilla/android_local_manifest" target="_blank">Raspberry Vanilla</a><br/>
-           &bull;Pick the correct value that correlates to the AAOS_REVISION</p>''')
+           Reference: <a href="https://github.com/raspberry-vanilla/android_local_manifest" target="_blank">Raspberry Vanilla</a> and only applicable to aosp_rpiX_car targets<br/>
+           <i>Pick the correct revision that correlates to main AAOS_REVISION</i></p>''')
 
     choice(name: 'ANDROID_VERSION',
            choices: ['14', '15'],
