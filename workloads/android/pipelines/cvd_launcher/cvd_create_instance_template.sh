@@ -53,6 +53,7 @@
 #  - SERVICE_ACCOUNT: The GCP service account. Default: derived from gcloud
 #        projects describe.
 #  - SUBNET: The name of the subnet. Default: sdv-subnet
+#  - UNIQUE_NAME: The name used to identify the instance. Default: cuttlefish-vm
 #  - VM_INSTANCE_CREATE: If 'true', then create a stopped VM instance from
 #        the final instance template. Useful for devs to experiment with the
 #        VM instances. May be disabled to reduce managed disk costs.
@@ -90,29 +91,38 @@
 source "$(dirname "${BASH_SOURCE[0]}")"/cvd_environment.sh "$0"
 
 # Environment variables that can be overridden from command line.
-# android-cuttlefish revisions can be v0.9.29, v0.9.30, v0.9.31, main
+# android-cuttlefish revisions can be of the form v1.0.0, v0.9.31, main etc.
 CUTTLEFISH_REVISION=${CUTTLEFISH_REVISION:-main}
 CUTTLEFISH_REVISION=$(echo "${CUTTLEFISH_REVISION}" | xargs)
 BOOT_DISK_SIZE=${BOOT_DISK_SIZE:-200GB}
+BOOT_DISK_SIZE=$(echo "${BOOT_DISK_SIZE}" | xargs)
 JENKINS_NAMESPACE=${JENKINS_NAMESPACE:-jenkins}
 JENKINS_PRIVATE_SSH_KEY_NAME=${JENKINS_PRIVATE_SSH_KEY_NAME:-jenkins-cuttlefish-vm-ssh-private-key}
 JENKINS_SSH_PUB_KEY_FILE=${JENKINS_SSH_PUB_KEY_FILE:-jenkins_rsa.pub}
 MACHINE_TYPE=${MACHINE_TYPE:-n1-standard-64}
+MACHINE_TYPE=$(echo "${MACHINE_TYPE}" | xargs)
 NETWORK=${NETWORK:-sdv-network}
 PROJECT=${PROJECT:-$(gcloud config list --format 'value(core.project)'|head -n 1)}
 REGION=${REGION:-europe-west1}
 SERVICE_ACCOUNT=${SERVICE_ACCOUNT:-$(gcloud projects describe "${PROJECT}" --format='get(projectNumber)')-compute@developer.gserviceaccount.com}
 SUBNET=${SUBNET:-sdv-subnet}
+UNIQUE_NAME=${UNIQUE_NAME:-cuttlefish-vm}
+UNIQUE_NAME=$(echo "${UNIQUE_NAME}" | xargs)
 VM_INSTANCE_CREATE=${VM_INSTANCE_CREATE:-true}
 ZONE=${ZONE:-europe-west1-d}
 
 # Instance names can only include specific characters, drop '.'.
-declare -r cuttlefish_version=${CUTTLEFISH_REVISION//./}
-declare -r vm_base_instance_template=instance-template-vm-debian-12
 declare -r vm_base_instance=vm-debian-12
-declare -r vm_cuttlefish_image=image-cuttlefish-vm-"${cuttlefish_version}"-debian-12
-declare -r vm_cuttlefish_instance_template=instance-template-cuttlefish-vm-"${cuttlefish_version}"-debian-12
-declare -r vm_cuttlefish_instance=cuttlefish-vm-${cuttlefish_version}-debian-12
+declare -r vm_base_instance_template=instance-template-vm-debian-12
+declare -r cuttlefish_version=${CUTTLEFISH_REVISION//./}
+declare cuttlefish_unique_name=${UNIQUE_NAME//./-}
+if [[ "${cuttlefish_unique_name}" == "cuttlefish-vm" ]]; then
+    # If unique name is default, append version.
+    cuttlefish_unique_name="${cuttlefish_unique_name}"-"${cuttlefish_version}"
+fi
+declare -r vm_cuttlefish_image=image-"${cuttlefish_unique_name}"-debian-12
+declare -r vm_cuttlefish_instance_template=instance-template-"${cuttlefish_unique_name}"-debian-12
+declare -r vm_cuttlefish_instance="${cuttlefish_unique_name}"-debian-12
 
 # Colours for logging.
 if [ -z "${WORKSPACE}" ]; then
@@ -172,6 +182,7 @@ function echo_environment() {
     echo_formatted "REGION=${REGION}"
     echo_formatted "SERVICE_ACCOUNT=${SERVICE_ACCOUNT}"
     echo_formatted "SUBNET=${SUBNET}"
+    echo_formatted "UNIQUE_NAME=${cuttlefish_unique_name}"
     echo_formatted "VM_INSTANCE_CREATE=${VM_INSTANCE_CREATE}"
     echo_formatted "ZONE=${ZONE}"
 }
@@ -189,6 +200,7 @@ function print_usage() {
       REGION=${REGION} \\
       SERVICE_ACCOUNT=${SERVICE_ACCOUNT} \\
       SUBNET=${SUBNET} \\
+      UNIQUE_NAME=${cuttlefish_unique_name} \\
       VM_INSTANCE_CREATE=${VM_INSTANCE_CREATE} \\
       ZONE=${ZONE} \\
       ./${SCRIPT_NAME}"
