@@ -77,7 +77,7 @@ pipeline {
 
 
   stages {
-    stage ('Stage 1: base template') {
+    stage ('Stage 1: Create base instance template') {
 
       when {
         allOf {
@@ -89,17 +89,17 @@ pipeline {
       steps {
         container(name: 'builder') {
           sh '''
-              CUTTLEFISH_REVISION=${ANDROID_CUTTLEFISH_REVISION} \
-              PROJECT=${CLOUD_PROJECT} \
-              REGION=${CLOUD_REGION} \
-              ZONE=${CLOUD_ZONE} \
-              ./workloads/android/pipelines/cvd_launcher/cvd_create_instance_template.sh 1
+            CUTTLEFISH_REVISION=${ANDROID_CUTTLEFISH_REVISION} \
+            PROJECT=${CLOUD_PROJECT} \
+            REGION=${CLOUD_REGION} \
+            ZONE=${CLOUD_ZONE} \
+            ./workloads/android/pipelines/cvd_launcher/cvd_create_instance_template.sh 1
           '''
         }
       }
     }
 
-    stage ('Stage 2: base vm') {
+    stage ('Stage 2: Create base VM instance') {
 
       when {
         allOf {
@@ -111,17 +111,17 @@ pipeline {
       steps {
         container(name: 'builder') {
           sh '''
-              CUTTLEFISH_REVISION=${ANDROID_CUTTLEFISH_REVISION} \
-              PROJECT=${CLOUD_PROJECT} \
-              REGION=${CLOUD_REGION} \
-              ZONE=${CLOUD_ZONE} \
-              ./workloads/android/pipelines/cvd_launcher/cvd_create_instance_template.sh 2
+            CUTTLEFISH_REVISION=${ANDROID_CUTTLEFISH_REVISION} \
+            PROJECT=${CLOUD_PROJECT} \
+            REGION=${CLOUD_REGION} \
+            ZONE=${CLOUD_ZONE} \
+            ./workloads/android/pipelines/cvd_launcher/cvd_create_instance_template.sh 2
           '''
         }
       }
     }
 
-    stage ('Stage 3: update VM') {
+    stage ('Stage 3: Install Cuttlefish on base VM instance') {
 
       when {
         allOf {
@@ -133,17 +133,17 @@ pipeline {
       steps {
         container(name: 'builder') {
           sh '''
-              CUTTLEFISH_REVISION=${ANDROID_CUTTLEFISH_REVISION} \
-              PROJECT=${CLOUD_PROJECT} \
-              REGION=${CLOUD_REGION} \
-              ZONE=${CLOUD_ZONE} \
-              ./workloads/android/pipelines/cvd_launcher/cvd_create_instance_template.sh 3
+            CUTTLEFISH_REVISION=${ANDROID_CUTTLEFISH_REVISION} \
+            PROJECT=${CLOUD_PROJECT} \
+            REGION=${CLOUD_REGION} \
+            ZONE=${CLOUD_ZONE} \
+            ./workloads/android/pipelines/cvd_launcher/cvd_create_instance_template.sh 3
           '''
         }
       }
     }
 
-    stage ('Stage 4: SSH access') {
+    stage ('Stage 4: Setup SSH access on base VM instance') {
 
       when {
         allOf {
@@ -157,30 +157,30 @@ pipeline {
           withCredentials([sshUserPrivateKey(credentialsId: "jenkins-cuttlefish-vm-ssh-private-key", keyFileVariable:
 'CUTTLEFISH_SSH_PRIVATE_KEY')]) {
             sh '''
-                # Extract public key from credentials.
-                eval `ssh-agent -s` || true
-                if ssh-add "${CUTTLEFISH_SSH_PRIVATE_KEY}"; then
-                    if ssh-add -L > "${WORKSPACE}"/jenkins_rsa.pub ; then
-                        echo "SSH key appears valid"
-                    else
-                        echo "SSH key is invalid"
-                        rm -f "${WORKSPACE}"/jenkins_rsa.pub || true
-                    fi
+              # Extract public key from credentials.
+              eval `ssh-agent -s` || true
+              if ssh-add "${CUTTLEFISH_SSH_PRIVATE_KEY}"; then
+                if ssh-add -L > "${WORKSPACE}"/jenkins_rsa.pub ; then
+                  echo "SSH key appears valid"
+                else
+                  echo "SSH key is invalid"
+                  rm -f "${WORKSPACE}"/jenkins_rsa.pub || true
                 fi
+              fi
 
-                CUTTLEFISH_REVISION=${ANDROID_CUTTLEFISH_REVISION} \
-                JENKINS_SSH_PUB_KEY_FILE="${WORKSPACE}"/jenkins_rsa.pub \
-                PROJECT=${CLOUD_PROJECT} \
-                REGION=${CLOUD_REGION} \
-                ZONE=${CLOUD_ZONE} \
-                ./workloads/android/pipelines/cvd_launcher/cvd_create_instance_template.sh 4
+              CUTTLEFISH_REVISION=${ANDROID_CUTTLEFISH_REVISION} \
+              JENKINS_SSH_PUB_KEY_FILE="${WORKSPACE}"/jenkins_rsa.pub \
+              PROJECT=${CLOUD_PROJECT} \
+              REGION=${CLOUD_REGION} \
+              ZONE=${CLOUD_ZONE} \
+              ./workloads/android/pipelines/cvd_launcher/cvd_create_instance_template.sh 4
             '''
           }
         }
       }
     }
 
-    stage ('Stage 5: create CF template') {
+    stage ('Stage 5: Create Cuttlefish instance template from VM instance') {
 
       when {
         allOf {
@@ -192,18 +192,18 @@ pipeline {
       steps {
         container(name: 'builder') {
           sh '''
-              CUTTLEFISH_REVISION=${ANDROID_CUTTLEFISH_REVISION} \
-              PROJECT=${CLOUD_PROJECT} \
-              REGION=${CLOUD_REGION} \
-              VM_INSTANCE_CREATE=true \
-              ZONE=${CLOUD_ZONE} \
-              ./workloads/android/pipelines/cvd_launcher/cvd_create_instance_template.sh 5
+            CUTTLEFISH_REVISION=${ANDROID_CUTTLEFISH_REVISION} \
+            PROJECT=${CLOUD_PROJECT} \
+            REGION=${CLOUD_REGION} \
+            VM_INSTANCE_CREATE=true \
+            ZONE=${CLOUD_ZONE} \
+            ./workloads/android/pipelines/cvd_launcher/cvd_create_instance_template.sh 5
           '''
         }
       }
     }
 
-    stage ('Stage 6: delete instances') {
+    stage ('Stage 6: Delete all artifacts') {
 
       when {
         allOf {
@@ -215,11 +215,11 @@ pipeline {
       steps {
         container(name: 'builder') {
           sh '''
-              CUTTLEFISH_REVISION=${ANDROID_CUTTLEFISH_REVISION} \
-              PROJECT=${CLOUD_PROJECT} \
-              REGION=${CLOUD_REGION} \
-              ZONE=${CLOUD_ZONE} \
-              ./workloads/android/pipelines/cvd_launcher/cvd_create_instance_template.sh 6
+            CUTTLEFISH_REVISION=${ANDROID_CUTTLEFISH_REVISION} \
+            PROJECT=${CLOUD_PROJECT} \
+            REGION=${CLOUD_REGION} \
+            ZONE=${CLOUD_ZONE} \
+            ./workloads/android/pipelines/cvd_launcher/cvd_create_instance_template.sh 6
           '''
         }
       }
