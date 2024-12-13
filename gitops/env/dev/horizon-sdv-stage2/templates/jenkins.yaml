@@ -121,22 +121,22 @@ spec:
                         noDelayProvisioning: true
                         projectId: "sdva-2108202401"
                     - computeEngine:
-                        cloudName: "cuttlefish-vm-v100"
+                        cloudName: "cuttlefish-vm-v101"
                         configurations:
                         - bootDiskAutoDelete: true
                           bootDiskSizeGb: 10
                           bootDiskSizeGbStr: "10"
                           bootDiskType: "https://www.googleapis.com/compute/v1/projects/sdva-2108202401/zones/europe-west1-d/diskTypes/hyperdisk-balanced"
-                          description: "cuttlefish-vm-v100"
+                          description: "cuttlefish-vm-v101"
                           javaExecPath: "/usr/bin/java"
                           labelSet:
-                          - name: "cuttlefish-vm-v100"
-                          labelString: "cuttlefish-vm-v100"
-                          labels: "cuttlefish-vm-v100"
+                          - name: "cuttlefish-vm-v101"
+                          labelString: "cuttlefish-vm-v101"
+                          labels: "cuttlefish-vm-v101"
                           launchTimeoutSeconds: 300
                           launchTimeoutSecondsStr: "300"
                           mode: NORMAL
-                          namePrefix: "cuttlefish-vm-v100"
+                          namePrefix: "cuttlefish-vm-v101"
                           numExecutors: 1
                           numExecutorsStr: "1"
                           oneShot: true
@@ -147,41 +147,7 @@ spec:
                           runAsUser: "jenkins"
                           sshConfiguration:
                             customPrivateKeyCredentialsId: "jenkins-cuttlefish-vm-ssh-private-key"
-                          template: "https://www.googleapis.com/compute/v1/projects/sdva-2108202401/global/instanceTemplates/instance-template-cuttlefish-vm-v100-debian-12"
-                          useInternalAddress: true
-                          zone: "https://www.googleapis.com/compute/v1/projects/sdva-2108202401/zones/europe-west1-d"
-                        credentialsId: "gce-creds"
-                        instanceCapStr: "20"
-                        noDelayProvisioning: true
-                        projectId: "sdva-2108202401"
-                    - computeEngine:
-                        cloudName: "cuttlefish-vm-v0931"
-                        configurations:
-                        - bootDiskAutoDelete: true
-                          bootDiskSizeGb: 10
-                          bootDiskSizeGbStr: "10"
-                          bootDiskType: "https://www.googleapis.com/compute/v1/projects/sdva-2108202401/zones/europe-west1-d/diskTypes/hyperdisk-balanced"
-                          description: "cuttlefish-vm-v0931"
-                          javaExecPath: "/usr/bin/java"
-                          labelSet:
-                          - name: "cuttlefish-vm-v0931"
-                          labelString: "cuttlefish-vm-v0931"
-                          labels: "cuttlefish-vm-v0931"
-                          launchTimeoutSeconds: 300
-                          launchTimeoutSecondsStr: "300"
-                          mode: NORMAL
-                          namePrefix: "cuttlefish-vm-v0931"
-                          numExecutors: 1
-                          numExecutorsStr: "1"
-                          oneShot: true
-                          region: "https://www.googleapis.com/compute/v1/projects/sdva-2108202401/regions/europe-west1"
-                          remoteFs: "/home/jenkins"
-                          retentionTimeMinutes: 6
-                          retentionTimeMinutesStr: "6"
-                          runAsUser: "jenkins"
-                          sshConfiguration:
-                            customPrivateKeyCredentialsId: "jenkins-cuttlefish-vm-ssh-private-key"
-                          template: "https://www.googleapis.com/compute/v1/projects/sdva-2108202401/global/instanceTemplates/instance-template-cuttlefish-vm-v0931-debian-12"
+                          template: "https://www.googleapis.com/compute/v1/projects/sdva-2108202401/global/instanceTemplates/instance-template-cuttlefish-vm-v101-debian-12"
                           useInternalAddress: true
                           zone: "https://www.googleapis.com/compute/v1/projects/sdva-2108202401/zones/europe-west1-d"
                         credentialsId: "gce-creds"

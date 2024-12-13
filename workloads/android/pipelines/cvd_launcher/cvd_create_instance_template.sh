@@ -91,7 +91,7 @@
 source "$(dirname "${BASH_SOURCE[0]}")"/cvd_environment.sh "$0"
 
 # Environment variables that can be overridden from command line.
-# android-cuttlefish revisions can be of the form v1.0.0, v0.9.31, main etc.
+# android-cuttlefish revisions can be of the form v1.0.1, main etc.
 CUTTLEFISH_REVISION=${CUTTLEFISH_REVISION:-main}
 CUTTLEFISH_REVISION=$(echo "${CUTTLEFISH_REVISION}" | xargs)
 BOOT_DISK_SIZE=${BOOT_DISK_SIZE:-200GB}
