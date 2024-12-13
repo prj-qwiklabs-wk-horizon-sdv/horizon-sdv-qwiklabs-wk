@@ -70,16 +70,21 @@ function mtkc_max_devices() {
     num_devices="${MTK_CONNECTED_DEVICES}"
     if (( num_devices != num_instances )); then
         echo "MTK_CONNECTED_DEVICES (${MTK_CONNECTED_DEVICES}) != num_instances (${num_instances})"
-        # Restart adb (adb devices can be unreliable)
-        echo "Restart adb server, sleep 20s"
-        sudo adb kill-server >/dev/null 2>&1
-        sudo adb start-server >/dev/null 2>&1
-        sleep 20
-        num_instances=$(adb devices | grep -c -E '0.+device$')
+        if (( num_instances == 0 )); then
+            # Restart adb (adb devices can be unreliable)
+            echo "Restart adb server, sleep 40s"
+            sudo adb kill-server || true
+            sleep 20
+            sudo adb start-server || true
+            sleep 20
+            num_instances=$(adb devices | grep -c -E '0.+device$')
 
-        if (( num_devices < num_instances || num_instances == 0 )); then
-            echo "ERROR MTK_CONNECTED_DEVICES (${MTK_CONNECTED_DEVICES}), num_instances (${num_instances})"
-            exit 1
+            if (( num_instances == 0 )); then
+                echo "ERROR MTK_CONNECTED_DEVICES (${MTK_CONNECTED_DEVICES}), num_instances (${num_instances})"
+                exit 1
+            fi
+        elif (( num_instances > num_devices )); then
+            num_instances=num_devices
         fi
 
         echo "Setting MTK_CONNECTED_DEVICES to ${num_instances}"
