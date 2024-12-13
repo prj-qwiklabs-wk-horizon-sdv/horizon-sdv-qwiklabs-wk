@@ -61,12 +61,11 @@ pipeline {
 
   parameters {
     string(name: 'ANDROID_CUTTLEFISH_REVISION',
-           defaultValue: 'v1.0.0',
+           defaultValue: 'main',
            description: '''<p>The branch/tag version of Android Cuttlefish to use, e.g..</p>
            <ul>
-             <li>v1.0.0</li>
-             <li>v0.9.31</li>
              <li>main</li>
+             <li>v1.0.1</li>
            </ul>
            <p>Reference: <a href="https://github.com/google/android-cuttlefish.git" target="_blank">android-cuttlefish.git</a></p>''')
 
@@ -97,8 +96,8 @@ target="_blank">gcloud compute instance-templates create</a>, i.e. <i>--create-d
            Default: leave empty, the name will be automatically derived from ANDROID_CUTTLEFISH_REVISION.<br/><br/>
            This option is simply provided for flexibility to allow users create their own instance templates, should they wish to, e.g.<br/>
            <ul>
-             <li>cuttlefish-vm-n1-standard-8-v100</li>
-             <li>cuttlefish-vm-bob-v100</li>
+             <li>cuttlefish-vm-n1-standard-8-v101</li>
+             <li>cuttlefish-vm-bob-v101</li>
            </ul>
            <p>If you define a unique instance,</p>
            <ul>
