@@ -132,14 +132,19 @@ pipeline {
           currentBuild.description = "${env.AAOS_LUNCH_TARGET}"
         }
         container(name: 'builder') {
-          sh '''
-            AAOS_GERRIT_MANIFEST_URL="${AAOS_GERRIT_MANIFEST_URL}" \
-            AAOS_REVISION="${AAOS_REVISION}" \
-            AAOS_RPI_REVISION="${AAOS_RPI_REVISION}" \
-            AAOS_LUNCH_TARGET="${AAOS_LUNCH_TARGET}" \
-            AAOS_CLEAN_BUILD=${AAOS_CLEAN_BUILD} \
-            ./workloads/android/pipelines/aaos_builder/aaos_initialise.sh
-          '''
+          withCredentials([usernamePassword(credentialsId: 'jenkins-gerrit-http-password', passwordVariable: 'GERRIT_PASSWORD', usernameVariable: 'GERRIT_USERNAME')]) {
+            sh '''
+              git config --global url."https://${GERRIT_USERNAME}@${HORIZON_DOMAIN}".insteadOf "https://${HORIZON_DOMAIN}"
+              git config --global credential.url https://"${GERRIT_USERNAME}":"${GERRIT_PASSWORD}"@"${HORIZON_DOMAIN}"
+
+              AAOS_GERRIT_MANIFEST_URL="${AAOS_GERRIT_MANIFEST_URL}" \
+              AAOS_REVISION="${AAOS_REVISION}" \
+              AAOS_RPI_REVISION="${AAOS_RPI_REVISION}" \
+              AAOS_LUNCH_TARGET="${AAOS_LUNCH_TARGET}" \
+              AAOS_CLEAN_BUILD=${AAOS_CLEAN_BUILD} \
+              ./workloads/android/pipelines/aaos_builder/aaos_initialise.sh
+            '''
+          }
         }
       }
     }
