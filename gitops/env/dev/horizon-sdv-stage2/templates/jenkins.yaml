@@ -291,6 +291,25 @@ spec:
                           }
                         }
                       }
+                  - script: >
+                      pipelineJob('MTK Connect Cleanup') {
+                        description('<p>Remove offline testbenches from MTK Connect.<br/><b>WARNING:</b> take care when using this job</p>')
+                        definition {
+                          cpsScm {
+                            lightweight()
+                            scm {
+                              git {
+                                remote {
+                                  url('https://github.com/AGBG-ASG/acn-horizon-sdv.git')
+                                  credentials('jenkins-github-agbg')
+                                }
+                                branch('*/main')
+                              }
+                            }
+                            scriptPath('workloads/android/pipelines/mtkc_cleanup/Jenkinsfile')
+                          }
+                        }
+                      }
                 unclassified:
                   gerrit-trigger:
                     servers:

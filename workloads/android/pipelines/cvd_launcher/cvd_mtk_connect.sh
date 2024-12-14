@@ -43,12 +43,13 @@ MTK_CONNECT_DOMAIN=${MTK_CONNECT_DOMAIN:-}
 MTK_CONNECT_USERNAME=${MTK_CONNECT_USERNAME:-}
 MTK_CONNECT_PASSWORD=${MTK_CONNECT_PASSWORD:-}
 MTK_CONNECTED_DEVICES=${MTK_CONNECTED_DEVICES:-8}
-MTK_CONNECT_TESTBENCH=${MTK_CONNECT_TESTBENCH:-aosp-cf-$(uuidgen)}
 MTK_CONNECT_TESTBENCH=${MTK_CONNECT_TESTBENCH// /_}
+MTK_CONNECT_TESTBENCH=$(echo "${MTK_CONNECT_TESTBENCH}" | xargs)
 MTK_CONNECT_HOST=$(hostname -I | sed 's/ .*//')
 MTK_CONNECT_TEST_ARTIFACT=${MTK_CONNECT_TEST_ARTIFACT:-N/A}
 MTK_CONNECT_FILE_PATH="$(dirname "${BASH_SOURCE[0]}")"
 MTK_CONNECT_NATIVE_LINUX_INSTALL=${MTK_CONNECT_NATIVE_LINUX_INSTALL:-false}
+MTK_CONNECT_DELETE_OFFLINE_TESTBENCHES=${MTK_CONNECT_DELETE_OFFLINE_TESTBENCHES:-false}
 NODEJS_VERSION=${NODEJS_VERSION-20.9.0}
 
 declare -r scripts_path="/usr/src/scripts"
@@ -84,11 +85,11 @@ function mtkc_max_devices() {
                 exit 1
             fi
         elif (( num_instances > num_devices )); then
-            num_instances=num_devices
+            num_instances="${MTK_CONNECTED_DEVICES}"
         fi
 
         echo "Setting MTK_CONNECTED_DEVICES to ${num_instances}"
-        num_devices=num_instances
+        num_devices=$num_instances
 
     else
         echo "MTK_CONNECTED_DEVICES (${MTK_CONNECTED_DEVICES}) = num_instances (${num_instances})"
@@ -114,6 +115,7 @@ function mtkc_start() {
         echo "MTK_CONNECT_DEVICES=${MTK_CONNECTED_DEVICES}"
         echo "MTK_CONNECT_TESTBENCH=${MTK_CONNECT_TESTBENCH}"
         echo "MTK_CONNECT_HOST=${MTK_CONNECT_HOST}"
+        echo "MTK_CONNECT_DELETE_OFFLINE=${MTK_CONNECT_DELETE_OFFLINE}"
     } >> "${scripts_path}"/.env
 
     {
@@ -162,6 +164,9 @@ function mtkc_start() {
     fi
 
     wait-on "${config_path}"/registration.name
+}
+
+function mtkc_create_testbench() {
     # Create the requisite testbench.
     node create-testbench.js
 }
@@ -199,6 +204,7 @@ Environment:
     MTK_CONNECT_HOST=${MTK_CONNECT_HOST}
     MTK_CONNECT_TEST_ARTIFACT=${MTK_CONNECT_TEST_ARTIFACT}
     MTK_CONNECT_NATIVE_LINUX_INSTALL=${MTK_CONNECT_NATIVE_LINUX_INSTALL}
+    MTK_CONNECT_DELETE_OFFLINE_TESTBENCHES=${MTK_CONNECT_DELETE_OFFLINE_TESTBENCHES}
 
     Storage Usage (/dev/sda1): $(df -h /dev/sda1 | tail -1 | awk '{print "Used " $3 " of " $2}')
    "
@@ -211,6 +217,11 @@ case "${1}" in
         mtkc_stop
         RESULT=0
         ;;
+    --delete)
+        mtkc_start
+        mtkc_stop
+        RESULT=0
+        ;;
     --start|*)
         if [[ "${MTK_CONNECT_NATIVE_LINUX_INSTALL}" == "false" ]]; then
             mtkc_upgrades
@@ -218,6 +229,7 @@ case "${1}" in
         mtkc_max_devices
         # Start
         mtkc_start
+        mtkc_create_testbench
         RESULT="$?"
         if (( RESULT == 0 )); then
             mtkc_summary "${RESULT}"
