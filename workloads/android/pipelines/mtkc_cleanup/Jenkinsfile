@@ -43,8 +43,9 @@ pipeline {
   }
   parameters {
     string(name: 'MTK_CONNECT_TESTBENCH',
-           defaultValue: 'CVD_Launcher-1',
+           defaultValue: 'Android/Tests/CVD_Launcher-1',
            description: '''<p>Provide the name of the individual testbench to remove from MTK Connect, leave field empty to delete all offline testbenches.<br>
+           e.g. <i>Android/Tests/CTS_Execution-1</i><br>
            <b>WARNING:</b> Take care when using this option!</p>''')
   }
 
