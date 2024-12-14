@@ -31,7 +31,7 @@ pipeline {
 
     string(name: 'CUTTLEFISH_DOWNLOAD_URL',
            defaultValue: '',
-           description: "<p>Storage URL pointing to the location of the Cuttlefish Virtual Device images and host packages, e.g.<br/>gs://${env.CLOUD_PROJECT}-aaos/AAOS_Builder/2</p>")
+           description: "<p>Storage URL pointing to the location of the Cuttlefish Virtual Device images and host packages, e.g.<br/>gs://${env.CLOUD_PROJECT}-aaos/Android/Builds/AAOS_Builder/2</p>")
 
     string(name: 'CUTTLEFISH_MAX_BOOT_TIME',
            defaultValue: '180',
@@ -52,7 +52,7 @@ pipeline {
 
     string(name: 'CTS_DOWNLOAD_URL',
            defaultValue: '',
-           description: "<p>CTS test harness download URL.<br/>Use official CTS test harness (empty field) or one built from CTS Builder job and stored in GS Bucket, e.g.<br/>gs://${env.CLOUD_PROJECT}-aaos/CTS_Builder/2/android-cts.zip</p>")
+           description: "<p>CTS test harness download URL.<br/>Use official CTS test harness (empty field) or one built from CTS Builder job and stored in GS Bucket, e.g.<br/>gs://${env.CLOUD_PROJECT}-aaos/Android/Builds/CTS_Builder/2/android-cts.zip</p>")
 
     choice(name: 'CTS_VERSION',
            choices: ['14', '15'],

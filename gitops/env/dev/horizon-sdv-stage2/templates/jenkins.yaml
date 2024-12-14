@@ -178,26 +178,27 @@ spec:
                       println("This is groovy !");
                 jobs:
                   - script: >
-                      pipelineJob('AAOS Builder') {
-                        description('Android Automotive build pipeline')
-                        definition {
-                          cpsScm {
-                            lightweight()
-                            scm {
-                              git {
-                                remote {
-                                  url('https://github.com/AGBG-ASG/acn-horizon-sdv.git')
-                                  credentials('jenkins-github-agbg')
-                                }
-                                branch('*/main')
-                              }
-                            }
-                            scriptPath('workloads/android/pipelines/aaos_builder/Jenkinsfile')
-                          }
-                        }
+                      folder('Android') {
+                        displayName('Android Workflows')
+                        description('<p>This folder contains pipelines and jobs related to administration, building, testing, and deploying Android applications.<br/>It includes workflows for administration, building and test tasks.</p>')
                       }
                   - script: >
-                      pipelineJob('AAOS Docker Builder') {
+                      folder('Android/Administration') {
+                        displayName('Administration')
+                        description('<p>This folder contains administrative jobs related to supporting Android workflows.</p>')
+                      }
+                  - script: >
+                      folder('Android/Builds') {
+                        displayName('Builds')
+                        description('<p>This folder contains jobs to build Android targets.</p>')
+                      }
+                  - script: >
+                      folder('Android/Tests') {
+                        displayName('Tests')
+                        description('<p>This folder contains jobs used to help test and validate Android builds.</p>')
+                      }
+                  - script: >
+                      pipelineJob('Android/Administration/AAOS Docker Builder') {
                         description('AAOS Docker build image for use in building AAOSP')
                         definition {
                           cpsScm {
@@ -216,7 +217,7 @@ spec:
                         }
                       }
                   - script: >
-                      pipelineJob('CF Instance Template') {
+                      pipelineJob('Android/Administration/CF Instance Template') {
                         description('Pipeline for creating and managing GCE instance templates optimized for Cuttlefish-based workflows, such as CVD Launcher and CTS Execution.<br/>Includes an option to delete outdated instances and artifacts.')
                         definition {
                           cpsScm {
@@ -235,7 +236,45 @@ spec:
                         }
                       }
                   - script: >
-                      pipelineJob('CTS Builder') {
+                      pipelineJob('Android/Administration/MTK Connect Cleanup') {
+                        description('<p>Remove offline testbenches from MTK Connect.<br/><b>WARNING:</b> take care when using this job</p>')
+                        definition {
+                          cpsScm {
+                            lightweight()
+                            scm {
+                              git {
+                                remote {
+                                  url('https://github.com/AGBG-ASG/acn-horizon-sdv.git')
+                                  credentials('jenkins-github-agbg')
+                                }
+                                branch('*/main')
+                              }
+                            }
+                            scriptPath('workloads/android/pipelines/mtkc_cleanup/Jenkinsfile')
+                          }
+                        }
+                      }
+                  - script: >
+                      pipelineJob('Android/Builds/AAOS Builder') {
+                        description('Android Automotive build pipeline')
+                        definition {
+                          cpsScm {
+                            lightweight()
+                            scm {
+                              git {
+                                remote {
+                                  url('https://github.com/AGBG-ASG/acn-horizon-sdv.git')
+                                  credentials('jenkins-github-agbg')
+                                }
+                                branch('*/main')
+                              }
+                            }
+                            scriptPath('workloads/android/pipelines/aaos_builder/Jenkinsfile')
+                          }
+                        }
+                      }
+                  - script: >
+                      pipelineJob('Android/Builds/CTS Builder') {
                         description('Builds Android Compliance Test Suite rather than use standard Google release')
                         definition {
                           cpsScm {
@@ -254,7 +293,7 @@ spec:
                         }
                       }
                   - script: >
-                      pipelineJob('CTS Execution') {
+                      pipelineJob('Android/Tests/CTS Execution') {
                         description('Run the CTS test harness against the Cuttlefish Virtual Devices')
                         definition {
                           cpsScm {
@@ -273,7 +312,7 @@ spec:
                         }
                       }
                   - script: >
-                      pipelineJob('CVD Launcher') {
+                      pipelineJob('Android/Tests/CVD Launcher') {
                         description('Launches Cuttlefish Virtual Devices (CVD) on the Cuttlefish Virtual Machine instances created by GCE from Cuttlefish instance templates')
                         definition {
                           cpsScm {
@@ -288,25 +327,6 @@ spec:
                               }
                             }
                             scriptPath('workloads/android/pipelines/cvd_launcher/Jenkinsfile')
-                          }
-                        }
-                      }
-                  - script: >
-                      pipelineJob('MTK Connect Cleanup') {
-                        description('<p>Remove offline testbenches from MTK Connect.<br/><b>WARNING:</b> take care when using this job</p>')
-                        definition {
-                          cpsScm {
-                            lightweight()
-                            scm {
-                              git {
-                                remote {
-                                  url('https://github.com/AGBG-ASG/acn-horizon-sdv.git')
-                                  credentials('jenkins-github-agbg')
-                                }
-                                branch('*/main')
-                              }
-                            }
-                            scriptPath('workloads/android/pipelines/mtkc_cleanup/Jenkinsfile')
                           }
                         }
                       }
