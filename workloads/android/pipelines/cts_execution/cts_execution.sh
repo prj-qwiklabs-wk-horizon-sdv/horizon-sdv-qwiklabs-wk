@@ -64,7 +64,7 @@ function cts_run() {
     num_instances=$(adb devices | grep -c -E '0.+device$')
     shards="${SHARD_COUNT}"
     if (( shards != num_instances )); then
-        echo "SHARD_COUNT (${SHARD_COUNT}) > num_instances (${num_instances})"
+        echo "SHARD_COUNT (${SHARD_COUNT}) != num_instances (${num_instances})"
 
         if (( num_instances == 0 )); then
             # Restart adb (adb devices can be unreliable)
@@ -80,11 +80,11 @@ function cts_run() {
                 exit 1
             fi
         elif (( num_instances > shards )); then
-            num_instances=shards
+            num_instances=${SHARD_COUNT}
         fi
 
         echo "Setting SHARD_COUNT to ${num_instances}"
-        shards=num_instances
+        shards=$num_instances
     else
         echo "SHARD_COUNT (${SHARD_COUNT}) = num_instances (${num_instances})"
     fi
