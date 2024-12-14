@@ -236,6 +236,25 @@ spec:
                         }
                       }
                   - script: >
+                      pipelineJob('Android/Administration/CF VM Cleanup') {
+                        description('<p>Pipeline for cleaning up GCE VM instances that have not terminated.<br/>Reduce risk of leaving expensive instances in running state.</p>')
+                        definition {
+                          cpsScm {
+                            lightweight()
+                            scm {
+                              git {
+                                remote {
+                                  url('https://github.com/AGBG-ASG/acn-horizon-sdv.git')
+                                  credentials('jenkins-github-agbg')
+                                }
+                                branch('*/main')
+                              }
+                            }
+                            scriptPath('workloads/android/pipelines/cf_vm_cleanup/Jenkinsfile')
+                          }
+                        }
+                      }
+                  - script: >
                       pipelineJob('Android/Administration/MTK Connect Cleanup') {
                         description('<p>Remove offline testbenches from MTK Connect.<br/><b>WARNING:</b> take care when using this job</p>')
                         definition {
