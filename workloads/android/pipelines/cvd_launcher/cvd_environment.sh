@@ -28,7 +28,7 @@ CUTTLEFISH_REPO_NAME=$(basename "${CUTTLEFISH_REPO_URL}" .git)
 CUTTLEFISH_UPDATE=${CUTTLEFISH_UPDATE:-false}
 # Time (seconds) to wait for Virtual Device to boot.
 CUTTLEFISH_MAX_BOOT_TIME=${CUTTLEFISH_MAX_BOOT_TIME:-180}
-# Time (minutes) to wait for Virtual Device to boot.
+# Time (minutes) to keep device alive.
 CUTTLEFISH_KEEP_ALIVE_TIME=${CUTTLEFISH_KEEP_ALIVE_TIME:-20}
 
 # Android CTS test harness URLs, installed on host.
