@@ -312,6 +312,25 @@ spec:
                         }
                       }
                   - script: >
+                      pipelineJob('Android/Builds/Gerrit') {
+                        description('Gerrit triggered build and test')
+                        definition {
+                          cpsScm {
+                            lightweight()
+                            scm {
+                              git {
+                                remote {
+                                  url('https://github.com/AGBG-ASG/acn-horizon-sdv.git')
+                                  credentials('jenkins-github-agbg')
+                                }
+                                branch('*/main')
+                              }
+                            }
+                            scriptPath('workloads/android/pipelines/gerrit/Jenkinsfile')
+                          }
+                        }
+                      }
+                  - script: >
                       pipelineJob('Android/Tests/CTS Execution') {
                         description('Run the CTS test harness against the Cuttlefish Virtual Devices')
                         definition {
