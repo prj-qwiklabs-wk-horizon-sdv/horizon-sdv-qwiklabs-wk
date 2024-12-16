@@ -14,10 +14,6 @@
 
 // Description:
 // Compliance Test Suite Execution on Cuttlefish Virtual Devices.
-//
-// Note: we skip all stages if this is the 1st build because there are no
-//       parameters until the 1st declarative scm checkout has been run.
-//
 pipeline {
 
   parameters {
@@ -81,15 +77,8 @@ pipeline {
 
   stages {
     stage ('Launch Virtual Devices') {
-      when { expression { env.BUILD_NUMBER.toInteger() > 1 } }
+      when { expression { env.CUTTLEFISH_DOWNLOAD_URL } }
       steps {
-        script {
-          // Validate CUTTLEFISH_DOWNLOAD_URL
-          if (env.CUTTLEFISH_DOWNLOAD_URL.isEmpty()) {
-            currentBuild.result = "ABORTED"
-            error('The CUTTLEFISH_DOWNLOAD_URL parameter must be defined!')
-          }
-        }
         sh '''
           CUTTLEFISH_DOWNLOAD_URL="${CUTTLEFISH_DOWNLOAD_URL}" \
           CUTTLEFISH_MAX_BOOT_TIME="${CUTTLEFISH_MAX_BOOT_TIME}" \
@@ -105,7 +94,7 @@ pipeline {
       when {
         allOf {
           expression { env.MTK_CONNECT_ENABLE == 'true' }
-          expression { env.BUILD_NUMBER.toInteger() > 1 }
+          expression { env.CUTTLEFISH_DOWNLOAD_URL }
         }
       }
       steps {
@@ -126,7 +115,7 @@ pipeline {
     }
 
     stage ('CTS execution') {
-      when { expression { env.BUILD_NUMBER.toInteger() > 1 } }
+      when { expression { env.CUTTLEFISH_DOWNLOAD_URL } }
       steps {
         sh '''
            CTS_VERSION=${CTS_VERSION} \
@@ -146,7 +135,7 @@ pipeline {
     always {
       withCredentials([usernamePassword(credentialsId: 'jenkins-mtk-connect-apikey', passwordVariable: 'MTK_CONNECT_PASSWORD', usernameVariable: 'MTK_CONNECT_USERNAME')]) {
         sh '''
-          if [ $BUILD_NUMBER -gt 1 ]; then
+          if test -n "$CUTTLEFISH_DOWNLOAD_URL"; then
             if [ $MTK_CONNECT_ENABLE = true ]; then
               sudo \
               MTK_CONNECT_DOMAIN=${HORIZON_DOMAIN} \

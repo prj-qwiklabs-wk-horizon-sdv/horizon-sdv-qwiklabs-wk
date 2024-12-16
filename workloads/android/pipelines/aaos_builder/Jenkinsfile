@@ -14,10 +14,6 @@
 
 // Description:
 // AAOS Build targets pipeline.
-//
-// Note: we skip all stages if this is the 1st build because there are no
-//       parameters until the 1st declarative scm checkout has been run.
-//
 pipeline {
 
   agent {
@@ -95,7 +91,7 @@ pipeline {
            <li>android-15.0.0_r4</li></ul></p>''')
 
     string(name: 'AAOS_LUNCH_TARGET',
-           defaultValue: 'sdk_car_x86_64-userdebug',
+           defaultValue: '',
            description: '''<p>Build Android cuttlefish, virtual devices and RPi targets, e.g.
            <ul>
            <li>sdk_car_x86_64-userdebug</li>
@@ -140,7 +136,7 @@ pipeline {
 
   stages {
     stage ('Initialise') {
-      when { expression { env.BUILD_NUMBER.toInteger() > 1 } }
+      when { expression { env.AAOS_LUNCH_TARGET } }
       steps {
         script {
           currentBuild.description = "${env.AAOS_LUNCH_TARGET}"
@@ -166,7 +162,7 @@ pipeline {
     }
 
     stage ('Build'){
-      when { expression { env.BUILD_NUMBER.toInteger() > 1 } }
+      when { expression { env.AAOS_LUNCH_TARGET } }
       steps {
         container(name: 'builder') {
           sh '''
@@ -181,8 +177,8 @@ pipeline {
     stage ('Storage'){
       when {
         allOf {
-          expression { env.BUILD_NUMBER.toInteger() > 1 }
-          expression { env.AAOS_ARTIFACT_STORAGE_SOLUTION != '' }
+          expression { env.AAOS_LUNCH_TARGET }
+          expression { env.AAOS_ARTIFACT_STORAGE_SOLUTION }
         }
       }
       steps {

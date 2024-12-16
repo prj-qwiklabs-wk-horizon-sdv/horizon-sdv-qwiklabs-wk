@@ -14,10 +14,6 @@
 
 // Description:
 // AAOS Gerrit Triggered Build.
-//
-// Note: we skip all stages if this is the 1st build because there are no
-//       parameters until the 1st declarative scm checkout has been run.
-//
 pipeline {
 
   agent {

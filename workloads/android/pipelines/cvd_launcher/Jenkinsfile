@@ -15,10 +15,6 @@
 // Description:
 // Cuttlefish Virtual Device launcher for use with MTK Connect in order to
 // test Cuttlefish Virtual Device images.
-// 
-// Note: we skip all stages if this is the 1st build because there are no
-//       parameters until the 1st declarative scm checkout has been run.
-// 
 pipeline {
 
   parameters {
@@ -60,15 +56,8 @@ pipeline {
 
   stages {
     stage ('Launch Virtual Devices') {
-      when { expression { env.BUILD_NUMBER.toInteger() > 1 } }
+      when { expression { env.CUTTLEFISH_DOWNLOAD_URL } }
       steps {
-        script {
-          // Validate CUTTLEFISH_DOWNLOAD_URL
-          if (env.CUTTLEFISH_DOWNLOAD_URL.isEmpty()) {
-            currentBuild.result = "ABORTED"
-            error('The CUTTLEFISH_DOWNLOAD_URL parameter must be defined!')
-          }
-        }
         sh '''
           CUTTLEFISH_DOWNLOAD_URL="${CUTTLEFISH_DOWNLOAD_URL}" \
           CUTTLEFISH_MAX_BOOT_TIME="${CUTTLEFISH_MAX_BOOT_TIME}" \
@@ -81,7 +70,7 @@ pipeline {
     }
 
     stage ('MTK Connect to Virtual Devices') {
-      when { expression { env.BUILD_NUMBER.toInteger() > 1 } }
+      when { expression { env.CUTTLEFISH_DOWNLOAD_URL } }
       steps {
         withCredentials([usernamePassword(credentialsId: 'jenkins-mtk-connect-apikey', passwordVariable: 'MTK_CONNECT_PASSWORD', usernameVariable: 'MTK_CONNECT_USERNAME')]) {
           sh '''
@@ -100,7 +89,7 @@ pipeline {
     }
 
     stage ('Keep Devices Alive'){
-      when { expression { env.BUILD_NUMBER.toInteger() > 1 } }
+      when { expression { env.CUTTLEFISH_DOWNLOAD_URL } }
       steps {
         sh '''
           CUTTLEFISH_KEEP_ALIVE_TIME="${CUTTLEFISH_KEEP_ALIVE_TIME}" \
@@ -114,7 +103,7 @@ pipeline {
     always {
       withCredentials([usernamePassword(credentialsId: 'jenkins-mtk-connect-apikey', passwordVariable: 'MTK_CONNECT_PASSWORD', usernameVariable: 'MTK_CONNECT_USERNAME')]) {
         sh '''
-          if [ $BUILD_NUMBER -gt 1 ]; then
+          if test -n "$CUTTLEFISH_DOWNLOAD_URL"; then
             sudo \
             MTK_CONNECT_DOMAIN=${HORIZON_DOMAIN} \
             MTK_CONNECT_USERNAME=${MTK_CONNECT_USERNAME} \

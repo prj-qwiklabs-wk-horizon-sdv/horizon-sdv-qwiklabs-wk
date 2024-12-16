@@ -18,18 +18,6 @@
 //
 // It reuses the AAOS Docker Builder Docker image, which contains all the
 // necessary packages to create the instance template.
-//
-// The pipeline has two parameters:
-//
-// * ANDROID_CUTTLEFISH_REVISION: a string parameter that specifies the
-//   branch or tag version of Android Cuttlefish to use.
-// * DELETE: a boolean parameter that determines whether to delete existing
-//   instances and skip creation steps. Helps to save on cost and
-//   maintenance.
-//
-// Note: we skip all stages if this is the 1st build because there are no
-//       parameters until the 1st declarative scm checkout has been run.
-//
 pipeline {
 
   agent {
@@ -61,7 +49,7 @@ pipeline {
 
   parameters {
     string(name: 'ANDROID_CUTTLEFISH_REVISION',
-           defaultValue: 'main',
+           defaultValue: '',
            description: '''<p>The branch/tag version of Android Cuttlefish to use, e.g..</p>
            <ul>
              <li>main</li>
@@ -121,7 +109,7 @@ target="_blank">gcloud compute instance-templates create</a>, i.e. <i>--create-d
       when {
         allOf {
           expression { env.DELETE == 'false' }
-          expression { env.BUILD_NUMBER.toInteger() > 1 }
+          expression { env.ANDROID_CUTTLEFISH_REVISION }
         }
       }
 
@@ -146,7 +134,7 @@ target="_blank">gcloud compute instance-templates create</a>, i.e. <i>--create-d
       when {
         allOf {
           expression { env.DELETE == 'false' }
-          expression { env.BUILD_NUMBER.toInteger() > 1 }
+          expression { env.ANDROID_CUTTLEFISH_REVISION }
         }
       }
 
@@ -168,7 +156,7 @@ target="_blank">gcloud compute instance-templates create</a>, i.e. <i>--create-d
       when {
         allOf {
           expression { env.DELETE == 'false' }
-          expression { env.BUILD_NUMBER.toInteger() > 1 }
+          expression { env.ANDROID_CUTTLEFISH_REVISION }
         }
       }
 
@@ -190,7 +178,7 @@ target="_blank">gcloud compute instance-templates create</a>, i.e. <i>--create-d
       when {
         allOf {
           expression { env.DELETE == 'false' }
-          expression { env.BUILD_NUMBER.toInteger() > 1 }
+          expression { env.ANDROID_CUTTLEFISH_REVISION }
         }
       }
 
@@ -227,7 +215,7 @@ target="_blank">gcloud compute instance-templates create</a>, i.e. <i>--create-d
       when {
         allOf {
           expression { env.DELETE == 'false' }
-          expression { env.BUILD_NUMBER.toInteger() > 1 }
+          expression { env.ANDROID_CUTTLEFISH_REVISION }
         }
       }
 
@@ -238,6 +226,7 @@ target="_blank">gcloud compute instance-templates create</a>, i.e. <i>--create-d
             MACHINE_TYPE=${MACHINE_TYPE} \
             PROJECT=${CLOUD_PROJECT} \
             REGION=${CLOUD_REGION} \
+            UNIQUE_NAME=${UNIQUE_NAME} \
             VM_INSTANCE_CREATE=true \
             ZONE=${CLOUD_ZONE} \
             ./workloads/android/pipelines/cvd_launcher/cvd_create_instance_template.sh 5
@@ -251,7 +240,7 @@ target="_blank">gcloud compute instance-templates create</a>, i.e. <i>--create-d
       when {
         allOf {
           expression { env.DELETE == 'true' }
-          expression { env.BUILD_NUMBER.toInteger() > 1 }
+          expression { env.ANDROID_CUTTLEFISH_REVISION || env.UNIQUE_NAME }
         }
       }
 
@@ -261,6 +250,7 @@ target="_blank">gcloud compute instance-templates create</a>, i.e. <i>--create-d
             CUTTLEFISH_REVISION=${ANDROID_CUTTLEFISH_REVISION} \
             PROJECT=${CLOUD_PROJECT} \
             REGION=${CLOUD_REGION} \
+            UNIQUE_NAME=${UNIQUE_NAME} \
             ZONE=${CLOUD_ZONE} \
             ./workloads/android/pipelines/cvd_launcher/cvd_create_instance_template.sh 6
           '''
