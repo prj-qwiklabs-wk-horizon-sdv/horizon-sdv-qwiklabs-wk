@@ -123,7 +123,7 @@ target="_blank">gcloud compute instance-templates create</a>, i.e. <i>--create-d
             REGION=${CLOUD_REGION} \
             UNIQUE_NAME=${UNIQUE_NAME} \
             ZONE=${CLOUD_ZONE} \
-            ./workloads/android/pipelines/cvd_launcher/cvd_create_instance_template.sh 1
+            ./workloads/android/pipelines/tests/cvd_launcher/cvd_create_instance_template.sh 1
           '''
         }
       }
@@ -145,7 +145,7 @@ target="_blank">gcloud compute instance-templates create</a>, i.e. <i>--create-d
             PROJECT=${CLOUD_PROJECT} \
             REGION=${CLOUD_REGION} \
             ZONE=${CLOUD_ZONE} \
-            ./workloads/android/pipelines/cvd_launcher/cvd_create_instance_template.sh 2
+            ./workloads/android/pipelines/tests/cvd_launcher/cvd_create_instance_template.sh 2
           '''
         }
       }
@@ -167,7 +167,7 @@ target="_blank">gcloud compute instance-templates create</a>, i.e. <i>--create-d
             PROJECT=${CLOUD_PROJECT} \
             REGION=${CLOUD_REGION} \
             ZONE=${CLOUD_ZONE} \
-            ./workloads/android/pipelines/cvd_launcher/cvd_create_instance_template.sh 3
+            ./workloads/android/pipelines/tests/cvd_launcher/cvd_create_instance_template.sh 3
           '''
         }
       }
@@ -203,7 +203,7 @@ target="_blank">gcloud compute instance-templates create</a>, i.e. <i>--create-d
               PROJECT=${CLOUD_PROJECT} \
               REGION=${CLOUD_REGION} \
               ZONE=${CLOUD_ZONE} \
-              ./workloads/android/pipelines/cvd_launcher/cvd_create_instance_template.sh 4
+              ./workloads/android/pipelines/tests/cvd_launcher/cvd_create_instance_template.sh 4
             '''
           }
         }
@@ -229,7 +229,7 @@ target="_blank">gcloud compute instance-templates create</a>, i.e. <i>--create-d
             UNIQUE_NAME=${UNIQUE_NAME} \
             VM_INSTANCE_CREATE=true \
             ZONE=${CLOUD_ZONE} \
-            ./workloads/android/pipelines/cvd_launcher/cvd_create_instance_template.sh 5
+            ./workloads/android/pipelines/tests/cvd_launcher/cvd_create_instance_template.sh 5
           '''
         }
       }
@@ -252,7 +252,7 @@ target="_blank">gcloud compute instance-templates create</a>, i.e. <i>--create-d
             REGION=${CLOUD_REGION} \
             UNIQUE_NAME=${UNIQUE_NAME} \
             ZONE=${CLOUD_ZONE} \
-            ./workloads/android/pipelines/cvd_launcher/cvd_create_instance_template.sh 6
+            ./workloads/android/pipelines/tests/cvd_launcher/cvd_create_instance_template.sh 6
           '''
         }
       }

@@ -216,7 +216,7 @@ spec:
                                 branch('*/main')
                               }
                             }
-                            scriptPath('workloads/android/pipelines/aaos_docker_builder/Jenkinsfile')
+                            scriptPath('workloads/android/pipelines/administration/aaos_docker_builder/Jenkinsfile')
                           }
                         }
                       }
@@ -235,7 +235,7 @@ spec:
                                 branch('*/main')
                               }
                             }
-                            scriptPath('workloads/android/pipelines/cf_instance_template/Jenkinsfile')
+                            scriptPath('workloads/android/pipelines/administration/cf_instance_template/Jenkinsfile')
                           }
                         }
                       }
@@ -254,7 +254,7 @@ spec:
                                 branch('*/main')
                               }
                             }
-                            scriptPath('workloads/android/pipelines/cf_vm_cleanup/Jenkinsfile')
+                            scriptPath('workloads/android/pipelines/administration/cf_vm_cleanup/Jenkinsfile')
                           }
                         }
                       }
@@ -273,7 +273,7 @@ spec:
                                 branch('*/main')
                               }
                             }
-                            scriptPath('workloads/android/pipelines/mtkc_cleanup/Jenkinsfile')
+                            scriptPath('workloads/android/pipelines/administration/mtkc_cleanup/Jenkinsfile')
                           }
                         }
                       }
@@ -292,7 +292,7 @@ spec:
                                 branch('*/main')
                               }
                             }
-                            scriptPath('workloads/android/pipelines/aaos_builder/Jenkinsfile')
+                            scriptPath('workloads/android/pipelines/builds/aaos_builder/Jenkinsfile')
                           }
                         }
                       }
@@ -311,7 +311,7 @@ spec:
                                 branch('*/main')
                               }
                             }
-                            scriptPath('workloads/android/pipelines/cts_builder/Jenkinsfile')
+                            scriptPath('workloads/android/pipelines/builds/cts_builder/Jenkinsfile')
                           }
                         }
                       }
@@ -330,7 +330,7 @@ spec:
                                 branch('*/main')
                               }
                             }
-                            scriptPath('workloads/android/pipelines/gerrit/Jenkinsfile')
+                            scriptPath('workloads/android/pipelines/builds/gerrit/Jenkinsfile')
                           }
                         }
                       }
@@ -349,7 +349,7 @@ spec:
                                 branch('*/main')
                               }
                             }
-                            scriptPath('workloads/android/pipelines/cts_execution/Jenkinsfile')
+                            scriptPath('workloads/android/pipelines/tests/cts_execution/Jenkinsfile')
                           }
                         }
                       }
@@ -368,7 +368,7 @@ spec:
                                 branch('*/main')
                               }
                             }
-                            scriptPath('workloads/android/pipelines/cvd_launcher/Jenkinsfile')
+                            scriptPath('workloads/android/pipelines/tests/cvd_launcher/Jenkinsfile')
                           }
                         }
                       }

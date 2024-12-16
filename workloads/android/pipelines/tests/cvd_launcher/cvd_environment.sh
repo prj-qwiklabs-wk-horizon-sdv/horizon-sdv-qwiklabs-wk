@@ -54,7 +54,7 @@ VM_MEMORY_MB=${VM_MEMORY_MB:-16384}
 if [ -z "${WORKSPACE}" ]; then
     CVD_PATH=../cvd_launcher
 else
-    CVD_PATH=workloads/android/pipelines/cvd_launcher
+    CVD_PATH=workloads/android/pipelines/tests/cvd_launcher
 fi
 
 # Show variables.
