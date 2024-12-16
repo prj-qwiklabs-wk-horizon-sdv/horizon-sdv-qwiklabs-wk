@@ -120,8 +120,8 @@ else
     EMPTY_DIR="${AAOS_CACHE_DIRECTORY}"/empty_dir
 fi
 
-# Clean build - remove workspace.
-if [[ "${AAOS_CLEAN_BUILD}" -eq 1 ]]; then
+function clean_workspace() {
+    # Clean build - remove workspace.
     echo "Clean workspace ${WORKSPACE} ..."
     mkdir -p "${EMPTY_DIR}"
     # Faster than rm -rf
@@ -130,10 +130,19 @@ if [[ "${AAOS_CLEAN_BUILD}" -eq 1 ]]; then
     rm -rf "${EMPTY_DIR}"
     rm -rf "${WORKSPACE}"
     echo "Cleaned workspace ${WORKSPACE}."
+}
+
+# Clean Workspace
+if [[ "${AAOS_CLEAN_BUILD}" -eq 1 ]]; then
+    clean_workspace
 fi
 
-mkdir -p "${WORKSPACE}" > /dev/null 2>&1
-cd "${WORKSPACE}" || exit
+create_workspace() {
+    mkdir -p "${WORKSPACE}" > /dev/null 2>&1
+    cd "${WORKSPACE}" || exit
+}
+
+create_workspace
 
 # Architecture:
 AAOS_ARCH=""
