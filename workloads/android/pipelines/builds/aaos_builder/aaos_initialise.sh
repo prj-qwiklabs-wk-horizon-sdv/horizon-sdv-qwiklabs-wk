@@ -42,38 +42,55 @@
 # shellcheck disable=SC1091
 source "$(dirname "${BASH_SOURCE[0]}")"/aaos_environment.sh "$0"
 
-# Initialise repo checkout.
-repo init -u "${AAOS_GERRIT_MANIFEST_URL}" -b "${AAOS_REVISION}" --depth=1
+# Retry 4 times, on 3rd fail clean workspace and retry once more.
+MAX_RETRIES=4
+for ((i=1; i<="${MAX_RETRIES}"; i++)); do
+    # Initialise repo checkout.
+    repo init -u "${AAOS_GERRIT_MANIFEST_URL}" -b "${AAOS_REVISION}" --depth=1
 
-# Add RPi manifests if needed.
-if [[ "${AAOS_LUNCH_TARGET}" =~ "rpi" ]]; then
-    # Download the RPi manifest if we are building for an RPi device.
-    curl -o .repo/local_manifests/manifest_brcm_rpi.xml \
-        -L "${AAOS_GERRIT_RPI_MANIFEST_URL}/${AAOS_RPI_REVISION}/manifest_brcm_rpi.xml" \
-        --create-dirs || exit 255
-    curl -o .repo/local_manifests/remove_projects.xml \
-        -L "${AAOS_GERRIT_RPI_MANIFEST_URL}/${AAOS_RPI_REVISION}/remove_projects.xml" \
-        || exit 255
-else
-    # Remove any old RPi manifests
-    rm .repo/local_manifests/manifest_brcm_rpi.xml > /dev/null 2>&1
-    rm .repo/local_manifests/remove_projects.xml > /dev/null 2>&1
-fi
-
-# Clean previous changes.
-# This will automatically clean any previous downloaded changes.
-# -j1 because that's what fail-fast recommends otherwise 1st sync will
-# take an eternity to fail..
-if ! repo sync -l --force-sync --fail-fast -j 1
-then
-    # 1st sync failed, so perform a full sync.
-    echo "ERROR: repo sync failed, performing a full sync"
-    if ! repo sync --no-clone-bundle --fail-fast --force-sync -j 2
-    then
-        echo "ERROR: repo sync failed"
-        exit 255
+    # Add RPi manifests if needed.
+    if [[ "${AAOS_LUNCH_TARGET}" =~ "rpi" ]]; then
+        # Download the RPi manifest if we are building for an RPi device.
+        curl -o .repo/local_manifests/manifest_brcm_rpi.xml \
+            -L "${AAOS_GERRIT_RPI_MANIFEST_URL}/${AAOS_RPI_REVISION}/manifest_brcm_rpi.xml" \
+            --create-dirs || exit 255
+        curl -o .repo/local_manifests/remove_projects.xml \
+            -L "${AAOS_GERRIT_RPI_MANIFEST_URL}/${AAOS_RPI_REVISION}/remove_projects.xml" \
+            || exit 255
+    else
+        # Remove any old RPi manifests
+        rm .repo/local_manifests/manifest_brcm_rpi.xml > /dev/null 2>&1
+        rm .repo/local_manifests/remove_projects.xml > /dev/null 2>&1
     fi
-fi
+
+    # Clean previous changes.
+    # This will automatically clean any previous downloaded changes.
+    # -j1 because that's what fail-fast recommends otherwise 1st sync will
+    # take an eternity to fail..
+    if ! repo sync -l --force-sync --fail-fast -j 1
+    then
+        # 1st sync failed, so perform a full sync.
+        echo "ERROR: repo sync failed, performing a full sync"
+        if ! repo sync --no-clone-bundle --fail-fast --force-sync -j 2
+        then
+            echo "WARNING: repo sync failed, sleep 60s and retrying..."
+            sleep 60
+            if [ "$i" -eq 3 ]; then
+                echo "WARNING: clean workspace and retry."
+                clean_workspace
+                create_workspace
+            fi
+            if [ "$i" -eq 4 ]; then
+                echo "ERROR: repo sync retry failed, giving up."
+                exit 255
+            fi
+        else
+            break
+        fi
+    else
+        break
+    fi
+done
 
 echo "SUCCESS: repo sync complete."
 
