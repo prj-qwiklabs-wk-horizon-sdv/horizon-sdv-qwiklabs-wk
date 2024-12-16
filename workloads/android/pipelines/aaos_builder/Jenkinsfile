@@ -91,7 +91,7 @@ pipeline {
            description: '''<p>Android revision tag/branch name, e.g:<br/>
            <ul>
            <li>android14-qpr1-automotiveos-release<br/></li>
-           <li>horizon-sdv/android14-qpr1-automotiveos-release<br/></li>
+           <li>horizon/android14-qpr1-automotiveos-release<br/></li>
            <li>android-15.0.0_r4</li></ul></p>''')
 
     string(name: 'AAOS_LUNCH_TARGET',
