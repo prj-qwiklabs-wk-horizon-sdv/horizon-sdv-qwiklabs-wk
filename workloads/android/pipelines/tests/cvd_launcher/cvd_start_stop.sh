@@ -58,9 +58,19 @@ function cuttlefish_extract_artifacts() {
     esac
 
     # Unpack the host packages.
-    tar -xvf cvd-host_package.tar.gz
+    if ! tar -xvf cvd-host_package.tar.gz
+    then
+        echo "Failed to extract cvd-host_package.tar.gz"
+        exit 1
+    fi
+
     # Unpack the Cuttlefish device images.
-    unzip aosp_cf_"${ARCHITECTURE}"_auto-img*.zip
+    if ! unzip aosp_cf_"${ARCHITECTURE}"_auto-img*.zip
+    then
+        echo "Failed to extract aosp_cf_${ARCHITECTURE}_auto-img*.zip"
+        exit 1
+    fi
+
     # Clean up
     rm -f aosp_cf_"${ARCHITECTURE}"_auto-img*.zip
     rm -f cvd-host_package.tar.gz
