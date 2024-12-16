@@ -16,7 +16,7 @@ spec:
     helm:
       values: |
         persistence:
-          accessMode: "ReadWriteOnce"
+          accessMode: "ReadWriteOnce
           enabled: true
           existingClaim: "jenkins-home-volume"
         rbac:
@@ -203,7 +203,7 @@ spec:
                       }
                   - script: >
                       pipelineJob('Android/Administration/AAOS Docker Builder') {
-                        description('AAOS Docker build image for use in building AAOSP')
+                        description('<p>AAOS Docker build image for use in building Android and Cuttlefish instances.</p>')
                         definition {
                           cpsScm {
                             lightweight()
@@ -222,7 +222,7 @@ spec:
                       }
                   - script: >
                       pipelineJob('Android/Administration/CF Instance Template') {
-                        description('Pipeline for creating and managing GCE instance templates optimized for Cuttlefish-based workflows, such as CVD Launcher and CTS Execution.<br/>Includes an option to delete outdated instances and artifacts.')
+                        description('<p>Pipeline for creating and managing GCE instance templates optimized for Cuttlefish workflows, such as CVD Launcher and CTS Execution.<br/>Includes an option to delete outdated instances and artifacts.</p>')
                         definition {
                           cpsScm {
                             lightweight()
@@ -260,7 +260,7 @@ spec:
                       }
                   - script: >
                       pipelineJob('Android/Administration/MTK Connect Cleanup') {
-                        description('<p>Remove offline testbenches from MTK Connect.<br/><b>WARNING:</b> take care when using this job</p>')
+                        description('<p>Remove offline testbenches from MTK Connect.<br/><b>WARNING:</b> take care when using this job!</p>')
                         definition {
                           cpsScm {
                             lightweight()
@@ -279,7 +279,7 @@ spec:
                       }
                   - script: >
                       pipelineJob('Android/Builds/AAOS Builder') {
-                        description('Android Automotive build pipeline')
+                        description('<p>Android Automotive build pipeline.<br/>This pipeline builds Android Automotive OS targets.</p>')
                         definition {
                           cpsScm {
                             lightweight()
@@ -298,7 +298,7 @@ spec:
                       }
                   - script: >
                       pipelineJob('Android/Builds/CTS Builder') {
-                        description('Builds Android Compliance Test Suite rather than use standard Google release')
+                        description('<p>Builds Android Compliance Test Suite test harness, rather than use standard Google release.<br/>CTS_Execution can then use this instead of default Android CTS test harness.</p>')
                         definition {
                           cpsScm {
                             lightweight()
@@ -317,7 +317,7 @@ spec:
                       }
                   - script: >
                       pipelineJob('Android/Builds/Gerrit') {
-                        description('Gerrit triggered build and test')
+                        description('<p>Gerrit triggered build and test. Triggered by Gerrit commits.</p>')
                         definition {
                           cpsScm {
                             lightweight()
@@ -336,7 +336,7 @@ spec:
                       }
                   - script: >
                       pipelineJob('Android/Tests/CTS Execution') {
-                        description('Run the CTS test harness against the Cuttlefish Virtual Devices')
+                        description('<p>Run the CTS test harness against Cuttlefish Virtual Device images.</p>')
                         definition {
                           cpsScm {
                             lightweight()
@@ -355,7 +355,7 @@ spec:
                       }
                   - script: >
                       pipelineJob('Android/Tests/CVD Launcher') {
-                        description('Launches Cuttlefish Virtual Devices (CVD) on the Cuttlefish Virtual Machine instances created by GCE from Cuttlefish instance templates')
+                        description('<p>Launches Cuttlefish Virtual Devices (CVD) on the Cuttlefish Virtual Machine instances created by GCE from Cuttlefish instance templates</p>')
                         definition {
                           cpsScm {
                             lightweight()
