@@ -243,5 +243,25 @@ module "sdv_iam_sceret_manager" {
 
 }
 
+# allow tcp port 27 for default_computer_sa
+
+resource "google_compute_firewall" "allow_tcp_27" {
+  name    = "cuttflefish-test-allow-tcp-27"
+  network = "default" # sdv_network
+  #network = module.vpc.network_self_link
+
+  allow {
+    protocol = "tcp"
+    ports    = ["27"]
+  }
+
+  direction = "INGRESS"
+  priority  = 1000
+
+  source_ranges = ["0.0.0.0/0"]
+
+  target_service_accounts =["serviceAccount:${var.sdv_default_computer_sa}"]
+}
+
 
 
