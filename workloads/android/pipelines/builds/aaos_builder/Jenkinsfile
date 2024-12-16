@@ -13,9 +13,7 @@
 // limitations under the License.
 
 // Description:
-// Build Android CTS for Cuttlefish. Only required if testing CTS changes
-// or requiring a new revision without updating the CTS version on CF
-// instances.
+// AAOS Build targets pipeline.
 pipeline {
 
   agent {
@@ -51,7 +49,7 @@ pipeline {
             command:
             - sleep
             args:
-            - 99d
+            - 4h
             resources:
               limits:
                 cpu: 96000m
@@ -94,9 +92,25 @@ pipeline {
 
     string(name: 'AAOS_LUNCH_TARGET',
            defaultValue: '',
-           description: '''<p>Build Android CTS for cuttlefish target, e.g.<br/>
-           <ul><li>aosp_cf_x86_64_auto-userdebug</li>
-           <li>aosp_cf_arm64_auto-userdebug</li></ul></p>''')
+           description: '''<p>Build Android cuttlefish, virtual devices and RPi targets, e.g.
+           <ul>
+           <li>sdk_car_x86_64-userdebug</li>
+           <li>sdk_car_arm64-userdebug</li>
+           <li>aosp_cf_x86_64_auto-userdebug</li>
+           <li>aosp_cf_arm64_auto-userdebug</li>
+           <li>aosp_rpi4_car-ap3a-userdebug</li>
+           <li>aosp_rpi5_car-ap3a-userdebug</li></ul></p>''')
+
+    string(name: 'AAOS_RPI_REVISION',
+           defaultValue: 'android-15.0.0_r4',
+           description: '''<p>RPi tag/branch name.<br/>
+           Reference: <a href="https://github.com/raspberry-vanilla/android_local_manifest" target="_blank">Raspberry Vanilla</a> and only applicable to aosp_rpiX_car targets<br/>
+           <i>Pick the correct revision that correlates to the AAOS_REVISION</i></p>''')
+
+    choice(name: 'ANDROID_VERSION',
+           choices: ['14', '15'],
+           description: '''<p>Android Version for AVD image builds.<br/>
+           Used to derive API level, eg. 14 is API Level 34, 15 is API Level 35</p>''')
 
     booleanParam(name: 'AAOS_CLEAN_BUILD', defaultValue: false,
                  description: '''<p>Clean the build workspace.<br/>
@@ -140,7 +154,7 @@ pipeline {
               AAOS_RPI_REVISION="${AAOS_RPI_REVISION}" \
               AAOS_LUNCH_TARGET="${AAOS_LUNCH_TARGET}" \
               AAOS_CLEAN_BUILD=${AAOS_CLEAN_BUILD} \
-              ./workloads/android/pipelines/aaos_builder/aaos_initialise.sh
+              ./workloads/android/pipelines/builds/aaos_builder/aaos_initialise.sh
             '''
           }
         }
@@ -153,9 +167,8 @@ pipeline {
         container(name: 'builder') {
           sh '''
             AAOS_LUNCH_TARGET="${AAOS_LUNCH_TARGET}" \
-            AAOS_BUILD_CTS=1 \
             AAOS_CLEAN_BUILD=0 \
-            ./workloads/android/pipelines/aaos_builder/aaos_build.sh
+            ./workloads/android/pipelines/builds/aaos_builder/aaos_build.sh
           '''
         }
       }
@@ -165,19 +178,23 @@ pipeline {
       when {
         allOf {
           expression { env.AAOS_LUNCH_TARGET }
-          expression { env.AAOS_ARTIFACT_STORAGE_SOLUTION != '' }
+          expression { env.AAOS_ARTIFACT_STORAGE_SOLUTION }
         }
       }
       steps {
         container(name: 'builder') {
           sh '''
             AAOS_LUNCH_TARGET="${AAOS_LUNCH_TARGET}" \
-            AAOS_BUILD_CTS=1 \
+            AAOS_CLEAN_BUILD=0 \
+            AAOS_REVISION="${AAOS_REVISION}" \
+            ./workloads/android/pipelines/builds/aaos_builder/aaos_avd_sdk.sh || true
+
+            AAOS_LUNCH_TARGET="${AAOS_LUNCH_TARGET}" \
             AAOS_CLEAN_BUILD=0 \
             AAOS_ARTIFACT_ROOT_NAME="${ANDROID_BUILD_BUCKET_ROOT_NAME}" \
             AAOS_ARTIFACT_STORAGE_SOLUTION="${AAOS_ARTIFACT_STORAGE_SOLUTION}" \
             CLOUD_REGION="${CLOUD_REGION}" \
-            ./workloads/android/pipelines/aaos_builder/aaos_storage.sh
+            ./workloads/android/pipelines/builds/aaos_builder/aaos_storage.sh
           '''
         }
       }

@@ -107,10 +107,10 @@ pipeline {
             export AAOS_CLEAN_BUILD=0
             export AAOS_ARTIFACT_ROOT_NAME="${ANDROID_BUILD_BUCKET_ROOT_NAME}"
             export CLOUD_REGION="${CLOUD_REGION}"
-            ./workloads/android/pipelines/aaos_builder/aaos_initialise.sh
-            ./workloads/android/pipelines/aaos_builder/aaos_build.sh
-            ./workloads/android/pipelines/aaos_builder/aaos_avd_sdk.sh || true
-            ./workloads/android/pipelines/aaos_builder/aaos_storage.sh
+            ./workloads/android/pipelines/builds/aaos_builder/aaos_initialise.sh
+            ./workloads/android/pipelines/builds/aaos_builder/aaos_build.sh
+            ./workloads/android/pipelines/builds/aaos_builder/aaos_avd_sdk.sh || true
+            ./workloads/android/pipelines/builds/aaos_builder/aaos_storage.sh
           '''
         }
       }
@@ -126,9 +126,9 @@ pipeline {
             export AAOS_CLEAN_BUILD=0
             export AAOS_ARTIFACT_ROOT_NAME="${ANDROID_BUILD_BUCKET_ROOT_NAME}"
             export CLOUD_REGION="${CLOUD_REGION}"
-            ./workloads/android/pipelines/aaos_builder/aaos_initialise.sh
-            ./workloads/android/pipelines/aaos_builder/aaos_build.sh
-            ./workloads/android/pipelines/aaos_builder/aaos_storage.sh
+            ./workloads/android/pipelines/builds/aaos_builder/aaos_initialise.sh
+            ./workloads/android/pipelines/builds/aaos_builder/aaos_build.sh
+            ./workloads/android/pipelines/builds/aaos_builder/aaos_storage.sh
           '''
         }
       }
@@ -145,9 +145,9 @@ pipeline {
               export CTS_VERSION=14
               export CTS_TESTPLAN="cts-virtual-device-stable"
               export CTS_MODULE="CtsHostsideNumberBlockingTestCases"
-              ./workloads/android/pipelines/cvd_launcher/cvd_start_stop.sh --start
-              ./workloads/android/pipelines/cts_execution/cts_initialise.sh
-              ./workloads/android/pipelines/cts_execution/cts_execution.sh
+              ./workloads/android/pipelines/tests/cvd_launcher/cvd_start_stop.sh --start
+              ./workloads/android/pipelines/tests/cts_execution/cts_initialise.sh
+              ./workloads/android/pipelines/tests/cts_execution/cts_execution.sh
             '''
           }
         }
@@ -160,7 +160,7 @@ pipeline {
     always {
       // Ensure we always stop CVD.
       sh '''
-        ./workloads/android/pipelines/cvd_launcher/cvd_start_stop.sh --stop || true
+        ./workloads/android/pipelines/tests/cvd_launcher/cvd_start_stop.sh --stop || true
       '''
     }
 
