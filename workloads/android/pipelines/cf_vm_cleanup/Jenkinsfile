@@ -16,9 +16,6 @@
 // Clean up any orphaned GCE instances that are left running because of GCE
 // plugin issues losing connection with agent, and then a potentially
 // expensive instance is left running.
-//
-// Note: we skip all stages if this is the 1st build because there are no
-//       parameters until the 1st declarative scm checkout has been run.
 pipeline {
 
   agent {
@@ -56,7 +53,7 @@ pipeline {
 
   stages {
     stage ('Delete VM instance') {
-      when { expression { env.BUILD_NUMBER.toInteger() > 1 } }
+      when { expression { env.VM_INSTANCE_NAME } }
       steps {
         container(name: 'builder') {
           sh '''

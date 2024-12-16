@@ -16,10 +16,6 @@
 // Build Android CTS for Cuttlefish. Only required if testing CTS changes
 // or requiring a new revision without updating the CTS version on CF
 // instances.
-//
-// Note: we skip all stages if this is the 1st build because there are no
-//       parameters until the 1st declarative scm checkout has been run.
-//
 pipeline {
 
   agent {
@@ -97,7 +93,7 @@ pipeline {
            <li>android-15.0.0_r4</li></ul></p>''')
 
     string(name: 'AAOS_LUNCH_TARGET',
-           defaultValue: 'aosp_cf_x86_64_auto-userdebug',
+           defaultValue: '',
            description: '''<p>Build Android CTS for cuttlefish target, e.g.<br/>
            <ul><li>aosp_cf_x86_64_auto-userdebug</li>
            <li>aosp_cf_arm64_auto-userdebug</li></ul></p>''')
@@ -126,7 +122,7 @@ pipeline {
 
   stages {
     stage ('Initialise') {
-      when { expression { env.BUILD_NUMBER.toInteger() > 1 } }
+      when { expression { env.AAOS_LUNCH_TARGET } }
       steps {
         script {
           currentBuild.description = "${env.AAOS_LUNCH_TARGET}"
@@ -152,7 +148,7 @@ pipeline {
     }
 
     stage ('Build'){
-      when { expression { env.BUILD_NUMBER.toInteger() > 1 } }
+      when { expression { env.AAOS_LUNCH_TARGET } }
       steps {
         container(name: 'builder') {
           sh '''
@@ -168,7 +164,7 @@ pipeline {
     stage ('Storage'){
       when {
         allOf {
-          expression { env.BUILD_NUMBER.toInteger() > 1 }
+          expression { env.AAOS_LUNCH_TARGET }
           expression { env.AAOS_ARTIFACT_STORAGE_SOLUTION != '' }
         }
       }
