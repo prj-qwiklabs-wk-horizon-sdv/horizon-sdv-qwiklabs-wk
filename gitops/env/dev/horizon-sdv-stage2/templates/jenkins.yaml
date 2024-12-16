@@ -16,7 +16,7 @@ spec:
     helm:
       values: |
         persistence:
-          accessMode: "ReadWriteOnce
+          accessMode: "ReadWriteOnce"
           enabled: true
           existingClaim: "jenkins-home-volume"
         rbac:
