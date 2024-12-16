@@ -82,7 +82,7 @@ pipeline {
   }
 
   triggers {
-    gerrit customUrl: '', gerritProjects: [[branches: [[compareType: 'PLAIN', pattern: 'android14-qpr1-automotiveos-release']], compareType: 'PLAIN', disableStrictForbiddenFileVerification: false, pattern: 'android/platform/manifest']], serverName: 'Gerrit'
+    gerrit customUrl: '', gerritProjects: [[branches: [[compareType: 'PLAIN', pattern: 'android14-qpr1-automotiveos-release']], compareType: 'PLAIN', disableStrictForbiddenFileVerification: false, pattern: 'android/device/generic/car']], serverName: 'Gerrit'
   }
 
   stages {
