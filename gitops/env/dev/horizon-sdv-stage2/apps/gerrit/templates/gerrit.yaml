@@ -10,10 +10,12 @@ spec:
     brokerType: NONE
   storage:
     storageClasses:
-      readWriteOnce: standard
-      readWriteMany: horizon-sdv-rwx
+      readWriteOnce: standard-rwo
+      readWriteMany: standard-rwx
     sharedStorage:
-      size: 1Ti
+      externalPVC:
+        enabled: true
+        claimName: "gerrit-shared-git"
   refdb:
     database: ZOOKEEPER
     zookeeper:
