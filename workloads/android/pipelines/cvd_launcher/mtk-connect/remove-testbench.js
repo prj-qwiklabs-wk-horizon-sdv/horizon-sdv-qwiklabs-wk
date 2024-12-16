@@ -69,7 +69,7 @@ async function removeAgent(registration) {
           console.log(`${testbench.name}: ${testbench.id} is online, skip.`);
         } else {
           // If specific testbench only delete that.
-          if (MTK_CONNECT_TESTBENCH === "") {
+          if (MTK_CONNECT_TESTBENCH === "DELETE_ALL") {
             // Delete all offline
             console.log(`${testbench.name}: ${testbench.id} is offline, delete.`);
             await axios.delete(`/api/v1/agents/${testbench.id}`);
