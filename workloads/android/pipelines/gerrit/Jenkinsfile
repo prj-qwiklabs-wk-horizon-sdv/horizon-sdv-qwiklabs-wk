@@ -143,7 +143,7 @@ pipeline {
         catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
           container(name: 'builder') {
             sh '''
-              BUCKET_FOLDER="${JOB_NAME// /_}
+              BUCKET_FOLDER="${JOB_NAME// /_}"
               export CUTTLEFISH_DOWNLOAD_URL="gs://${CLOUD_PROJECT}-aaos/Android/Builds/$JOB_NAME/$BUILD_NUMBER"
               export CTS_DOWNLOAD_URL="${CUTTLEFISH_DOWNLOAD_URL}"
               export CTS_VERSION=14
