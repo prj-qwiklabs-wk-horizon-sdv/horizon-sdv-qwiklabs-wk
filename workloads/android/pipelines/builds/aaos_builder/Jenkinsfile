@@ -144,7 +144,6 @@ pipeline {
         container(name: 'builder') {
           withCredentials([usernamePassword(credentialsId: 'jenkins-gerrit-http-password', passwordVariable: 'GERRIT_PASSWORD', usernameVariable: 'GERRIT_USERNAME')]) {
             sh '''
-              GERRIT_PASSWORD=$(echo "${GERRIT_PASSWORD}" |tr -d '\n')
               git config --global credential.helper store
               git config --global url."https://${GERRIT_USERNAME}@${HORIZON_DOMAIN}".insteadOf "https://${HORIZON_DOMAIN}"
               echo https://"${GERRIT_USERNAME}":"${GERRIT_PASSWORD}"@"${HORIZON_DOMAIN}" > ~/.git-credentials
