@@ -118,11 +118,14 @@ declare -r cuttlefish_version=${CUTTLEFISH_REVISION//./}
 declare cuttlefish_unique_name=${UNIQUE_NAME//./-}
 if [[ "${cuttlefish_unique_name}" == "cuttlefish-vm" ]]; then
     # If unique name is default, append version.
-    cuttlefish_unique_name="${cuttlefish_unique_name}"-"${cuttlefish_version}"
+    cuttlefish_unique_name="${cuttlefish_unique_name}"-"${cuttlefish_version}"-debian-12
+else
+    # Use the requested name.
+    cuttlefish_unique_name="${cuttlefish_unique_name}"
 fi
-declare -r vm_cuttlefish_image=image-"${cuttlefish_unique_name}"-debian-12
-declare -r vm_cuttlefish_instance_template=instance-template-"${cuttlefish_unique_name}"-debian-12
-declare -r vm_cuttlefish_instance="${cuttlefish_unique_name}"-debian-12
+declare -r vm_cuttlefish_image=image-"${cuttlefish_unique_name}"
+declare -r vm_cuttlefish_instance_template=instance-template-"${cuttlefish_unique_name}"
+declare -r vm_cuttlefish_instance="${cuttlefish_unique_name}"
 
 # Colours for logging.
 if [ -z "${WORKSPACE}" ]; then
