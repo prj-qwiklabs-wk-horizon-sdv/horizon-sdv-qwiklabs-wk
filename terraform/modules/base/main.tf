@@ -247,8 +247,7 @@ module "sdv_iam_sceret_manager" {
 
 resource "google_compute_firewall" "allow_tcp_27" {
   name    = "cuttflefish-test-allow-tcp-27"
-  network = "default" # sdv_network
-  #network = module.vpc.network_self_link
+  network = "sdv_network"
 
   allow {
     protocol = "tcp"
