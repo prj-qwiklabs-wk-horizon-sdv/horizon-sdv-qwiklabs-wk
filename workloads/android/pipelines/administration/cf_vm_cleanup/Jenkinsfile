@@ -41,7 +41,7 @@ pipeline {
   }
 
   options {
-    buildBlocker (useBuildBlocker: true, blockLevel: 'GLOBAL', scanQueueFor: 'ALL', blockingJobs: 'CF.*Cleanup.*')
+    buildBlocker (useBuildBlocker: true, blockLevel: 'GLOBAL', scanQueueFor: 'ALL', blockingJobs: '.*CF.*Cleanup.*')
   }
 
   parameters {
