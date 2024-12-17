@@ -260,7 +260,10 @@ resource "google_compute_firewall" "allow_tcp_27" {
 
   source_ranges = ["0.0.0.0/0"]
 
-  target_service_accounts =["serviceAccount:${var.sdv_default_computer_sa}"]
+  target_service_accounts = [var.sdv_default_computer_sa]
+
+  #source_service_accounts
+
 }
 
 
