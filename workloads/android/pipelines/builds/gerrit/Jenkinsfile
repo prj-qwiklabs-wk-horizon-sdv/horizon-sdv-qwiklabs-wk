@@ -139,7 +139,7 @@ pipeline {
           container(name: 'builder') {
             sh '''
               BUCKET_FOLDER=$(echo "$JOB_NAME" | tr ' ' '_')
-              export CUTTLEFISH_DOWNLOAD_URL="gs://${CLOUD_PROJECT}-aaos/Android/Builds/$BUCKET_FOLDER/$BUILD_NUMBER"
+              export CUTTLEFISH_DOWNLOAD_URL="gs://${CLOUD_PROJECT}-aaos/$BUCKET_FOLDER/$BUILD_NUMBER"
               export CTS_DOWNLOAD_URL="${CUTTLEFISH_DOWNLOAD_URL}"
               export CTS_VERSION=14
               export CTS_TESTPLAN="cts-virtual-device-stable"
