@@ -392,7 +392,7 @@ function create_cuttlefish_boilerplate_template() {
         --service-account="${SERVICE_ACCOUNT}" \
         --machine-type="${MACHINE_TYPE}" \
         --image-project=debian-cloud \
-        --create-disk=image="${vm_cuttlefish_image}",boot=yes,auto-delete=yes \
+        --create-disk=image="${vm_cuttlefish_image}",boot=yes,auto-delete=yes,type=pd-balanced \
         --metadata=enable-oslogin=true \
         --reservation-affinity=any \
         --enable-nested-virtualization \
