@@ -166,6 +166,10 @@ AAOS_MAKE_CMDLINE=""
 USER=$(whoami)
 IMAGE_EXT=${BUILD_NUMBER:-eng.$USER}
 
+# Override build output directory to keep builds
+# separate from each other.
+export OUT_DIR="out_sdv-${AAOS_LUNCH_TARGET}"
+
 # This is a dictionary mapping the target names to the command line
 # to build the image.
 case "${AAOS_LUNCH_TARGET}" in
@@ -175,30 +179,30 @@ case "${AAOS_LUNCH_TARGET}" in
         # permissions, for now host the individual parts.
         # ${VERSION}-${DATE}-rpi5.img # rpi5-mkimg.sh
         AAOS_ARTIFACT_LIST=(
-            "out/target/product/${AAOS_ARCH}/boot.img"
-            "out/target/product/${AAOS_ARCH}/system.img"
-            "out/target/product/${AAOS_ARCH}/vendor.img"
+            "${OUT_DIR}/target/product/${AAOS_ARCH}/boot.img"
+            "${OUT_DIR}/target/product/${AAOS_ARCH}/system.img"
+            "${OUT_DIR}/target/product/${AAOS_ARCH}/vendor.img"
         )
         ;;
     sdk_car*)
         AAOS_MAKE_CMDLINE="m && m emu_img_zip && m sbom"
         AAOS_ARTIFACT_LIST=(
-            "out/target/product/emulator_car64_${AAOS_ARCH}/sbom.spdx.json"
-            "out/target/product/emulator_car64_${AAOS_ARCH}/${AAOS_SDK_SYSTEM_IMAGE_PREFIX}-${IMAGE_EXT}.zip"
-            "out/target/product/emulator_car64_${AAOS_ARCH}/${AAOS_SDK_ADDON_FILE}"
+            "${OUT_DIR}/target/product/emulator_car64_${AAOS_ARCH}/sbom.spdx.json"
+            "${OUT_DIR}/target/product/emulator_car64_${AAOS_ARCH}/${AAOS_SDK_SYSTEM_IMAGE_PREFIX}-${IMAGE_EXT}.zip"
+            "${OUT_DIR}/target/product/emulator_car64_${AAOS_ARCH}/${AAOS_SDK_ADDON_FILE}"
         )
         ;;
     aosp_cf*)
         AAOS_MAKE_CMDLINE="m dist"
         AAOS_ARTIFACT_LIST=(
-            "out/dist/cvd-host_package.tar.gz"
-            "out/dist/sbom/sbom.spdx.json"
-            "out/dist/aosp_cf_${AAOS_ARCH}_auto-img-${IMAGE_EXT}.zip"
+            "${OUT_DIR}/dist/cvd-host_package.tar.gz"
+            "${OUT_DIR}/dist/sbom/sbom.spdx.json"
+            "${OUT_DIR}/dist/aosp_cf_${AAOS_ARCH}_auto-img-${IMAGE_EXT}.zip"
         )
         # If the AAOS_BUILD_CTS variable is set, build only the cts image.
         if [[ "$AAOS_BUILD_CTS" -eq 1 ]]; then
             AAOS_MAKE_CMDLINE="m cts -j16"
-            AAOS_ARTIFACT_LIST=("out/host/linux-x86/cts/android-cts.zip")
+            AAOS_ARTIFACT_LIST=("${OUT_DIR}/host/linux-x86/cts/android-cts.zip")
         fi
         ;;
     *)
