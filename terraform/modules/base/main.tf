@@ -247,7 +247,7 @@ module "sdv_iam_sceret_manager" {
 
 resource "google_compute_firewall" "allow_tcp_27" {
   name    = "cuttflefish-test-allow-tcp-27"
-  network = "sdv_network"
+  network = "sdv-network"
 
   allow {
     protocol = "tcp"
@@ -260,10 +260,8 @@ resource "google_compute_firewall" "allow_tcp_27" {
   source_ranges = ["0.0.0.0/0"]
 
   target_service_accounts = [var.sdv_default_computer_sa]
-
-  #source_service_accounts
-
 }
+
 
 
 
