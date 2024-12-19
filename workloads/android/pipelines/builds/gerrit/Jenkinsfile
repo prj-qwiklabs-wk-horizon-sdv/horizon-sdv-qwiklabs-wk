@@ -76,7 +76,7 @@ pipeline {
   agent none
 
   triggers {
-    gerrit customUrl: '', gerritProjects: [[branches: [[compareType: 'PLAIN', pattern: 'android14-qpr1-automotiveos-release']], compareType: 'PLAIN', disableStrictForbiddenFileVerification: false, pattern: 'android/device/generic/car']], serverName: 'Gerrit'
+    gerrit customUrl: '', gerritProjects: [[branches: [[compareType: 'PLAIN', pattern: 'accenture/accenture/android14-qpr1-automotiveos-release']], compareType: 'PLAIN', disableStrictForbiddenFileVerification: false, pattern: 'android/device/generic/car']], serverName: 'Gerrit'
   }
 
   stages {
