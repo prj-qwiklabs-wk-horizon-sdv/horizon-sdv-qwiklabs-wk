@@ -84,22 +84,47 @@ pipeline {
 
     string(name: 'AAOS_REVISION',
            defaultValue: 'android14-qpr1-automotiveos-release',
-           description: '''<p>Android revision tag/branch name, e.g:<br/>
-           <ul>
-           <li>android14-qpr1-automotiveos-release<br/></li>
-           <li>horizon/android14-qpr1-automotiveos-release<br/></li>
-           <li>android-15.0.0_r4</li></ul></p>''')
+           description: '''<p>Android revision tag/branch name, e.g:<br/><br/>
+           <a href="https://source.android.com/docs/automotive/start/avd/android_virtual_device" target="_blank">Virtual Devices</a>
+           <ul><li>android14-qpr1-automotiveos-release</li>
+           <li>accenture/android14-qpr1-automotiveos-release</li></ul>
+           <a href="https://source.android.com/docs/automotive/start/pixelxl" target="_blank">Pixel Devices</a>
+           <ul><li>android-14.0.0_r30</li></ul>
+           <a href="https://github.com/raspberry-vanilla/android_local_manifest" target="_blank">Raspberry Pi</a>
+           <ul><li>android-15.0.0_r4</li></ul></p>''')
 
     string(name: 'AAOS_LUNCH_TARGET',
            defaultValue: '',
-           description: '''<p>Build Android cuttlefish, virtual devices and RPi targets, e.g.
+           description: '''<p>Build Android cuttlefish, virtual devices, Pixel and RPi targets, e.g.<br/><br/>
+           <a href="https://source.android.com/docs/automotive/start/avd/android_virtual_device" target="_blank">Virtual Devices</a>
            <ul>
            <li>sdk_car_x86_64-userdebug</li>
            <li>sdk_car_arm64-userdebug</li>
            <li>aosp_cf_x86_64_auto-userdebug</li>
            <li>aosp_cf_arm64_auto-userdebug</li>
+           </ul>
+           <a href="https://source.android.com/docs/automotive/start/pixelxl" target="_blank">Pixel Devices</a>
+           <ul>
+           <li>aosp_tangorpro_car-ap1a-userdebug</li>
+           </ul>
+           <a href="https://github.com/raspberry-vanilla/android_local_manifest" target="_blank">Raspberry Pi</a>
+           <ul>
            <li>aosp_rpi4_car-ap3a-userdebug</li>
-           <li>aosp_rpi5_car-ap3a-userdebug</li></ul></p>''')
+           <li>aosp_rpi5_car-ap3a-userdebug</li>
+           </ul></p>''')
+
+    string(name: 'OVERRIDE_VENDOR_COMMAND',
+           defaultValue: '',
+           description: '''<p>Vendor command required prior to make, e.g. Pixel driver:<br/><br/>
+           <i>curl --output - https://dl.google.com/dl/android/aosp/google_devices-tangorpro-ap1a.240405.002-8d141153.tgz | tar -xzvf - && tail -n +315 extract-google_devices-tangorpro.sh | tar -zxvf -</i><br/><br/>
+           Reference: <a href="https://source.android.com/docs/automotive/start/pixelxl" target="_blank">Pixel Devices</a> and <a href="https://developers.google.com/android/drivers" target="_blank">Pixel Driver Device Binaries.</a></p>''')
+
+    string(name: 'OVERRIDE_MAKE_COMMAND',
+           defaultValue: '',
+           description: '''<p>Override default make command, e.g. Pixel device:<br/><br/>
+           <i>m && m android.hardware.automotive.vehicle@2.0-default-service android.hardware.automotive.audiocontrol-service.example</i><br/><br/>
+           Reference: <a href="https://source.android.com/docs/automotive/start/pixelxl" target="_blank">Pixel Devices</a>
+           </p>''')
 
     string(name: 'AAOS_RPI_REVISION',
            defaultValue: 'android-15.0.0_r4',
@@ -113,9 +138,10 @@ pipeline {
            Used to derive API level, eg. 14 is API Level 34, 15 is API Level 35</p>''')
 
     choice(name: 'AAOS_CLEAN',
-           choices: ['', 'CLEAN_BUILD', 'CLEAN_ALL'],
+           choices: ['NO_CLEAN', 'CLEAN_BUILD', 'CLEAN_ALL'],
            description: '''<p>Clean build or cache directories, e.g.
            <ul>
+           <li>NO_CLEAN : do not clean</li>
            <li>CLEAN_BUILD : this will clean the build target output directory</li>
            <li>CLEAN_ALL : this will clear the whole cache including source</li>
            </ul>
@@ -140,7 +166,7 @@ pipeline {
       when {
         allOf {
           expression { env.AAOS_LUNCH_TARGET }
-          expression { env.AAOS_CLEAN != '' }
+          expression { env.AAOS_CLEAN != 'NO_CLEAN' }
         }
       }
       steps {
@@ -150,7 +176,7 @@ pipeline {
         container(name: 'builder') {
             sh '''
               AAOS_LUNCH_TARGET="${AAOS_LUNCH_TARGET}" \
-              AAOS_CLEAN=${AAOS_CLEAN} \
+              AAOS_CLEAN="${AAOS_CLEAN}" \
               ./workloads/android/pipelines/builds/aaos_builder/aaos_environment.sh
             '''
         }
@@ -174,7 +200,8 @@ pipeline {
               AAOS_REVISION="${AAOS_REVISION}" \
               AAOS_RPI_REVISION="${AAOS_RPI_REVISION}" \
               AAOS_LUNCH_TARGET="${AAOS_LUNCH_TARGET}" \
-              AAOS_CLEAN=${AAOS_CLEAN} \
+              AAOS_CLEAN="NO_CLEAN" \
+              OVERRIDE_VENDOR_COMMAND="${OVERRIDE_VENDOR_COMMAND}" \
               ./workloads/android/pipelines/builds/aaos_builder/aaos_initialise.sh
             '''
           }
@@ -188,7 +215,8 @@ pipeline {
         container(name: 'builder') {
           sh '''
             AAOS_LUNCH_TARGET="${AAOS_LUNCH_TARGET}" \
-            AAOS_CLEAN='' \
+            OVERRIDE_MAKE_COMMAND="${OVERRIDE_MAKE_COMMAND}" \
+            AAOS_CLEAN="NO_CLEAN" \
             ./workloads/android/pipelines/builds/aaos_builder/aaos_build.sh
           '''
         }
@@ -206,15 +234,15 @@ pipeline {
         container(name: 'builder') {
           sh '''
             AAOS_LUNCH_TARGET="${AAOS_LUNCH_TARGET}" \
-            AAOS_CLEAN='' \
             AAOS_REVISION="${AAOS_REVISION}" \
+            AAOS_CLEAN="NO_CLEAN" \
             ./workloads/android/pipelines/builds/aaos_builder/aaos_avd_sdk.sh || true
 
             AAOS_LUNCH_TARGET="${AAOS_LUNCH_TARGET}" \
-            AAOS_CLEAN='' \
             AAOS_ARTIFACT_ROOT_NAME="${ANDROID_BUILD_BUCKET_ROOT_NAME}" \
             AAOS_ARTIFACT_STORAGE_SOLUTION="${AAOS_ARTIFACT_STORAGE_SOLUTION}" \
             CLOUD_REGION="${CLOUD_REGION}" \
+            AAOS_CLEAN="NO_CLEAN" \
             ./workloads/android/pipelines/builds/aaos_builder/aaos_storage.sh
           '''
         }

@@ -102,5 +102,10 @@ if [[ -n "${GERRIT_PROJECT}" && -n "${GERRIT_CHANGE_NUMBER}" && -n "${GERRIT_PAT
     eval "${REPO_CMD}"
 fi
 
+# Additional commands to run after repo init.
+if [ -n "${POST_INITIALISE_COMMANDS}" ]; then
+    eval "${POST_INITIALISE_COMMANDS}"
+fi
+
 # Return result
 exit $?

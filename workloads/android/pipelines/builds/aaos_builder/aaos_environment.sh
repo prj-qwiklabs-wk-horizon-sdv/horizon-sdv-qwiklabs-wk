@@ -22,6 +22,8 @@
 #  - AAOS_GERRIT_MANIFEST_URL: the URL of the AAOS manifest.
 #  - AAOS_REVISION: the branch or tag/version of the AAOS manifest.
 #  - AAOS_LUNCH_TARGET: the target device.
+#  - OVERRIDE_MAKE_COMMAND: the make command line to use
+#  - OVERRIDE_VENDOR_COMMAND: additional vendor commands for initialisation.
 #
 # Optional variables:
 #  - AAOS_CLEAN: whether to clean before building.
@@ -136,12 +138,16 @@ function remove_directory() {
 export OUT_DIR="out_sdv-${AAOS_LUNCH_TARGET}"
 
 # Clean Workspace or specific build target directory.
+AAOS_CLEAN=${AAOS_CLEAN:-NO_CLEAN}
 case "${AAOS_CLEAN}" in
     CLEAN_ALL)
         remove_directory "${WORKSPACE}"
         ;;
     CLEAN_BUILD)
         remove_directory "${WORKSPACE}"/"${OUT_DIR}"
+        ;;
+    NO_CLEAN)
+        echo "Reusing existing ${WORKSPACE}..."
         ;;
     *)
         ;;
@@ -164,6 +170,8 @@ elif [[ "${AAOS_LUNCH_TARGET}" =~ "rpi4" ]]; then
     AAOS_ARCH="rpi4"
 elif [[ "${AAOS_LUNCH_TARGET}" =~ "rpi5" ]]; then
     AAOS_ARCH="rpi5"
+elif [[ "${AAOS_LUNCH_TARGET}" =~ "tangor" ]]; then
+    AAOS_ARCH="arm64"
 fi
 
 # Declare articact array.
@@ -175,6 +183,11 @@ AAOS_MAKE_CMDLINE=""
 # If Jenkins, or local, the artifacts differ so update.
 USER=$(whoami)
 IMAGE_EXT=${BUILD_NUMBER:-eng.$USER}
+
+# Post build commands
+declare -a POST_BUILD_COMMANDS
+# Post storage commands
+declare -a POST_STORAGE_COMMANDS
 
 # This is a dictionary mapping the target names to the command line
 # to build the image.
@@ -211,15 +224,42 @@ case "${AAOS_LUNCH_TARGET}" in
             AAOS_ARTIFACT_LIST=("${OUT_DIR}/host/linux-x86/cts/android-cts.zip")
         fi
         ;;
+    *tangorpro_car*)
+        AAOS_MAKE_CMDLINE="m && m android.hardware.automotive.vehicle@2.0-default-service android.hardware.automotive.audiocontrol-service.example"
+        AAOS_ARTIFACT_LIST=(
+            "vendor.tgz"
+        )
+        POST_INITIALISE_COMMANDS="curl --output - https://dl.google.com/dl/android/aosp/google_devices-tangorpro-ap1a.240405.002-8d141153.tgz | tar -xzvf - && tail -n +315 extract-google_devices-tangorpro.sh | tar -zxvf -"
+        POST_BUILD_COMMANDS=(
+            "cp -f ${OUT_DIR}/target/product/tangorpro/system.img vendor/google_devices/tangorpro/proprietary"
+            "cp -f ${OUT_DIR}/target/product/tangorpro/bootloader.img vendor/google_devices/tangorpro/proprietary"
+            "cp -f ${OUT_DIR}/target/product/tangorpro/vbmeta_vendor.img vendor/google_devices/tangorpro/proprietary"
+            "cp -f ${OUT_DIR}/target/product/tangorpro/vendor.img vendor/google_devices/tangorpro/proprietary"
+            "cp -f ${OUT_DIR}/target/product/tangorpro/vendor_dlkm.img vendor/google_devices/tangorpro/proprietary"
+            "cp -f ${OUT_DIR}/target/product/tangorpro/android-info.txt vendor/google_devices/tangorpro/"
+            "tar -czf vendor.tgz vendor"
+        )
+        POST_STORAGE_COMMANDS=(
+            "rm -f vendor.tgz"
+            "rm -rf vendor"
+        )
+        ;;
     *)
         # If the target is not one of the above, print an error message
         # but continue as best so people can play with builds.
-        echo "Error: unknown target ${LUNCH_TARGET}" >&2
+        echo "WARNING: unknown target ${LUNCH_TARGET}" >&2
         AAOS_MAKE_CMDLINE="m"
-        echo "Defaulting make to: ${AAOS_MAKE_CMDLINE}"
         echo "Artifacts will not be stored!"
         ;;
 esac
+
+# Additional build commands
+if [ -n "${OVERRIDE_MAKE_COMMAND}" ]; then
+    AAOS_MAKE_CMDLINE="${OVERRIDE_MAKE_COMMAND}"
+fi
+if [ -n "${OVERRIDE_VENDOR_COMMAND}" ]; then
+    POST_INITIALISE_COMMANDS="${OVERRIDE_VENDOR_COMMAND}"
+fi
 
 # Define artifact storage strategy and functions.
 AAOS_ARTIFACT_STORAGE_SOLUTION=${AAOS_ARTIFACT_STORAGE_SOLUTION:-"GCS_BUCKET"}
@@ -248,6 +288,8 @@ Environment:
 
     ANDROID_VERSION=${ANDROID_VERSION}
     ANDROID_API_LEVEL=${ANDROID_API_LEVEL}
+
+    POST_INITIALISE_COMMANDS=${POST_INITIALISE_COMMANDS}
 
     hostname=$(hostname)
 

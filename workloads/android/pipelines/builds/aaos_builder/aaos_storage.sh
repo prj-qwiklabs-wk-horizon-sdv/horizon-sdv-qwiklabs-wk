@@ -111,5 +111,12 @@ else
     noop
 fi
 
+# Post storage commands.
+echo "Post storage commands:"
+for command in "${POST_STORAGE_COMMANDS[@]}"; do
+    echo "${command}"
+    eval "${command}"
+done
+
 # Return result
 exit $?
