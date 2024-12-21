@@ -24,7 +24,7 @@
 #  - AAOS_LUNCH_TARGET: the target device.
 #
 # Optional variables:
-#  - AAOS_CLEAN_BUILD: whether to clean the build directory before building.
+#  - AAOS_CLEAN: whether to clean before building.
 #  - AAOS_ARTIFACT_STORAGE_SOLUTION: the persistent storage location for
 #         artifacts (GCS_BUCKET default).
 #
@@ -120,22 +120,32 @@ else
     EMPTY_DIR="${AAOS_CACHE_DIRECTORY}"/empty_dir
 fi
 
-function clean_workspace() {
-    # Clean build - remove workspace.
-    echo "Clean workspace ${WORKSPACE} ..."
+function remove_directory() {
+    echo "Remove directory ${1} ..."
     mkdir -p "${EMPTY_DIR}"
     # Faster than rm -rf
-    rsync -aq --delete "${EMPTY_DIR}"/ "${WORKSPACE}"/
+    rsync -aq --delete "${EMPTY_DIR}"/ "${1}"/ || true
     # Final, remove directories.
     rm -rf "${EMPTY_DIR}"
-    rm -rf "${WORKSPACE}"
-    echo "Cleaned workspace ${WORKSPACE}."
+    rm -rf "${1}"
+    echo "Removed directory ${1}."
 }
 
-# Clean Workspace
-if [[ "${AAOS_CLEAN_BUILD}" -eq 1 ]]; then
-    clean_workspace
-fi
+# Override build output directory to keep builds
+# separate from each other.
+export OUT_DIR="out_sdv-${AAOS_LUNCH_TARGET}"
+
+# Clean Workspace or specific build target directory.
+case "${AAOS_CLEAN}" in
+    CLEAN_ALL)
+        remove_directory "${WORKSPACE}"
+        ;;
+    CLEAN_BUILD)
+        remove_directory "${WORKSPACE}"/"${OUT_DIR}"
+        ;;
+    *)
+        ;;
+esac
 
 create_workspace() {
     mkdir -p "${WORKSPACE}" > /dev/null 2>&1
@@ -165,10 +175,6 @@ AAOS_MAKE_CMDLINE=""
 # If Jenkins, or local, the artifacts differ so update.
 USER=$(whoami)
 IMAGE_EXT=${BUILD_NUMBER:-eng.$USER}
-
-# Override build output directory to keep builds
-# separate from each other.
-export OUT_DIR="out_sdv-${AAOS_LUNCH_TARGET}"
 
 # This is a dictionary mapping the target names to the command line
 # to build the image.

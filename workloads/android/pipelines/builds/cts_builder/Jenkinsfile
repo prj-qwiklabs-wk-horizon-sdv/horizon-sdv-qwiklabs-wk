@@ -98,9 +98,14 @@ pipeline {
            <ul><li>aosp_cf_x86_64_auto-userdebug</li>
            <li>aosp_cf_arm64_auto-userdebug</li></ul></p>''')
 
-    booleanParam(name: 'AAOS_CLEAN_BUILD', defaultValue: false,
-                 description: '''<p>Clean the build workspace.<br/>
-                 <b>Warning:</b> Only use when necessary.</p>''')
+    choice(name: 'AAOS_CLEAN',
+           choices: ['', 'CLEAN_BUILD', 'CLEAN_ALL'],
+           description: '''<p>Clean build or cache directories, e.g.
+           <ul>
+           <li>CLEAN_BUILD : this will clean the build target output directory</li>
+           <li>CLEAN_ALL : this will clear the whole cache including source</li>
+           </ul>
+           <b>Warning:</b> Only use when necessary.</p>''')
 
     string(name: 'AAOS_ARTIFACT_STORAGE_SOLUTION', defaultValue: 'GCS_BUCKET',
            description: '''<p>Android Artifact Storage:<br/>
@@ -116,11 +121,28 @@ pipeline {
            description: '<p>Gerrit review item patchset number.</p>')
   }
 
-  environment {
-    AAOS_CLEAN_BUILD="${AAOS_CLEAN_BUILD == "true" ? 1 : 0}"
-  }
-
   stages {
+    stage ('Clean') {
+      when {
+        allOf {
+          expression { env.AAOS_LUNCH_TARGET }
+          expression { env.AAOS_CLEAN != '' }
+        }
+      }
+      steps {
+        script {
+          currentBuild.description = "${env.AAOS_LUNCH_TARGET}"
+        }
+        container(name: 'builder') {
+            sh '''
+              AAOS_LUNCH_TARGET="${AAOS_LUNCH_TARGET}" \
+              AAOS_CLEAN=${AAOS_CLEAN} \
+              ./workloads/android/pipelines/builds/aaos_builder/aaos_environment.sh
+            '''
+        }
+      }
+    }
+
     stage ('Initialise') {
       when { expression { env.AAOS_LUNCH_TARGET } }
       steps {
@@ -138,7 +160,7 @@ pipeline {
               AAOS_REVISION="${AAOS_REVISION}" \
               AAOS_RPI_REVISION="${AAOS_RPI_REVISION}" \
               AAOS_LUNCH_TARGET="${AAOS_LUNCH_TARGET}" \
-              AAOS_CLEAN_BUILD=${AAOS_CLEAN_BUILD} \
+              AAOS_CLEAN=${AAOS_CLEAN} \
               ./workloads/android/pipelines/builds/aaos_builder/aaos_initialise.sh
             '''
           }
@@ -153,7 +175,7 @@ pipeline {
           sh '''
             AAOS_LUNCH_TARGET="${AAOS_LUNCH_TARGET}" \
             AAOS_BUILD_CTS=1 \
-            AAOS_CLEAN_BUILD=0 \
+            AAOS_CLEAN="" \
             ./workloads/android/pipelines/builds/aaos_builder/aaos_build.sh
           '''
         }
@@ -172,7 +194,7 @@ pipeline {
           sh '''
             AAOS_LUNCH_TARGET="${AAOS_LUNCH_TARGET}" \
             AAOS_BUILD_CTS=1 \
-            AAOS_CLEAN_BUILD=0 \
+            AAOS_CLEAN="" \
             AAOS_ARTIFACT_ROOT_NAME="${ANDROID_BUILD_BUCKET_ROOT_NAME}" \
             AAOS_ARTIFACT_STORAGE_SOLUTION="${AAOS_ARTIFACT_STORAGE_SOLUTION}" \
             CLOUD_REGION="${CLOUD_REGION}" \

@@ -30,7 +30,7 @@
 #  - AAOS_LUNCH_TARGET: the target device.
 #
 # Optional variables:
-#  - AAOS_CLEAN_BUILD: whether to clean the build directory before building.
+#  - AAOS_CLEAN: whether to clean before building.
 #  - AAOS_ARTIFACT_STORAGE: the persistent storage location for artifacts
 #
 # For Gerrit review change sets:

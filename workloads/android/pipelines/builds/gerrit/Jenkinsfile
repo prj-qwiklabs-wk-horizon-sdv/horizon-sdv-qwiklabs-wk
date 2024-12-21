@@ -94,7 +94,7 @@ pipeline {
               export AAOS_GERRIT_MANIFEST_URL="https://${HORIZON_DOMAIN}/android/platform/manifest"
               export AAOS_REVISION="android14-qpr1-automotiveos-release"
               export AAOS_LUNCH_TARGET="sdk_car_x86_64-userdebug"
-              export AAOS_CLEAN_BUILD=0
+              export AAOS_CLEAN=""
               export AAOS_ARTIFACT_ROOT_NAME="${ANDROID_BUILD_BUCKET_ROOT_NAME}"
               export CLOUD_REGION="${CLOUD_REGION}"
               export AAOS_BUILD_NUMBER=${BUILD_NUMBER}/${AAOS_LUNCH_TARGET}
@@ -121,7 +121,7 @@ pipeline {
               export AAOS_GERRIT_MANIFEST_URL="https://${HORIZON_DOMAIN}/android/platform/manifest"
               export AAOS_REVISION="android14-qpr1-automotiveos-release"
               export AAOS_LUNCH_TARGET="aosp_cf_x86_64_auto-userdebug"
-              export AAOS_CLEAN_BUILD=0
+              export AAOS_CLEAN=""
               export AAOS_ARTIFACT_ROOT_NAME="${ANDROID_BUILD_BUCKET_ROOT_NAME}"
               export AAOS_BUILD_NUMBER=${BUILD_NUMBER}/${AAOS_LUNCH_TARGET}
               export CLOUD_REGION="${CLOUD_REGION}"
