@@ -42,7 +42,7 @@ declare -r aaos_devices_file="device/generic/car/tools/x86_64/devices.xml"
 declare avd_sha1=''
 declare avd_size=''
 declare avd_image_url=''
-declare out_dir=''
+declare output_dir=''
 
 # Create the SDK Addons file for use with AVD images and Android Studio.
 function create_sdk_addons() {
@@ -83,7 +83,7 @@ function create_sdk_addons() {
     sed -i "s|<url>[^<]*</url>|<url>${avd_image_url}</url>|" "${AAOS_SDK_ADDON_FILE}"
 
     # Add the SDK Addons file to the archives.
-    cp -f "${AAOS_SDK_ADDON_FILE}" "${out_dir}"
+    cp -f "${AAOS_SDK_ADDON_FILE}" "${output_dir}"
 }
 
 function create_devices_xml() {
@@ -112,7 +112,7 @@ function update_archives() {
             avd_sha1="$(sha1sum "${artifact}" | awk '{print $1}')"
             avd_size="$(${STAT_CMD} "${artifact}")"
             avd_image_url="$(basename "${artifact}")"
-            out_dir="$(dirname "${artifact}")"
+            output_dir="$(dirname "${artifact}")"
             break
         fi
     done
