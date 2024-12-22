@@ -105,15 +105,17 @@ AAOS_CACHE_DIRECTORY=${AAOS_CACHE_DIRECTORY:-/aaos-cache}
 
 # AAOS workspace and artifact storage paths
 if [ -z "${WORKSPACE}" ]; then
+    ORIG_WORKSPACE="${HOME}"
     WORKSPACE="${HOME}"/aaos_builds
     AAOS_CACHE_DIRECTORY="${WORKSPACE}"
     EMPTY_DIR="${HOME}"/empty_dir
 else
+    # Store original workspace for use later.
+    ORIG_WORKSPACE="${WORKSPACE}"
     # Ensure PVC has correct privileges.
     # Note: builder Dockerfile defines USER name
     sudo chown builder:builder /"${AAOS_CACHE_DIRECTORY}"
     sudo chmod g+s /"${AAOS_CACHE_DIRECTORY}"
-
     WORKSPACE=/"${AAOS_CACHE_DIRECTORY}"/aaos_builds
     if [[ "${AAOS_LUNCH_TARGET}" =~ "rpi" ]]; then
         # Avoid RPI builds affecting standard android repos.
@@ -247,7 +249,7 @@ case "${AAOS_LUNCH_TARGET}" in
     *)
         # If the target is not one of the above, print an error message
         # but continue as best so people can play with builds.
-        echo "WARNING: unknown target ${LUNCH_TARGET}" >&2
+        echo "WARNING: unknown target ${LUNCH_TARGET}"
         AAOS_MAKE_CMDLINE="m"
         echo "Artifacts will not be stored!"
         ;;
