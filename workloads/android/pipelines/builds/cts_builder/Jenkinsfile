@@ -205,4 +205,9 @@ pipeline {
       }
     }
   }
+  post {
+    always {
+      archiveArtifacts artifacts: '*artifacts*.txt', followSymlinks: false, onlyIfSuccessful: false, allowEmptyArchive: true
+    }
+  }
 }

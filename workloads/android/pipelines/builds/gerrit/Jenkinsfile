@@ -157,6 +157,9 @@ pipeline {
 
   // REVIEW what is returned.
   post {
+    always {
+      archiveArtifacts artifacts: '*artifacts*.txt', followSymlinks: false, onlyIfSuccessful: false, allowEmptyArchive: true
+    }
     success {
       gerritReview labels: [Verified: 1], message: 'Build was successful.'
     }
