@@ -46,10 +46,19 @@ if [ -n "${AAOS_MAKE_CMDLINE}" ]; then
 
     # Run the build.
     eval "${AAOS_MAKE_CMDLINE}"
+    RESULT=$?
 else
     echo "Error: make command line undefined!"
     exit 255
 fi
 
+if (( RESULT == 0 )); then
+    echo "Post build commands:"
+    for command in "${POST_BUILD_COMMANDS[@]}"; do
+        echo "${command}"
+        eval "${command}"
+    done
+fi
+
 # Return result
-exit $?
+exit "$RESULT"
