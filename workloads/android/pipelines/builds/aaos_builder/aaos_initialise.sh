@@ -42,7 +42,7 @@
 # shellcheck disable=SC1091
 source "$(dirname "${BASH_SOURCE[0]}")"/aaos_environment.sh "$0"
 
-# Retry 4 times, on 3rd fail clean workspace and retry once more.
+# Retry 4 times, on 3rd fail, clean workspace and retry once more.
 MAX_RETRIES=4
 for ((i=1; i<="${MAX_RETRIES}"; i++)); do
     # Initialise repo checkout.
@@ -65,27 +65,17 @@ for ((i=1; i<="${MAX_RETRIES}"; i++)); do
 
     # Clean previous changes.
     # This will automatically clean any previous downloaded changes.
-    # -j1 because that's what fail-fast recommends otherwise 1st sync will
-    # take an eternity to fail..
-    if ! repo sync -l --force-sync --fail-fast -j 1
+    if ! repo sync --no-tags --optimized-fetch --prune --retry-fetches=3 --auto-gc --no-clone-bundle --fail-fast --force-sync -j2
     then
-        # 1st sync failed, so perform a full sync.
-        echo "ERROR: repo sync failed, performing a full sync"
-        if ! repo sync --no-clone-bundle --fail-fast --force-sync -j 2
-        then
-            echo "WARNING: repo sync failed, sleep 60s and retrying..."
-            sleep 60
-            if [ "$i" -eq 3 ]; then
-                echo "WARNING: clean workspace and retry."
-                clean_workspace
-                create_workspace
-            fi
-            if [ "$i" -eq 4 ]; then
-                echo "ERROR: repo sync retry failed, giving up."
-                exit 255
-            fi
-        else
-            break
+        echo "WARNING: repo sync failed, sleep 60s and retrying..."
+        sleep 60
+        if [ "$i" -eq 3 ]; then
+            echo "WARNING: clean workspace and retry."
+            recreate_workspace
+        fi
+        if [ "$i" -eq 4 ]; then
+            echo "ERROR: repo sync retry failed, giving up."
+            exit 255
         fi
     else
         break

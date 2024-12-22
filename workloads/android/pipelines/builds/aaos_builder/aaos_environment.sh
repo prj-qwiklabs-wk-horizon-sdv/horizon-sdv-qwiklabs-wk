@@ -155,9 +155,14 @@ case "${AAOS_CLEAN}" in
         ;;
 esac
 
-create_workspace() {
+function create_workspace() {
     mkdir -p "${WORKSPACE}" > /dev/null 2>&1
     cd "${WORKSPACE}" || exit
+}
+
+function recreate_workspace() {
+    remove_directory "${WORKSPACE}"
+    create_workspace
 }
 
 create_workspace
