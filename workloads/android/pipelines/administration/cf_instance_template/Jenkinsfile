@@ -82,13 +82,14 @@ target="_blank">gcloud compute instance-templates create</a>, i.e. <i>--create-d
            defaultValue: '',
            description: '''<p>Define the unique name used for the instance template.<br/>
            Default: leave empty, the name will be automatically derived from ANDROID_CUTTLEFISH_REVISION.<br/><br/>
-           This option is simply provided for flexibility to allow users create their own instance templates, should they wish to, e.g.<br/>
+           This option is simply provided for flexibility to allow users create their own instance templates, should they wish to, e.g.<br/></p>
            <ul>
              <li>cuttlefish-vm-n1-standard-8-v101</li>
              <li>cuttlefish-vm-bob-v101</li>
            </ul>
-           <p>If you define a unique instance,</p>
+           <p>If you define a unique instance:</p>
            <ul>
+             <li>The name must start with cuttlefish-vm.</li>
              <li>Update Jenkins CasC to include a new compute engine entry that references the instance template this pipeline created.</li>
              <li><b>Pipeline Dependencies:</b> <i>CVD Launcher</b></i> and <i>CTS Execution</i></li>
              <li>JENKINS_GCE_CLOUD_LABEL parameter references the label of the new compute engine entry.</li>
