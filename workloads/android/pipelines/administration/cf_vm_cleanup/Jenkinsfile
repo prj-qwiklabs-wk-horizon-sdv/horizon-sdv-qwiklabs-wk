@@ -53,7 +53,12 @@ pipeline {
 
   stages {
     stage ('Delete VM instance') {
-      when { expression { env.VM_INSTANCE_NAME } }
+      when {
+        allOf {
+          expression { env.VM_INSTANCE_NAME }
+          expression { env.VM_INSTANCE_NAME =~ /(cuttlefish-vm)/ }
+        }
+      }
       steps {
         container(name: 'builder') {
           sh '''

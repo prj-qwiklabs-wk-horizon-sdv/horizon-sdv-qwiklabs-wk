@@ -210,8 +210,7 @@ function print_usage() {
     echo "Use defaults or override environment variables."
 }
 
-# Function to check if running locally to avoid downloading CTS archives
-# that cause MS Defender to block MacOS because of CTS vulnerabilities.
+# Check environment.
 function check_environment() {
     if [ -z "${PROJECT}" ]; then
         echo -r "${RED}Environment variable PROJECT must be defined${NC}"
@@ -219,6 +218,10 @@ function check_environment() {
     fi
     if [ -z "${SERVICE_ACCOUNT}" ]; then
         echo -r "${RED}Environment variable SERVICE_ACCOUNT must be defined${NC}"
+        exit 1
+    fi
+    if [[ "${cuttlefish_unique_name}" != cuttlefish-vm* ]]; then
+        echo "UNIQUE_NAME must start with cuttlefish-vm"
         exit 1
     fi
 }
@@ -461,6 +464,7 @@ function delete_instances() {
 # Main: run all or allow the user to select which steps to run.
 function main() {
     echo_environment
+    check_environment
     case "$1" in
         1)  create_base_template_instance ;;
         2)  create_vm_instance ;;
