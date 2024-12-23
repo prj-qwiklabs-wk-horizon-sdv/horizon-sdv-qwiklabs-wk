@@ -51,27 +51,33 @@ function gcs_bucket() {
     # Replace spaces in Jenkins Job Name
     BUCKET_FOLDER="${JOB_NAME// /_}"
     local -r destination="${bucket_name}/${BUCKET_FOLDER}/${AAOS_BUILD_NUMBER}"
-    local -r cloud_url="https://storage.cloud.google.com"
+    local -r cloud_url="https://console.cloud.google.com/storage/browser/${AAOS_ARTIFACT_ROOT_NAME}/${BUCKET_FOLDER}/${AAOS_BUILD_NUMBER}"
+    local -r artifacts_summary="${ORIG_WORKSPACE}/${AAOS_LUNCH_TARGET}-artifacts.txt"
 
     # Remove the old artifacts
     /usr/bin/gsutil -m rm "${destination}"/* || true
+    rm -f "${artifacts_summary}"
 
     # Copy artifacts to Google Cloud Storage bucket
-    echo "Storing artifacts to bucket ${bucket_name}"
+    echo "Storing ${AAOS_LUNCH_TARGET} artifacts to bucket ${bucket_name}"
     for artifact in "${AAOS_ARTIFACT_LIST[@]}"; do
         # Copy the artifact to the bucket
         /usr/bin/gsutil cp "${artifact}" "${destination}"/ || true
         echo "Copied ${artifact} to ${destination}"
     done
 
-    # Print HTTP download URL links in console log.
-    echo "Artifacts for ${JOB_NAME}/${AAOS_BUILD_NUMBER} stored in ${destination}"
-    echo "Bucket URL: ${cloud_url}/${AAOS_ARTIFACT_ROOT_NAME}"
+    # Print download URL links in console log and file..
+    echo ""
+    echo "Artifacts for ${AAOS_LUNCH_TARGET} stored in ${destination}" | tee -a "${artifacts_summary}"
+    echo "Bucket URL: ${cloud_url}" | tee -a "${artifacts_summary}"
+    echo "" | tee -a "${artifacts_summary}"
 
     for artifact in "${AAOS_ARTIFACT_LIST[@]}"; do
         # shellcheck disable=SC2086
-        echo "Artifact URL: ${destination}/$(echo ${artifact} | awk -F / '{print $NF}')"
+        filename=$(echo ${artifact} | awk -F / '{print $NF}')
+        echo "    gsutil cp ${destination}/${filename} ." | tee -a "${artifacts_summary}"
     done
+
 }
 
 #
