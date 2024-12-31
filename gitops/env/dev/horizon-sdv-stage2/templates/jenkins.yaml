@@ -16,7 +16,7 @@ spec:
     helm:
       values: |
         persistence:
-          accessMode: "ReadWriteOnce"
+          accessMode: "ReadWriteOnce
           enabled: true
           existingClaim: "jenkins-home-volume"
         rbac:
@@ -199,8 +199,8 @@ spec:
                         description('<p>This folder contains jobs used to help test and validate Android builds.</p>')
                       }
                   - script: >
-                      pipelineJob('Android/Environment/AAOS Docker Builder') {
-                        description('<p>AAOS Docker build image for use in building Android and Cuttlefish instances.</p>')
+                      pipelineJob('Android/Environment/Docker Image Template') {
+                        description('<p>Build the container image used on Kubernetes for building Android targets and Cuttlefish instances.</p>')
                         definition {
                           cpsScm {
                             lightweight()
@@ -213,7 +213,7 @@ spec:
                                 branch('*/main')
                               }
                             }
-                            scriptPath('workloads/android/pipelines/environment/aaos_docker_builder/Jenkinsfile')
+                            scriptPath('workloads/android/pipelines/environment/docker_image_template/Jenkinsfile')
                           }
                         }
                       }
