@@ -146,8 +146,8 @@ pipeline {
       }
       post {
         always {
-          withCredentials([usernamePassword(credentialsId: 'jenkins-mtk-connect-apikey', passwordVariable: 'MTK_CONNECT_PASSWORD', usernameVariable: 'MTK_CONNECT_USERNAME')]) {
-            catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+          catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+            withCredentials([usernamePassword(credentialsId: 'jenkins-mtk-connect-apikey', passwordVariable: 'MTK_CONNECT_PASSWORD', usernameVariable: 'MTK_CONNECT_USERNAME')]) {
               sh '''
                 if test -n "$CUTTLEFISH_DOWNLOAD_URL"; then
                   sudo \
@@ -163,9 +163,9 @@ pipeline {
                 fi
               '''
             }
+            archiveArtifacts artifacts: 'cvd*.log', followSymlinks: false, onlyIfSuccessful: false, allowEmptyArchive: true
+            archiveArtifacts artifacts: 'cuttlefish*.tgz', followSymlinks: false, onlyIfSuccessful: false, allowEmptyArchive: true
           }
-          archiveArtifacts artifacts: 'cvd*.log', followSymlinks: false, onlyIfSuccessful: false, allowEmptyArchive: true
-          archiveArtifacts artifacts: 'cuttlefish*.tgz', followSymlinks: false, onlyIfSuccessful: false, allowEmptyArchive: true
         }
       }
     }
