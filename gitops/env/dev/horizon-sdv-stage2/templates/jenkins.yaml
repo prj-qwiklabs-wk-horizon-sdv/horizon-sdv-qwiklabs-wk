@@ -181,12 +181,12 @@ spec:
                   - script: >
                       folder('Android') {
                         displayName('Android Workflows')
-                        description('<p>This folder contains pipelines and jobs related to administration, building, testing, and deploying Android applications.<br/>It includes workflows for administration, building and test tasks.</p>')
+                        description('<p>This folder contains pipelines and jobs related to environment administration, building, testing, and deploying Android applications.<br/>It includes workflows for administration, building and test tasks.</p>')
                       }
                   - script: >
-                      folder('Android/Administration') {
-                        displayName('Administration')
-                        description('<p>This folder contains administrative jobs related to supporting Android workflows.</p>')
+                      folder('Android/Environment') {
+                        displayName('Environment')
+                        description('<p>This folder contains environment administrative jobs related to supporting Android workflows.</p>')
                       }
                   - script: >
                       folder('Android/Builds') {
@@ -199,7 +199,7 @@ spec:
                         description('<p>This folder contains jobs used to help test and validate Android builds.</p>')
                       }
                   - script: >
-                      pipelineJob('Android/Administration/AAOS Docker Builder') {
+                      pipelineJob('Android/Environment/AAOS Docker Builder') {
                         description('<p>AAOS Docker build image for use in building Android and Cuttlefish instances.</p>')
                         definition {
                           cpsScm {
@@ -213,12 +213,12 @@ spec:
                                 branch('*/main')
                               }
                             }
-                            scriptPath('workloads/android/pipelines/administration/aaos_docker_builder/Jenkinsfile')
+                            scriptPath('workloads/android/pipelines/environment/aaos_docker_builder/Jenkinsfile')
                           }
                         }
                       }
                   - script: >
-                      pipelineJob('Android/Administration/CF Instance Template') {
+                      pipelineJob('Android/Environment/CF Instance Template') {
                         description('<p>Pipeline for creating and managing GCE instance templates optimized for Cuttlefish workflows, such as CVD Launcher and CTS Execution.<br/>Includes an option to delete outdated instances and artifacts.</p>')
                         definition {
                           cpsScm {
@@ -232,12 +232,12 @@ spec:
                                 branch('*/main')
                               }
                             }
-                            scriptPath('workloads/android/pipelines/administration/cf_instance_template/Jenkinsfile')
+                            scriptPath('workloads/android/pipelines/environment/cf_instance_template/Jenkinsfile')
                           }
                         }
                       }
                   - script: >
-                      pipelineJob('Android/Administration/CF VM Cleanup') {
+                      pipelineJob('Android/Environment/CF VM Cleanup') {
                         description('<p>Pipeline for cleaning up GCE VM instances that have not terminated.<br/>Reduce risk of leaving expensive instances in running state.</p>')
                         definition {
                           cpsScm {
@@ -251,12 +251,12 @@ spec:
                                 branch('*/main')
                               }
                             }
-                            scriptPath('workloads/android/pipelines/administration/cf_vm_cleanup/Jenkinsfile')
+                            scriptPath('workloads/android/pipelines/environment/cf_vm_cleanup/Jenkinsfile')
                           }
                         }
                       }
                   - script: >
-                      pipelineJob('Android/Administration/MTK Connect Cleanup') {
+                      pipelineJob('Android/Environment/MTK Connect Cleanup') {
                         description('<p>Remove offline testbenches from MTK Connect.<br/><b>WARNING:</b> take care when using this job!</p>')
                         definition {
                           cpsScm {
@@ -270,7 +270,7 @@ spec:
                                 branch('*/main')
                               }
                             }
-                            scriptPath('workloads/android/pipelines/administration/mtkc_cleanup/Jenkinsfile')
+                            scriptPath('workloads/android/pipelines/environment/mtkc_cleanup/Jenkinsfile')
                           }
                         }
                       }
