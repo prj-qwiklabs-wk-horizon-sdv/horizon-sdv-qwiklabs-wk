@@ -102,6 +102,9 @@ function mtkc_start() {
     local -r app_path="/usr/src/app"
     local -r config_path="/usr/src/config"
 
+    # Avoid (unattended-upgr)
+    dpkg --configure -a
+
     # Install the required packages.
     npm install -g wait-on pm2 >/dev/null 2>&1
 

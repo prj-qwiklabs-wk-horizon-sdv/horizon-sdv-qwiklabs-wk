@@ -224,8 +224,8 @@ async function main()  {
     } catch (err) {
       if (maxRetries > 0) {
         console.log(`Error: retry configureDevices`);
-        // Delay between 180s and 300s.
-        await delayMs(Math.random() * (300000 - 180000) + 180000);
+        // Delay between 90s and 180s.
+        await delayMs(Math.random() * (180000 - 90000) + 90000);
         continue;
       } else {
         throw err;
