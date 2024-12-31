@@ -126,7 +126,11 @@ spec:
                     - computeEngine:
                         cloudName: cuttlefish-vm-main
                         configurations:
-                          - description: "cuttlefish-vm-main"
+                          - bootDiskAutoDelete: true
+                            bootDiskSizeGb: 10
+                            bootDiskSizeGbStr: "10"
+                            bootDiskType: "https://www.googleapis.com/compute/v1/projects/sdva-2108202401/zones/europe-west1-d/diskTypes/hyperdisk-balanced"
+                            description: "cuttlefish-vm-main"
                             javaExecPath: "/usr/bin/java"
                             labelSet:
                               - name: "cuttlefish-vm-main"
@@ -156,7 +160,11 @@ spec:
                     - computeEngine:
                         cloudName: "cuttlefish-vm-v101"
                         configurations:
-                        - description: "cuttlefish-vm-v101"
+                        - bootDiskAutoDelete: true
+                          bootDiskSizeGb: 10
+                          bootDiskSizeGbStr: "10"
+                          bootDiskType: "https://www.googleapis.com/compute/v1/projects/sdva-2108202401/zones/europe-west1-d/diskTypes/hyperdisk-balanced"
+                          description: "cuttlefish-vm-v101"
                           javaExecPath: "/usr/bin/java"
                           labelSet:
                           - name: "cuttlefish-vm-v101"
