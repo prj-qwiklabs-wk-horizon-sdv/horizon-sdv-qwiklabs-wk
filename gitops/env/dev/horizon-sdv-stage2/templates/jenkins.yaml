@@ -15,10 +15,6 @@ spec:
     targetRevision: 5.7.14
     helm:
       values: |
-        persistence:
-          accessMode: "ReadWriteOnce
-          enabled: true
-          existingClaim: "jenkins-home-volume"
         rbac:
           readSecrets: true
         controller:
