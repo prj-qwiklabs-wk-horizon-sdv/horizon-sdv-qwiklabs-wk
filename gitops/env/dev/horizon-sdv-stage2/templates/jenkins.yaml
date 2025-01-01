@@ -15,10 +15,6 @@ spec:
     targetRevision: 5.7.14
     helm:
       values: |
-        persistence:
-          accessMode: "ReadWriteOnce"
-          enabled: true
-          existingClaim: "jenkins-home-volume"
         rbac:
           readSecrets: true
         controller:
@@ -90,39 +86,6 @@ spec:
                 jenkins:
                   systemMessage: Welcome to Horizon SDV server.
                   clouds:
-                    - kubernetes:
-                        containerCap: 20
-                        containerCapStr: "20"
-                        jenkinsTunnel: "jenkins-agent.jenkins.svc.cluster.local:50000"
-                        jenkinsUrl: "http://jenkins.jenkins.svc.cluster.local:8080/jenkins"
-                        name: "kubernetes"
-                        namespace: "jenkins"
-                        podLabels:
-                          - key: "jenkins/jenkins-jenkins-agent"
-                            value: "true"
-                        serverUrl: "https://kubernetes.default"
-                        templates:
-                        - containers:
-                          - args: "^${computer.jnlpmac} ^${computer.name}"
-                            envVars:
-                            - envVar:
-                              key: "JENKINS_URL"
-                              value: "http://jenkins.jenkins.svc.cluster.local:8080/jenkins"
-                            name: "jnlp"
-                            resourceLimitCpu: "512m"
-                            resourceLimitMemory: "512Mi"
-                            resourceRequestCpu: "512m"
-                            resourceRequestMemory: "512Mi"
-                            workingDir: "/home/jenkins/agent"
-                          label: "jenkins-jenkins-agent"
-                          name: "default"
-                          namespace: "jenkins"
-                          nodeUsageMode: NORMAL
-                          podRetention: "never"
-                          serviceAccount: "default"
-                          slaveConnectTimeout: 100
-                          slaveConnectTimeoutStr: "100"
-                          yamlMergeStrategy: "override"
                     - computeEngine:
                         cloudName: cuttlefish-vm-main
                         configurations:
