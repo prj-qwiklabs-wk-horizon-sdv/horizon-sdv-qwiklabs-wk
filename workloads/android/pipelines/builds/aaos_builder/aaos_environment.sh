@@ -23,7 +23,7 @@
 #  - AAOS_REVISION: the branch or tag/version of the AAOS manifest.
 #  - AAOS_LUNCH_TARGET: the target device.
 #  - OVERRIDE_MAKE_COMMAND: the make command line to use
-#  - OVERRIDE_VENDOR_COMMAND: additional vendor commands for initialisation.
+#  - ADDITIONAL_INITIALISE_COMMANDS: additional vendor commands for initialisation.
 #
 # Optional variables:
 #  - AAOS_CLEAN: whether to clean before building.
@@ -264,8 +264,8 @@ esac
 if [ -n "${OVERRIDE_MAKE_COMMAND}" ]; then
     AAOS_MAKE_CMDLINE="${OVERRIDE_MAKE_COMMAND}"
 fi
-if [ -n "${OVERRIDE_VENDOR_COMMAND}" ]; then
-    POST_INITIALISE_COMMANDS="${OVERRIDE_VENDOR_COMMAND}"
+if [ -n "${ADDITIONAL_INITIALISE_COMMANDS}" ]; then
+    POST_INITIALISE_COMMANDS="${ADDITIONAL_INITIALISE_COMMANDS}"
 fi
 
 # Define artifact storage strategy and functions.
