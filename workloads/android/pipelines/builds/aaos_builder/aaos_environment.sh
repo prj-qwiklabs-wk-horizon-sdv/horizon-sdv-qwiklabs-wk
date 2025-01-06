@@ -236,6 +236,8 @@ case "${AAOS_LUNCH_TARGET}" in
         AAOS_ARTIFACT_LIST=(
             "vendor.tgz"
         )
+        # Pixel Tablet binaries for Android 14.0.0 (AP1A.240405.002)
+        # https://developers.google.com/android/drivers#tangorproap1a.240405.002
         POST_INITIALISE_COMMANDS="curl --output - https://dl.google.com/dl/android/aosp/google_devices-tangorpro-ap1a.240405.002-8d141153.tgz | tar -xzvf - && tail -n +315 extract-google_devices-tangorpro.sh | tar -zxvf -"
         POST_BUILD_COMMANDS=(
             "cp -f ${OUT_DIR}/target/product/tangorpro/system.img vendor/google_devices/tangorpro/proprietary"
