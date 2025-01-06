@@ -113,16 +113,18 @@ pipeline {
            <li>aosp_rpi5_car-ap3a-userdebug</li>
            </ul></p>''')
 
-    string(name: 'OVERRIDE_VENDOR_COMMAND',
+    string(name: 'ADDITIONAL_INITIALISE_COMMANDS',
            defaultValue: '',
-           description: '''<p>Vendor command required prior to make, e.g. Pixel driver:<br/><br/>
+           description: '''<p>Additional commands post repo init/sync/download and prior to build/make, e.g. Pixel driver:<br/><br/>
            <i>curl --output - https://dl.google.com/dl/android/aosp/google_devices-tangorpro-ap1a.240405.002-8d141153.tgz | tar -xzvf - && tail -n +315 extract-google_devices-tangorpro.sh | tar -zxvf -</i><br/><br/>
-           Reference: <a href="https://source.android.com/docs/automotive/start/pixelxl" target="_blank">Pixel Devices</a> and <a href="https://developers.google.com/android/drivers" target="_blank">Pixel Driver Device Binaries.</a></p>''')
+           <b>Note: </b>Single command line only, use logical operators to execute subsequent commands.<br/><br/>
+           Reference: <a href="https://source.android.com/docs/automotive/start/pixelxl" target="_blank">Pixel Devices</a> and <a href="https://developers.google.com/android/drivers" target="_blank">Pixel Driver Device Binaries.</a><br/></p>''')
 
     string(name: 'OVERRIDE_MAKE_COMMAND',
            defaultValue: '',
            description: '''<p>Override default make command, e.g. Pixel device:<br/><br/>
            <i>m && m android.hardware.automotive.vehicle@2.0-default-service android.hardware.automotive.audiocontrol-service.example</i><br/><br/>
+           <b>Note: </b>Single command line only, use logical operators to execute subsequent commands.<br/><br/>
            Reference: <a href="https://source.android.com/docs/automotive/start/pixelxl" target="_blank">Pixel Devices</a>
            </p>''')
 
@@ -201,7 +203,7 @@ pipeline {
               AAOS_RPI_REVISION="${AAOS_RPI_REVISION}" \
               AAOS_LUNCH_TARGET="${AAOS_LUNCH_TARGET}" \
               AAOS_CLEAN="NO_CLEAN" \
-              OVERRIDE_VENDOR_COMMAND="${OVERRIDE_VENDOR_COMMAND}" \
+              ADDITIONAL_INITIALISE_COMMANDS="${ADDITIONAL_INITIALISE_COMMANDS}" \
               ./workloads/android/pipelines/builds/aaos_builder/aaos_initialise.sh
             '''
           }
@@ -215,7 +217,7 @@ pipeline {
         container(name: 'builder') {
           sh '''
             AAOS_LUNCH_TARGET="${AAOS_LUNCH_TARGET}" \
-            OVERRIDE_MAKE_COMMAND="${OVERRIDE_MAKE_COMMAND}" \
+            ADDITIONAL_INITIALISE_COMMANDS="${ADDITIONAL_INITIALISE_COMMANDS}" \
             AAOS_CLEAN="NO_CLEAN" \
             ./workloads/android/pipelines/builds/aaos_builder/aaos_build.sh
           '''
