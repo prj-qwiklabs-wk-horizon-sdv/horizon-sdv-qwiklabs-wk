@@ -29,6 +29,7 @@
 #  - AAOS_CLEAN: whether to clean before building.
 #  - AAOS_ARTIFACT_STORAGE_SOLUTION: the persistent storage location for
 #         artifacts (GCS_BUCKET default).
+#  - GERRIT_FETCH_PATCHSET: use FETCH vs repo download.
 #
 # For Gerrit review change sets:
 #  - GERRIT_PROJECT: the name of the project to download.
@@ -68,6 +69,8 @@ AAOS_REVISION=$(echo "${AAOS_REVISION}" | xargs)
 AAOS_GERRIT_MANIFEST_URL=${AAOS_GERRIT_MANIFEST_URL:-https://android.googlesource.com/platform/manifest}
 AAOS_GERRIT_RPI_MANIFEST_URL=${AAOS_GERRIT_RPI_MANIFEST_URL:-https://raw.githubusercontent.com/raspberry-vanilla/android_local_manifest/}
 
+# Use FETCH for patchset rather than repo download.
+GERRIT_FETCH_PATCHSET=${GERRIT_FETCH_PATCHSET:-true}
 # Check we have a target defined.
 AAOS_LUNCH_TARGET=$(echo "${AAOS_LUNCH_TARGET}" | xargs)
 # Default if not defined (important for initial pipeline build)
@@ -267,8 +270,17 @@ if [ -n "${OVERRIDE_MAKE_COMMAND}" ]; then
     AAOS_MAKE_CMDLINE="${OVERRIDE_MAKE_COMMAND}"
 fi
 if [ -n "${ADDITIONAL_INITIALISE_COMMANDS}" ]; then
-    POST_INITIALISE_COMMANDS="${ADDITIONAL_INITIALISE_COMMANDS}"
+    if [ -n "${POST_INITIALISE_COMMANDS}" ]; then
+        POST_INITIALISE_COMMANDS+=" && ${ADDITIONAL_INITIALISE_COMMANDS}"
+    else
+        POST_INITIALISE_COMMANDS+="${ADDITIONAL_INITIALISE_COMMANDS}"
+    fi
 fi
+
+# Gerrit Review environment variables: remove leading and trailing slashes.
+GERRIT_PROJECT=$(echo "${GERRIT_PROJECT}" | xargs)
+GERRIT_CHANGE_NUMBER=$(echo "${GERRIT_CHANGE_NUMBER}" | xargs)
+GERRIT_PATCHSET_NUMBER=$(echo "${GERRIT_PATCHSET_NUMBER}" | xargs)
 
 # Define artifact storage strategy and functions.
 AAOS_ARTIFACT_STORAGE_SOLUTION=${AAOS_ARTIFACT_STORAGE_SOLUTION:-"GCS_BUCKET"}
@@ -277,11 +289,6 @@ AAOS_ARTIFACT_STORAGE_SOLUTION=$(echo "${AAOS_ARTIFACT_STORAGE_SOLUTION}" | xarg
 # Artifact storage bucket
 AAOS_ARTIFACT_ROOT_NAME=${AAOS_ARTIFACT_ROOT_NAME:-sdva-2108202401-aaos}
 AAOS_ARTIFACT_REGION=${CLOUD_REGION:-europe-west1}
-
-# Gerrit Review environment variables: remove leading and trailing slashes.
-GERRIT_PROJECT=$(echo "${GERRIT_PROJECT}" | xargs)
-GERRIT_CHANGE_NUMBER=$(echo "${GERRIT_CHANGE_NUMBER}" | xargs)
-GERRIT_PATCHSET_NUMBER=$(echo "${GERRIT_PATCHSET_NUMBER}" | xargs)
 
 # Show variables.
 VARIABLES="

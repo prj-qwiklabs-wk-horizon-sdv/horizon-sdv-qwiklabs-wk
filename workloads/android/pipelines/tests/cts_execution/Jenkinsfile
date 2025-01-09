@@ -51,7 +51,7 @@ pipeline {
 
     string(name: 'CUTTLEFISH_DOWNLOAD_URL',
            defaultValue: '',
-           description: "<p>Storage URL pointing to the location of the Cuttlefish Virtual Device images and host packages, e.g.<br/>gs://${env.CLOUD_PROJECT}-aaos/Android/Builds/AAOS_Builder/2</p>")
+           description: "<p>Storage URL pointing to the location of the Cuttlefish Virtual Device images and host packages, e.g.<br/>gs://${env.CLOUD_PROJECT}-aaos/Android/Builds/AAOS_Builder/&lt;BUILD_NUMBER&gt;</p>")
 
     string(name: 'CUTTLEFISH_MAX_BOOT_TIME',
            defaultValue: '180',
