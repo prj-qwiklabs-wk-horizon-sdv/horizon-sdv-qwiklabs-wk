@@ -91,8 +91,8 @@ spec:
                   systemMessage: Welcome to Horizon SDV server.
                   clouds:
                     - kubernetes:
-                        containerCap: 20
-                        containerCapStr: "20"
+                        containerCap: 10
+                        containerCapStr: "10"
                         name: "kubernetes"
                         namespace: "jenkins"
                     - computeEngine:
