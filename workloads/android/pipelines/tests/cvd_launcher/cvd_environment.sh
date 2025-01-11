@@ -32,8 +32,9 @@ CUTTLEFISH_MAX_BOOT_TIME=${CUTTLEFISH_MAX_BOOT_TIME:-180}
 CUTTLEFISH_KEEP_ALIVE_TIME=${CUTTLEFISH_KEEP_ALIVE_TIME:-20}
 
 # Android CTS test harness URLs, installed on host.
-CTS_ANDROID_15_URL="https://dl.google.com/dl/android/cts/android-cts-15_r1-linux_x86-x86.zip"
-CTS_ANDROID_14_URL="https://dl.google.com/dl/android/cts/android-cts-14_r5-linux_x86-x86.zip"
+# https://source.android.com/docs/compatibility/cts/downloads
+CTS_ANDROID_15_URL="https://dl.google.com/dl/android/cts/android-cts-15_r2-linux_x86-x86.zip"
+CTS_ANDROID_14_URL="https://dl.google.com/dl/android/cts/android-cts-14_r6-linux_x86-x86.zip"
 # Store logs in Bucket.
 CUTTLEFISH_ARTIFACT_REGION=${CLOUD_REGION:--europe-west1}
 CUTTLEFISH_ARTIFACT_ROOT_NAME=cuttlefish_logs
