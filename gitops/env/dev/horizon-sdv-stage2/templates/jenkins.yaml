@@ -122,7 +122,7 @@ spec:
                             runAsUser: "jenkins"
                             sshConfiguration:
                               customPrivateKeyCredentialsId: "jenkins-cuttlefish-vm-ssh-private-key"
-                            template: "https://www.googleapis.com/compute/v1/projects/sdva-2108202401/global/instanceTemplates/instance-template-cuttlefish-vm-main-debian-12"
+                            template: "https://www.googleapis.com/compute/v1/projects/sdva-2108202401/global/instanceTemplates/instance-template-cuttlefish-vm-main-debian"
                             useInternalAddress: true
                             zone: "https://www.googleapis.com/compute/v1/projects/sdva-2108202401/zones/europe-west1-d"
                         credentialsId: "gce-creds"
@@ -156,7 +156,7 @@ spec:
                           runAsUser: "jenkins"
                           sshConfiguration:
                             customPrivateKeyCredentialsId: "jenkins-cuttlefish-vm-ssh-private-key"
-                          template: "https://www.googleapis.com/compute/v1/projects/sdva-2108202401/global/instanceTemplates/instance-template-cuttlefish-vm-v101-debian-12"
+                          template: "https://www.googleapis.com/compute/v1/projects/sdva-2108202401/global/instanceTemplates/instance-template-cuttlefish-vm-v101-debian"
                           useInternalAddress: true
                           zone: "https://www.googleapis.com/compute/v1/projects/sdva-2108202401/zones/europe-west1-d"
                         credentialsId: "gce-creds"

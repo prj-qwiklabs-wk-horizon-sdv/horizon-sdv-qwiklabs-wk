@@ -35,6 +35,7 @@
 #  - CUTTLEFISH_REVISION: the branch/tag version of Android Cuttlefish
 #        to use. Default: main
 #  - BOOT_DISK_SIZE: Disk image size in GB. Default: 200GB
+#  - DEBIAN_OS_VERSION: Default: debian-12-bookworm-v20241210}
 #  - JENKINS_NAMESPACE: k8s namespace. Default: jenkins
 #  - JENKINS_PRIVATE_SSH_KEY_NAME: SSH key name to extract public key from
 #        Private key would be created similar to:
@@ -47,6 +48,7 @@
 #        Default: jenkins_rsa.pub
 #  - MACHINE_TYPE: The machine type to create instance templates for. Default:
 #        n1-standard-64
+#  - MAX_RUN_DURATION: Limits how long this VM instance can run. Default: 4h
 #  - NETWORK: The name of the VPC network. Default: sdv-network
 #  - PROJECT: The GCP project. Default: derived from gcloud config.
 #  - REGION: The GCP region. Default: europe-west1
@@ -63,7 +65,7 @@
 # The following arguments are optional and recommended run without args:
 
 #  -h|--help :     - Print usage
-#  1 : Run stage 1 - create the base instance template (debian 12 +
+#  1 : Run stage 1 - create the base instance template (debian +
 #                    virtualisation)
 #  2 : Run stage 2 - create the VM instance from base instance template.
 #  3 : Run stage 3 - Populate the VM instance with CF host packages
@@ -85,7 +87,6 @@
 #                    Simply a helper job, only required if admins wish to
 #                    drop older versions of Cuttlefish.
 #  No args:          run all stages with exception 6 (delete).
-
 # Include common functions and variables.
 # shellcheck disable=SC1091
 source "$(dirname "${BASH_SOURCE[0]}")"/cvd_environment.sh "$0"
@@ -96,11 +97,13 @@ CUTTLEFISH_REVISION=${CUTTLEFISH_REVISION:-main}
 CUTTLEFISH_REVISION=$(echo "${CUTTLEFISH_REVISION}" | xargs)
 BOOT_DISK_SIZE=${BOOT_DISK_SIZE:-200GB}
 BOOT_DISK_SIZE=$(echo "${BOOT_DISK_SIZE}" | xargs)
+DEBIAN_OS_VERSION=${DEBIAN_OS_VERSION:-debian-12-bookworm-v20241210}
 JENKINS_NAMESPACE=${JENKINS_NAMESPACE:-jenkins}
 JENKINS_PRIVATE_SSH_KEY_NAME=${JENKINS_PRIVATE_SSH_KEY_NAME:-jenkins-cuttlefish-vm-ssh-private-key}
 JENKINS_SSH_PUB_KEY_FILE=${JENKINS_SSH_PUB_KEY_FILE:-jenkins_rsa.pub}
 MACHINE_TYPE=${MACHINE_TYPE:-n1-standard-64}
 MACHINE_TYPE=$(echo "${MACHINE_TYPE}" | xargs)
+MAX_RUN_DURATION=${MAX_RUN_DURATION:-4h}
 NETWORK=${NETWORK:-sdv-network}
 PROJECT=${PROJECT:-$(gcloud config list --format 'value(core.project)'|head -n 1)}
 REGION=${REGION:-europe-west1}
@@ -112,13 +115,13 @@ VM_INSTANCE_CREATE=${VM_INSTANCE_CREATE:-true}
 ZONE=${ZONE:-europe-west1-d}
 
 # Instance names can only include specific characters, drop '.'.
-declare -r vm_base_instance=vm-debian-12
-declare -r vm_base_instance_template=instance-template-vm-debian-12
+declare -r vm_base_instance=vm-debian
+declare -r vm_base_instance_template=instance-template-vm-debian
 declare -r cuttlefish_version=${CUTTLEFISH_REVISION//./}
 declare cuttlefish_unique_name=${UNIQUE_NAME//./-}
 if [[ "${cuttlefish_unique_name}" == "cuttlefish-vm" ]]; then
     # If unique name is default, append version.
-    cuttlefish_unique_name="${cuttlefish_unique_name}"-"${cuttlefish_version}"-debian-12
+    cuttlefish_unique_name="${cuttlefish_unique_name}"-"${cuttlefish_version}"-debian
 else
     # Use the requested name.
     cuttlefish_unique_name="${cuttlefish_unique_name}"
@@ -176,10 +179,12 @@ function echo_environment() {
     echo_formatted "Environment variables:"
     echo_formatted "CUTTLEFISH_REVISION=${CUTTLEFISH_REVISION}"
     echo_formatted "BOOT_DISK_SIZE=${BOOT_DISK_SIZE}"
+    echo_formatted "DEBIAN_OS_VERSION=${DEBIAN_OS_VERSION}"
     echo_formatted "JENKINS_NAMESPACE=${JENKINS_NAMESPACE}"
     echo_formatted "JENKINS_PRIVATE_SSH_KEY_NAME=${JENKINS_PRIVATE_SSH_KEY_NAME}"
     echo_formatted "JENKINS_SSH_PUB_KEY_FILE=${JENKINS_SSH_PUB_KEY_FILE}"
     echo_formatted "MACHINE_TYPE=${MACHINE_TYPE}"
+    echo_formatted "MAX_RUN_DURATION=${MAX_RUN_DURATION}"
     echo_formatted "NETWORK=${NETWORK}"
     echo_formatted "PROJECT=${PROJECT}"
     echo_formatted "REGION=${REGION}"
@@ -194,10 +199,12 @@ function print_usage() {
     echo "Usage:
       CUTTLEFISH_REVISION=${CUTTLEFISH_REVISION} \\
       BOOT_DISK_SIZE=${BOOT_DISK_SIZE} \\
+      DEBIAN_OS_VERSION=${DEBIAN_OS_VERSION} \\
       JENKINS_NAMESPACE=${JENKINS_NAMESPACE} \\
       JENKINS_PRIVATE_SSH_KEY_NAME=${JENKINS_PRIVATE_SSH_KEY_NAME} \\
       JENKINS_SSH_PUB_KEY_FILE=${JENKINS_SSH_PUB_KEY_FILE} \\
       MACHINE_TYPE=${MACHINE_TYPE} \\
+      MAX_RUN_DURATION=${MAX_RUN_DURATION} \\
       NETWORK=${NETWORK} \\
       PROJECT=${PROJECT} \\
       REGION=${REGION} \\
@@ -236,8 +243,10 @@ function create_base_template_instance() {
         --key-revocation-action-type=none \
         --service-account="${SERVICE_ACCOUNT}" \
         --machine-type="${MACHINE_TYPE}" \
+        --max-run-duration="${MAX_RUN_DURATION}" \
+        --instance-termination-action=delete \
         --image-project=debian-cloud \
-        --create-disk=mode=rw,architecture=X86_64,boot=yes,size="${BOOT_DISK_SIZE}",auto-delete=true,type=pd-balanced,device-name="${vm_base_instance}",image=projects/debian-cloud/global/images/debian-12-bookworm-v20241009,interface=SCSI \
+        --create-disk=mode=rw,architecture=X86_64,boot=yes,size="${BOOT_DISK_SIZE}",auto-delete=true,type=pd-balanced,device-name="${vm_base_instance}",image=projects/debian-cloud/global/images/"${DEBIAN_OS_VERSION}",interface=SCSI \
         --tags=http-server,https-server \
         --metadata=enable-oslogin=true \
         --reservation-affinity=any \
@@ -257,7 +266,7 @@ function create_vm_instance() {
 
     gcloud compute instances create "${vm_base_instance}" \
         --source-instance-template "${vm_base_instance_template}" \
-        --zone="${ZONE}" >/dev/null 2>&1 &
+        --zone="${ZONE}" &
     progress_spinner "$!"
 
     echo -e "${ORANGE}Sleep for 2 minutes while instance stabilises${NC}"
@@ -278,10 +287,10 @@ function install_host_tools() {
         xargs -I {} gcloud compute os-login ssh-keys remove --key={} || true
 
     gcloud compute ssh --zone "${ZONE}" "${vm_base_instance}" --tunnel-through-iap --project "${PROJECT}" \
-        --command='mkdir -p cvd' >/dev/null 2>&1 &
+        --command='mkdir -p cvd' >/dev/null &
     progress_spinner "$!"
 
-    gcloud compute scp "${CVD_PATH}"/*.sh "${vm_base_instance}":~/cvd/ --zone="${ZONE}" >/dev/null 2>&1 &
+    gcloud compute scp "${CVD_PATH}"/*.sh "${vm_base_instance}":~/cvd/ --zone="${ZONE}" >/dev/null &
     progress_spinner "$!"
 
     # Keep debug so we can see what's happening.
@@ -290,7 +299,7 @@ function install_host_tools() {
     progress_spinner "$!"
 
     gcloud compute ssh --zone "${ZONE}" "${vm_base_instance}" --tunnel-through-iap --project "${PROJECT}" \
-        --command='rm -rf cvd' >/dev/null 2>&1 &
+        --command='rm -rf cvd' >/dev/null &
     progress_spinner "$!"
 
     echo -e "${ORANGE}Sleep for 5 minutes while instance reboots${NC}"
@@ -334,16 +343,16 @@ function create_ssh_key() {
 
     gcloud compute ssh --zone "${ZONE}" "${vm_base_instance}" --tunnel-through-iap \
         --project "${PROJECT}" \
-        --command='sudo rm -rf /home/jenkins/.ssh && sudo mkdir /home/jenkins/.ssh && sudo chmod 700 /home/jenkins/.ssh && sudo chown jenkins:jenkins /home/jenkins/.ssh' >/dev/null 2>&1 &
+        --command='sudo rm -rf /home/jenkins/.ssh && sudo mkdir /home/jenkins/.ssh && sudo chmod 700 /home/jenkins/.ssh && sudo chown jenkins:jenkins /home/jenkins/.ssh' >/dev/null &
     progress_spinner "$!"
 
     gcloud compute scp "${JENKINS_SSH_PUB_KEY_FILE}" "${vm_base_instance}":/tmp/authorized_keys \
-        --zone="${ZONE}" >/dev/null 2>&1 &
+        --zone="${ZONE}" >/dev/null &
     progress_spinner "$!"
 
     gcloud compute ssh --zone "${ZONE}" "${vm_base_instance}" --tunnel-through-iap \
         --project "${PROJECT}" \
-        --command='sudo mv /tmp/authorized_keys /home/jenkins/.ssh/authorized_keys && sudo chown -R jenkins:jenkins /home/jenkins/.ssh' >/dev/null 2>&1 &
+        --command='sudo mv /tmp/authorized_keys /home/jenkins/.ssh/authorized_keys && sudo chown -R jenkins:jenkins /home/jenkins/.ssh' >/dev/null &
     progress_spinner "$!"
 
     # Clean up
@@ -367,7 +376,7 @@ function create_cuttlefish_boilerplate_template() {
         --source-disk="${vm_base_instance}" \
         --source-disk-zone="${ZONE}" \
         --storage-location="${REGION}" \
-        --source-disk-project="${PROJECT}" >/dev/null 2>&1 &
+        --source-disk-project="${PROJECT}" &
     progress_spinner "$!"
 
     echo -e "${ORANGE}Sleep for 1 minute while image creation completes${NC}"
@@ -395,12 +404,14 @@ function create_cuttlefish_boilerplate_template() {
         --service-account="${SERVICE_ACCOUNT}" \
         --machine-type="${MACHINE_TYPE}" \
         --image-project=debian-cloud \
+        --max-run-duration="${MAX_RUN_DURATION}" \
+        --instance-termination-action=delete \
         --create-disk=image="${vm_cuttlefish_image}",boot=yes,auto-delete=yes,type=pd-balanced \
         --metadata=enable-oslogin=true \
         --reservation-affinity=any \
         --enable-nested-virtualization \
         --region="${REGION}" \
-        --network-interface network="${NETWORK}",subnet="${SUBNET}",stack-type=IPV4_ONLY,no-address >/dev/null 2>&1 &
+        --network-interface network="${NETWORK}",subnet="${SUBNET}",stack-type=IPV4_ONLY,no-address &
     progress_spinner "$!"
 
     echo -e "${ORANGE}Sleep for 1 minute while instance template creation completes${NC}"
@@ -415,7 +426,7 @@ function create_cuttlefish_boilerplate_template() {
     if [ "${VM_INSTANCE_CREATE}" = true ]; then
         gcloud compute instances create "${vm_cuttlefish_instance}" \
             --source-instance-template "${vm_cuttlefish_instance_template}" \
-            --zone="${ZONE}" >/dev/null 2>&1 &
+            --zone="${ZONE}" &
         progress_spinner "$!"
 
         echo -e "${ORANGE}Sleep for 1 minute while instance creation completes${NC}"
