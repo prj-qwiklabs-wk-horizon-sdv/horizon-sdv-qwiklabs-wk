@@ -38,6 +38,20 @@ resource "google_container_cluster" "sdv_cluster" {
     enabled = true
   }
 
+  # Release channel feature, which provide control over automatic upgrades of GKE clusters.
+  release_channel {
+    channel = "STABLE"
+  }
+
+  maintenance_policy {
+    recurring_window {
+    start_time = "2025-01-01T00:00:00Z"
+    end_time  = "2050-01-01T00:00:00Z"
+    recurrence = "FREQ=WEEKLY;BYDAY=SA,SU"
+  }
+
+  }
+
   # enable gateway api
   gateway_api_config {
     channel = "CHANNEL_STANDARD"
@@ -83,10 +97,6 @@ resource "google_container_node_pool" "sdv_main_node_pool" {
     }
   }
 
-  management {
-    auto_upgrade = false
-  }
-
   # autoscaling {
   #   min_node_count = 1
   #   max_node_count = 3
@@ -128,10 +138,6 @@ resource "google_container_node_pool" "sdv_build_node_pool" {
     workload_metadata_config {
       mode = "GKE_METADATA"
     }
-  }
-
-  management {
-    auto_upgrade = false
   }
 
   autoscaling {
