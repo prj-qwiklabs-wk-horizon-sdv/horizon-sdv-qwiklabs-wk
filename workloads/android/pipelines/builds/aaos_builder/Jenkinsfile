@@ -80,38 +80,20 @@ pipeline {
   parameters {
     string(name: 'AAOS_GERRIT_MANIFEST_URL',
            defaultValue: 'https://android.googlesource.com/platform/manifest',
-           description: "<p>Android Manifest URL, e.g.<br/><ul><li><a href=https://${env.HORIZON_DOMAIN}/android/platform/manifest target=\"_blank\">https://${env.HORIZON_DOMAIN}/android/platform/manifest</a></li><li><a href=https://android.googlesource.com/platform/manifest target=\"_blank\">https://android.googlesource.com/platform/manifest</a></li></ul></p>")
+           description: "<p>Android Manifest URL.</p>")
 
     string(name: 'AAOS_REVISION',
-           defaultValue: 'android14-qpr1-automotiveos-release',
-           description: '''<p>Android revision tag/branch name, e.g:<br/><br/>
-           <a href="https://source.android.com/docs/automotive/start/avd/android_virtual_device" target="_blank">Virtual Devices</a>
-           <ul><li>android14-qpr1-automotiveos-release</li>
-           <li>accenture/android14-qpr1-automotiveos-release</li></ul>
-           <a href="https://source.android.com/docs/automotive/start/pixelxl" target="_blank">Pixel Devices</a>
-           <ul><li>android-14.0.0_r30</li></ul>
-           <a href="https://github.com/raspberry-vanilla/android_local_manifest" target="_blank">Raspberry Pi</a>
-           <ul><li>android-15.0.0_r4</li></ul></p>''')
+           defaultValue: 'android-14.0.0_r30',
+           description: '''<p>Android revision tag/branch name.</p>''')
 
     string(name: 'AAOS_LUNCH_TARGET',
            defaultValue: '',
-           description: '''<p>Build Android cuttlefish, virtual devices, Pixel and RPi targets, e.g.<br/><br/>
-           <a href="https://source.android.com/docs/automotive/start/avd/android_virtual_device" target="_blank">Virtual Devices</a>
-           <ul>
-           <li>sdk_car_x86_64-userdebug</li>
-           <li>sdk_car_arm64-userdebug</li>
-           <li>aosp_cf_x86_64_auto-userdebug</li>
-           <li>aosp_cf_arm64_auto-userdebug</li>
-           </ul>
-           <a href="https://source.android.com/docs/automotive/start/pixelxl" target="_blank">Pixel Devices</a>
-           <ul>
-           <li>aosp_tangorpro_car-ap1a-userdebug</li>
-           </ul>
-           <a href="https://github.com/raspberry-vanilla/android_local_manifest" target="_blank">Raspberry Pi</a>
-           <ul>
-           <li>aosp_rpi4_car-ap3a-userdebug</li>
-           <li>aosp_rpi5_car-ap3a-userdebug</li>
-           </ul></p>''')
+           description: '''<p>Build Android cuttlefish, virtual devices, Pixel and RPi target to build.</p>''')
+
+    choice(name: 'ANDROID_VERSION',
+           choices: ['14', '15'],
+           description: '''<p>Android Version for AVD image builds.<br/>
+           Essential for <b>Android Studio</b> devices <i>sdk_car</i> targets to create the SDK addons and device files</p>''')
 
     string(name: 'ADDITIONAL_INITIALISE_COMMANDS',
            defaultValue: '',
@@ -131,11 +113,6 @@ pipeline {
            description: '''<p>RPi tag/branch name.<br/>
            Reference: <a href="https://github.com/raspberry-vanilla/android_local_manifest" target="_blank">Raspberry Vanilla</a> and only applicable to aosp_rpiX_car targets<br/>
            <i>Pick the correct revision that correlates to the AAOS_REVISION</i></p>''')
-
-    choice(name: 'ANDROID_VERSION',
-           choices: ['14', '15'],
-           description: '''<p>Android Version for AVD image builds.<br/>
-           Used to derive API level, eg. 14 is API Level 34, 15 is API Level 35</p>''')
 
     choice(name: 'AAOS_CLEAN',
            choices: ['NO_CLEAN', 'CLEAN_BUILD', 'CLEAN_ALL'],

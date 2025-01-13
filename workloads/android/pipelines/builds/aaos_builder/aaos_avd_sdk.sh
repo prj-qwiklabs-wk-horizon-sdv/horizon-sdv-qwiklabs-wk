@@ -105,16 +105,18 @@ function create_devices_xml() {
 # Add SDK addons to archives and devices.xml to system image zip
 function update_archives() {
     for artifact in "${AAOS_ARTIFACT_LIST[@]}"; do
-        if [[ $(basename "${artifact}") =~ ^"${AAOS_SDK_SYSTEM_IMAGE_PREFIX}" ]]; then
-            zip -u "${artifact}" devices.xml
+        for file in ${artifact}; do
+            if [[ $(basename "${file}") =~ ^"${AAOS_SDK_SYSTEM_IMAGE_PREFIX}" ]]; then
+                zip -u "${file}" devices.xml
 
-            # Update SDK Addons envs with image details.
-            avd_sha1="$(sha1sum "${artifact}" | awk '{print $1}')"
-            avd_size="$(${STAT_CMD} "${artifact}")"
-            avd_image_url="$(basename "${artifact}")"
-            output_dir="$(dirname "${artifact}")"
-            break
-        fi
+                # Update SDK Addons envs with image details.
+                avd_sha1="$(sha1sum "${file}" | awk '{print $1}')"
+                avd_size="$(${STAT_CMD} "${file}")"
+                avd_image_url="$(basename "${file}")"
+                output_dir="$(dirname "${file}")"
+                break
+            fi
+        done
     done
 }
 

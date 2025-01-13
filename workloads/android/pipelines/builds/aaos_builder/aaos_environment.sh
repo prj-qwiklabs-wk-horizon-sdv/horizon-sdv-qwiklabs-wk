@@ -57,8 +57,9 @@ unset BUILD_NUMBER
 # rebuild. See:
 # hostname: jenkins-aaos-build-pod
 
-# AAOS revisions: qpr1 for AVD etc, Android 15 for RPi HW.
-AAOS_DEFAULT_REVISION=${AAOS_DEFAULT_REVISION:-android14-qpr1-automotiveos-release}
+AAOS_DEFAULT_REVISION=$(echo "${AAOS_DEFAULT_REVISION}" | xargs)
+AAOS_DEFAULT_REVISION=${AAOS_DEFAULT_REVISION:-android-14.0.0_r30}
+AAOS_RPI_REVISION=$(echo "${AAOS_RPI_REVISION}" | xargs)
 AAOS_RPI_REVISION=${AAOS_RPI_REVISION:-android-15.0.0_r4}
 
 # Android branch/tag:
@@ -66,7 +67,9 @@ AAOS_REVISION=${AAOS_REVISION:-${AAOS_DEFAULT_REVISION}}
 AAOS_REVISION=$(echo "${AAOS_REVISION}" | xargs)
 
 # Gerrit AAOS and RPi manifest URLs.
+AAOS_GERRIT_MANIFEST_URL=$(echo "${AAOS_GERRIT_MANIFEST_URL}" | xargs)
 AAOS_GERRIT_MANIFEST_URL=${AAOS_GERRIT_MANIFEST_URL:-https://android.googlesource.com/platform/manifest}
+AAOS_GERRIT_RPI_MANIFEST_URL=$(echo "${AAOS_GERRIT_RPI_MANIFEST_URL}" | xargs)
 AAOS_GERRIT_RPI_MANIFEST_URL=${AAOS_GERRIT_RPI_MANIFEST_URL:-https://raw.githubusercontent.com/raspberry-vanilla/android_local_manifest/}
 
 # Use FETCH for patchset rather than repo download.
@@ -192,8 +195,6 @@ AAOS_MAKE_CMDLINE=""
 
 # If Jenkins, or local, the artifacts differ so update.
 USER=$(whoami)
-IMAGE_EXT=${BUILD_NUMBER:-eng.$USER}
-
 # Post build commands
 declare -a POST_BUILD_COMMANDS
 # Post storage commands
@@ -217,7 +218,7 @@ case "${AAOS_LUNCH_TARGET}" in
         AAOS_MAKE_CMDLINE="m && m emu_img_zip && m sbom"
         AAOS_ARTIFACT_LIST=(
             "${OUT_DIR}/target/product/emulator_car64_${AAOS_ARCH}/sbom.spdx.json"
-            "${OUT_DIR}/target/product/emulator_car64_${AAOS_ARCH}/${AAOS_SDK_SYSTEM_IMAGE_PREFIX}-${IMAGE_EXT}.zip"
+            "${OUT_DIR}/target/product/emulator_car64_${AAOS_ARCH}/${AAOS_SDK_SYSTEM_IMAGE_PREFIX}*.zip"
             "${OUT_DIR}/target/product/emulator_car64_${AAOS_ARCH}/${AAOS_SDK_ADDON_FILE}"
         )
         ;;
@@ -226,7 +227,7 @@ case "${AAOS_LUNCH_TARGET}" in
         AAOS_ARTIFACT_LIST=(
             "${OUT_DIR}/dist/cvd-host_package.tar.gz"
             "${OUT_DIR}/dist/sbom/sbom.spdx.json"
-            "${OUT_DIR}/dist/aosp_cf_${AAOS_ARCH}_auto-img-${IMAGE_EXT}.zip"
+            "${OUT_DIR}/dist/aosp_cf_${AAOS_ARCH}_auto-img*.zip"
         )
         # If the AAOS_BUILD_CTS variable is set, build only the cts image.
         if [[ "$AAOS_BUILD_CTS" -eq 1 ]]; then

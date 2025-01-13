@@ -53,6 +53,24 @@ pipeline {
            defaultValue: '',
            description: "<p>Storage URL pointing to the location of the Cuttlefish Virtual Device images and host packages, e.g.<br/>gs://${env.CLOUD_PROJECT}-aaos/Android/Builds/AAOS_Builder/&lt;BUILD_NUMBER&gt;</p>")
 
+    choice(name: 'CTS_VERSION',
+           choices: ['14', '15'],
+           description: '''<p>Select CTS version: Android 14 or 15<br/>
+           Essential for picking the correct test hardness</p>''')
+
+    string(name: 'CTS_DOWNLOAD_URL',
+           defaultValue: '',
+           description: "<p>CTS test harness download URL.<br/>Use official CTS test harness (empty field) or one built from CTS Builder job and stored in GS Bucket, e.g.<br/>gs://${env.CLOUD_PROJECT}-aaos/Android/Builds/CTS_Builder/2/android-cts.zip</p>")
+
+    string(name: 'CTS_TESTPLAN',
+           defaultValue: 'cts-virtual-device-stable',
+           description: '''<p>Test plan.<br/>
+           The cts-virtual-device-stable test plan tracks the latest of what is stable on the virtual platform.</p>''')
+
+    string(name: 'CTS_MODULE',
+           defaultValue: 'CtsHostsideNumberBlockingTestCases',
+           description: '''<p>CTS module to test, or leave empty if all modules are to be tested.</p>''')
+
     string(name: 'CUTTLEFISH_MAX_BOOT_TIME',
            defaultValue: '180',
            description: '''<p>Android Cuttlefish max boot time in seconds.<br/>
@@ -69,23 +87,6 @@ pipeline {
     string(name: 'VM_MEMORY_MB',
            defaultValue: '16384',
            description: '''<p>total memory available to guest (memory_mb option)</p>''')
-
-    string(name: 'CTS_DOWNLOAD_URL',
-           defaultValue: '',
-           description: "<p>CTS test harness download URL.<br/>Use official CTS test harness (empty field) or one built from CTS Builder job and stored in GS Bucket, e.g.<br/>gs://${env.CLOUD_PROJECT}-aaos/Android/Builds/CTS_Builder/2/android-cts.zip</p>")
-
-    choice(name: 'CTS_VERSION',
-           choices: ['14', '15'],
-           description: '''<p>Select CTS version: Android 14 or 15</p>''')
-
-    string(name: 'CTS_TESTPLAN',
-           defaultValue: 'cts-virtual-device-stable',
-           description: '''<p>Test plan.<br/>
-           The cts-virtual-device-stable test plan tracks the latest of what is stable on the virtual platform.</p>''')
-
-    string(name: 'CTS_MODULE',
-           defaultValue: 'CtsHostsideNumberBlockingTestCases',
-           description: '''<p>CTS module to test, or leave empty if all modules are to be tested.</p>''')
 
     string(name: 'CTS_TIMEOUT',
            defaultValue: '240',
