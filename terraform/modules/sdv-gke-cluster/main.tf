@@ -83,6 +83,10 @@ resource "google_container_node_pool" "sdv_main_node_pool" {
     }
   }
 
+  management {
+    auto_upgrade = false
+  }
+
   # autoscaling {
   #   min_node_count = 1
   #   max_node_count = 3
@@ -124,6 +128,10 @@ resource "google_container_node_pool" "sdv_build_node_pool" {
     workload_metadata_config {
       mode = "GKE_METADATA"
     }
+  }
+
+  management {
+    auto_upgrade = false
   }
 
   autoscaling {
