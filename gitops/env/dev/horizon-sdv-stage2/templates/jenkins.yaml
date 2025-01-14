@@ -93,7 +93,7 @@ spec:
                     - kubernetes:
                         containerCap: 10
                         containerCapStr: "10"
-                        name: "kubernetes"
+                        name: "horizon-kubernetes"
                         namespace: "jenkins"
                     - computeEngine:
                         cloudName: cuttlefish-vm-main
