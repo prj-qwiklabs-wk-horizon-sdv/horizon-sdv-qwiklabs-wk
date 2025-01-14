@@ -82,21 +82,15 @@ pipeline {
   parameters {
     string(name: 'AAOS_GERRIT_MANIFEST_URL',
            defaultValue: 'https://android.googlesource.com/platform/manifest',
-           description: "<p>Android Manifest URL, e.g.<br/><ul><li><a href=https://${env.HORIZON_DOMAIN}/android/platform/manifest target=\"_blank\">https://${env.HORIZON_DOMAIN}/android/platform/manifest</a></li><li><a href=https://android.googlesource.com/platform/manifest target=\"_blank\">https://android.googlesource.com/platform/manifest</a></li></ul></p>")
+           description: "<p>Android Manifest URL.</p>")
 
     string(name: 'AAOS_REVISION',
-           defaultValue: 'android14-qpr1-automotiveos-release',
-           description: '''<p>Android revision tag/branch name, e.g:<br/>
-           <ul>
-           <li>android14-qpr1-automotiveos-release<br/></li>
-           <li>horizon/android14-qpr1-automotiveos-release<br/></li>
-           <li>android-15.0.0_r4</li></ul></p>''')
+           defaultValue: 'android-14.0.0_r30',
+           description: '''<p>Android revision tag/branch name.</p>''')
 
     string(name: 'AAOS_LUNCH_TARGET',
            defaultValue: '',
-           description: '''<p>Build Android CTS for cuttlefish target, e.g.<br/>
-           <ul><li>aosp_cf_x86_64_auto-userdebug</li>
-           <li>aosp_cf_arm64_auto-userdebug</li></ul></p>''')
+           description: '''<p>Build Android CTS from cuttlefish target.</p>''')
 
     choice(name: 'AAOS_CLEAN',
            choices: ['NO_CLEAN', 'CLEAN_BUILD', 'CLEAN_ALL'],
