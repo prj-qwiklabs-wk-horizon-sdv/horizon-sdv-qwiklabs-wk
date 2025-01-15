@@ -45,7 +45,6 @@ const _ = require("lodash");
  * credentials from environment variables.
  */
 const { MTK_CONNECT_DOMAIN, MTK_CONNECT_USERNAME, MTK_CONNECT_PASSWORD, MTK_CONNECT_REGISTRATION, MTK_CONNECT_DELETE_OFFLINE_TESTBENCHES, MTK_CONNECT_TESTBENCH } = process.env;
-const registration = MTK_CONNECT_REGISTRATION || fs.readFileSync('/usr/src/config/registration.name', 'utf-8');
 
 axios.defaults.baseURL = `https://${MTK_CONNECT_DOMAIN}/mtk-connect`;
 axios.defaults.auth = {
@@ -55,50 +54,44 @@ axios.defaults.auth = {
 
 /**
  * Remove MTK Connect agent based on registration and offline testbenches.
- *
- * @param {string} registration - The registration to be removed.
  */
-async function removeAgent(registration) {
+async function removeAgent() {
 
   if (MTK_CONNECT_DELETE_OFFLINE_TESTBENCHES) {
+    console.log('removing testbenches');
     let response = await axios.get('/api/v1/agents');
+    console.log('removing testbenches response');
 
     if (response.status === 200) {
       for (let testbench of response.data.data) {
         if (testbench.online === true) {
           console.log(`${testbench.name}: ${testbench.id} is online, skip.`);
         } else {
-          // If specific testbench only delete that.
-          if (MTK_CONNECT_TESTBENCH === "DELETE_ALL") {
-            // Delete all offline
+          if (testbench.name === MTK_CONNECT_TESTBENCH) {
             console.log(`${testbench.name}: ${testbench.id} is offline, delete.`);
             await axios.delete(`/api/v1/agents/${testbench.id}`);
-          } else {
-            if (testbench.name === MTK_CONNECT_TESTBENCH) {
-              console.log(`${testbench.name}: ${testbench.id} is offline, delete.`);
-              await axios.delete(`/api/v1/agents/${testbench.id}`);
-              break;
-            }
+            break;
           }
         }
       }
     } else {
       console.log(`error ${response.status}`);
     }
-  }
-
-  const agentResponse = await axios.get('/api/v1/agents', {params: {q: JSON.stringify({registration})}});
-  if (agentResponse.status === 200 && agentResponse.data.data.length === 1) {
-    const { id } = agentResponse.data.data[0];
-    console.log(`removing agent with registration ${registration}`);
-    await axios.delete(`/api/v1/agents/${id}`);
+  } else {
+    const registration = MTK_CONNECT_REGISTRATION || fs.readFileSync('/usr/src/config/registration.name', 'utf-8');
+    const agentResponse = await axios.get('/api/v1/agents', {params: {q: JSON.stringify({registration})}});
+    if (agentResponse.status === 200 && agentResponse.data.data.length === 1) {
+      const { id } = agentResponse.data.data[0];
+      console.log(`removing agent with registration ${registration}`);
+      await axios.delete(`/api/v1/agents/${id}`);
+    }
   }
 }
 
 
 async function main()  {
   try {
-    await removeAgent(registration);
+    await removeAgent();
   } catch (err) {
     throw err;
   }
