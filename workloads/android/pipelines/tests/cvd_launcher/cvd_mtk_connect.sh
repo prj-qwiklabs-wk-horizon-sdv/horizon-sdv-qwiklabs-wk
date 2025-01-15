@@ -29,8 +29,6 @@
 #  - MTK_CONNECTED_DEVICES: the number of connected devices.
 #  - MTK_CONNECT_TESTBENCH: the name of the testbench to create in mtk-connect.
 #  - MTK_CONNECT_TEST_ARTIFACT: what is being tested.
-#  - MTK_CONNECT_NATIVE_LINUX_INSTALL: true if required to install on the
-#    native Linux host, false if installing in a container.
 
 # Example Usage:
 # sudo \
@@ -48,21 +46,10 @@ MTK_CONNECT_TESTBENCH=$(echo "${MTK_CONNECT_TESTBENCH}" | xargs)
 MTK_CONNECT_HOST=$(hostname -I | sed 's/ .*//')
 MTK_CONNECT_TEST_ARTIFACT=${MTK_CONNECT_TEST_ARTIFACT:-N/A}
 MTK_CONNECT_FILE_PATH="$(dirname "${BASH_SOURCE[0]}")"
-MTK_CONNECT_NATIVE_LINUX_INSTALL=${MTK_CONNECT_NATIVE_LINUX_INSTALL:-false}
 MTK_CONNECT_DELETE_OFFLINE_TESTBENCHES=${MTK_CONNECT_DELETE_OFFLINE_TESTBENCHES:-false}
 NODEJS_VERSION=${NODEJS_VERSION-20.9.0}
 
 declare -r scripts_path="/usr/src/scripts"
-
-# Perform any necessary upgrades of components.
-function mtkc_upgrades() {
-    # Upgrade node.js to avoid warnings
-    local -r nodejs_archive=node-v"${NODEJS_VERSION}"-linux-x64.tar.gz
-    wget -nv https://nodejs.org/dist/v"${NODEJS_VERSION}"/"${nodejs_archive}"
-    # Strip components leading components and install in local
-    tar -xvf "${nodejs_archive}" --strip-components=1 -C /usr/local
-    rm -f "${nodejs_archive}"
-}
 
 # Adjust devices based on true number of active devices.
 function mtkc_max_devices() {
@@ -127,9 +114,6 @@ function mtkc_start() {
     } >> "${app_path}"/.env
 
     local -a mtkc_files=(create-testbench.js package.json remove-testbench.js)
-    if [[ "${MTK_CONNECT_NATIVE_LINUX_INSTALL}" == "false" ]]; then
-        mtkc_files+=(download-agent.js)
-    fi
 
     # Copy over the MTKC files.
     for file in "${mtkc_files[@]}"; do
@@ -140,33 +124,16 @@ function mtkc_start() {
     cd "${scripts_path}" || exit # If fails, exit, don't continue!
     npm install
 
-    # If running on host then use native linux installer
-    if [[ "${MTK_CONNECT_NATIVE_LINUX_INSTALL}" == "true" ]]; then
+    if [[ "$1" == "--start" ]]; then
         # Local Linux host install.
         AUTH=$(echo -n "${MTK_CONNECT_USERNAME}:${MTK_CONNECT_PASSWORD}" | base64)
         sudo curl -sSL https://"${MTK_CONNECT_DOMAIN}"/mtk-connect/get-agent?platform=linux | sudo AUTH="${AUTH}" bash
         rm -rf "${config_path}"
         ln -sf /opt/mtk-connect-agent/config "${config_path}"
-    else
-        # Running in container.
 
-        # Download the agent
-        node download-agent.js
-        unzip mtk-connect-agent.node.zip >/dev/null 2>&1
-
-        # Reorganise the files
-        mv -f "${scripts_path}"/config ../
-        mv -f src/* "${app_path}"
-        cd "${app_path}" || exit
-        npm install
-
-        # Start the agent
-        pm2 start -f runAgent.js
-
-        cd "${scripts_path}" || exit # If fails, exit, don't continue!
+        wait-on "${config_path}"/registration.name
     fi
 
-    wait-on "${config_path}"/registration.name
 }
 
 function mtkc_create_testbench() {
@@ -179,9 +146,6 @@ function mtkc_create_testbench() {
 function mtkc_stop() {
     cd "${scripts_path}" || exit
     node remove-testbench.js
-    if [[ "${MTK_CONNECT_NATIVE_LINUX_INSTALL}" == "false" ]]; then
-        pm2 stop all || true
-    fi
 }
 
 # Print a summary of the MTK Connect agent.
@@ -206,7 +170,6 @@ Environment:
     MTK_CONNECT_TESTBENCH=${MTK_CONNECT_TESTBENCH}
     MTK_CONNECT_HOST=${MTK_CONNECT_HOST}
     MTK_CONNECT_TEST_ARTIFACT=${MTK_CONNECT_TEST_ARTIFACT}
-    MTK_CONNECT_NATIVE_LINUX_INSTALL=${MTK_CONNECT_NATIVE_LINUX_INSTALL}
     MTK_CONNECT_DELETE_OFFLINE_TESTBENCHES=${MTK_CONNECT_DELETE_OFFLINE_TESTBENCHES}
 
     Storage Usage (/dev/sda1): $(df -h /dev/sda1 | tail -1 | awk '{print "Used " $3 " of " $2}')
@@ -226,12 +189,9 @@ case "${1}" in
         RESULT=0
         ;;
     --start|*)
-        if [[ "${MTK_CONNECT_NATIVE_LINUX_INSTALL}" == "false" ]]; then
-            mtkc_upgrades
-        fi
         mtkc_max_devices
         # Start
-        mtkc_start
+        mtkc_start --start
         mtkc_create_testbench
         RESULT="$?"
         if (( RESULT == 0 )); then
