@@ -164,7 +164,11 @@ case "${1}" in
             echo "    Booted ${BOOTED_INSTANCES} instances of ${NUM_INSTANCES}"
             # Allow system time to settle.
             echo "    Sleep 90 seconds"
-            sleep 90
+			# Ensure adb devices show devices.
+            sudo adb kill-server || true
+            sleep 30
+            sudo adb start-server || true
+            sleep 60
             adb devices
         else
             echo "Device(s) not booted within ${CUTTLEFISH_MAX_BOOT_TIME} seconds"
