@@ -58,9 +58,7 @@ axios.defaults.auth = {
 async function removeAgent() {
 
   if (MTK_CONNECT_DELETE_OFFLINE_TESTBENCHES) {
-    console.log('removing testbenches');
     let response = await axios.get('/api/v1/agents');
-    console.log('removing testbenches response');
 
     if (response.status === 200) {
       for (let testbench of response.data.data) {
