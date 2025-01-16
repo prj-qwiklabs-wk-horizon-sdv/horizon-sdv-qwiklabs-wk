@@ -138,7 +138,7 @@ pipeline {
                 sh '''
                   export AAOS_GERRIT_MANIFEST_URL="https://${HORIZON_DOMAIN}/android/platform/manifest"
                   export AAOS_REVISION="${GERRIT_BRANCH}"
-                  export AAOS_LUNCH_TARGET="aosp_cf_x86_64_ap1a-auto-userdebug"
+                  export AAOS_LUNCH_TARGET="aosp_cf_x86_64_auto-ap1a-userdebug"
                   export AAOS_ARTIFACT_ROOT_NAME="${ANDROID_BUILD_BUCKET_ROOT_NAME}"
                   export CLOUD_REGION="${CLOUD_REGION}"
                   export AAOS_BUILD_NUMBER=${BUILD_NUMBER}/${AAOS_LUNCH_TARGET}
