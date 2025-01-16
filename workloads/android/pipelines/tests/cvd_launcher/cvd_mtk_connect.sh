@@ -128,7 +128,12 @@ function mtkc_start() {
         # Local Linux host install.
         AUTH=$(echo -n "${MTK_CONNECT_USERNAME}:${MTK_CONNECT_PASSWORD}" | base64)
         sudo curl -sSL https://"${MTK_CONNECT_DOMAIN}"/mtk-connect/get-agent?platform=linux | sudo AUTH="${AUTH}" bash
-        echo "Download/install returned $?"
+        RESULT="$?"
+        if (( RESULT != 0 )); then
+            echo "Error Download/install returned ${RESULT}"
+            exit "${RESULT}"
+        fi
+
         rm -rf "${config_path}"
         ln -sf /opt/mtk-connect-agent/config "${config_path}"
 
