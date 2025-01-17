@@ -91,7 +91,7 @@ pipeline {
           when { expression { env.GERRIT_CHANGE_ID } }
           steps {
             script {
-              currentBuild.description = "Change Number: ${env.GERRIT_CHANGE_NUMBER}/${env.GERRIT_PATCHSET_NUMBER}"
+              currentBuild.description = "Change: ${env.GERRIT_PROJECT}/${env.GERRIT_CHANGE_NUMBER}/${env.GERRIT_PATCHSET_NUMBER}"
             }
             container(name: 'builder') {
               withCredentials([usernamePassword(credentialsId: env.GERRIT_CREDENTIALS_ID, passwordVariable: 'GERRIT_PASSWORD', usernameVariable: 'GERRIT_USERNAME')]) {
