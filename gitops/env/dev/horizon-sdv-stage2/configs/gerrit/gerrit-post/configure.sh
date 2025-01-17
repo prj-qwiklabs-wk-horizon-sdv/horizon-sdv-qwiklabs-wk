@@ -293,103 +293,6 @@ function gerrit-setup-all-projects() {
   return
 }
 
-function gerrit-create-projects() {
-  retVal="RETVAL_NOK"
-  ERR_MSG=$(ssh -q -o LogLevel=ERROR -o BatchMode=yes -o UserKnownHostsFile=/dev/null -o StrictHostKeychecking=no -p 29418 -i /root/.ssh/privatekey gerrit-admin@gerrit-service gerrit ls-projects | grep "^android/platform/manifest")
-  if [[ $ERR_MSG == *"android/platform/manifest"* ]]; then
-    echo "Project exists."
-    retVal="RETVAL_OK"
-  else
-    echo "Create android/platform/manifest project."
-    ssh -q -o LogLevel=ERROR -o BatchMode=yes -o UserKnownHostsFile=/dev/null -o StrictHostKeychecking=no -p 29418 -i /root/.ssh/privatekey gerrit-admin@gerrit-service gerrit create-project android/platform/manifest
-    retVal="RETVAL_OK"
-  fi
-  ERR_MSG=$(ssh -q -o LogLevel=ERROR -o BatchMode=yes -o UserKnownHostsFile=/dev/null -o StrictHostKeychecking=no -p 29418 -i /root/.ssh/privatekey gerrit-admin@gerrit-service gerrit ls-projects | grep "^android/device/generic/car")
-  if [[ $ERR_MSG == *"android/device/generic/car"* ]]; then
-    echo "Project exists."
-    retVal="RETVAL_OK"
-  else
-    echo "Create android/device/generic/car project."
-    ssh -q -o LogLevel=ERROR -o BatchMode=yes -o UserKnownHostsFile=/dev/null -o StrictHostKeychecking=no -p 29418 -i /root/.ssh/privatekey gerrit-admin@gerrit-service gerrit create-project android/device/generic/car
-    retVal="RETVAL_OK"
-  fi
-}
-
-function gerrit-mirror-android() {
-  retVal="RETVAL_NOK"
-  git config --global --add safe.directory /mnt/git/.mirror/android/platform/manifest.git
-
-  if [ ! -d "/mnt/git/.mirror/android/platform/" ]; then
-    mkdir -p /mnt/git/.mirror/android/platform/
-    cd /mnt/git/.mirror/android/platform/
-    git clone --mirror https://android.googlesource.com/platform/manifest
-    cd manifest.git
-    git config --global --add safe.directory /mnt/git/android/platform/manifest.git
-    git remote add gerrit /mnt/git/android/platform/manifest.git/
-    git gc --aggressive --force
-    chown -R 1000:users /mnt/git/.mirror/
-  else
-    cd /mnt/git/.mirror/android/platform/manifest.git
-    git fetch origin
-    #git gc --aggressive --force
-    chown -R 1000:users /mnt/git/.mirror/
-    git config --global --add safe.directory /mnt/git/android/platform/manifest.git
-  fi
-  git fetch gerrit
-  git push gerrit refs/heads/*:refs/heads/*
-  git push gerrit refs/tags/*:refs/tags/*
-
-  rm -rf /root/manifest
-  mkdir -p /root/manifest
-  cd /root/manifest
-  git clone /mnt/git/android/platform/manifest.git .
-  git checkout -t origin/android14-qpr1-automotiveos-release
-  git config --global --add safe.directory /mnt/git/android/platform/manifest.git
-
-  NUM=$(xq-python '.manifest.project | length' ./default.xml)
-  n=1
-
-  NUM=10
-  echo "Showing only 10 first repositories to be sync'ed:"
-  until [ "$n" -ge $NUM ]; do
-    REPO_NAME=$(xq-python ".manifest.project[$n]" ./default.xml | grep "name" | awk -F'\"' '{print $4}')
-    REPO_URL="https://android.googlesource.com/$REPO_NAME"
-    echo $REPO_URL
-    n=$((n + 1))
-  done
-
-  #export APP_ID=$(cat githubAppID)
-  #export APP_SECRET=$(cat githubAppPrivateKey)
-  #export GH_REPO=AGBG-ASG/acn-horizon-sdv-android-platform-manifest
-  #TOKEN=$(./get_github_app_token.sh)
-  #git clone --mirror https://git:${TOKEN}@github.com/${GH_REPO}
-
-  git config --global --add safe.directory /mnt/git/.mirror/android/device/generic/car.git
-
-  if [ ! -d "/mnt/git/.mirror/android/device/generic/car/" ]; then
-    mkdir -p /mnt/git/.mirror/android/device/generic/car/
-    cd /mnt/git/.mirror/android/device/generic/
-    git clone --mirror https://android.googlesource.com/device/generic/car
-    cd car.git
-    git config --global --add safe.directory /mnt/git/android/device/generic/car.git
-    git remote add gerrit /mnt/git/android/device/generic/car.git/
-    git gc --aggressive --force
-    chown -R 1000:users /mnt/git/.mirror/
-  else
-    cd /mnt/git/.mirror/android/device/generic/car.git
-    git fetch origin
-    #git gc --aggressive --force
-    chown -R 1000:users /mnt/git/.mirror/
-    git config --global --add safe.directory /mnt/git/android/device/generic/car.git
-  fi
-  git fetch gerrit
-  git push gerrit refs/heads/*:refs/heads/*
-  git push gerrit refs/tags/*:refs/tags/*
-
-  retVal="RETVAL_OK"
-  return
-}
-
 function main() {
   initialize
 
@@ -408,18 +311,6 @@ function main() {
   gerrit-setup-all-projects
   if [[ "${retVal}" == "RETVAL_NOK" ]]; then
     echo "gerrit-setup-all-projects failed"
-    exit 1
-  fi
-
-  gerrit-create-projects
-  if [[ "${retVal}" == "RETVAL_NOK" ]]; then
-    echo "gerrit-create-projects failed"
-    exit 1
-  fi
-
-  gerrit-mirror-android
-  if [[ "${retVal}" == "RETVAL_NOK" ]]; then
-    echo "gerrit-mirror-android failed"
     exit 1
   fi
 }
