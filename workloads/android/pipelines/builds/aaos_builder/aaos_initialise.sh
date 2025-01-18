@@ -37,7 +37,6 @@
 #  - GERRIT_PROJECT: the name of the project to download.
 #  - GERRIT_CHANGE_NUMBER: the change number of the changeset to download.
 #  - GERRIT_PATCHSET_NUMBER: the patchset number of the changeset to download.
-#  - GERRIT_FETCH_PATCHSET: use FETCH vs repo download.
 
 # Include common functions and variables.
 # shellcheck disable=SC1091
@@ -87,30 +86,26 @@ echo "SUCCESS: repo sync complete."
 
 # Command to pull in change set from Gerrit.
 if [[ -n "${GERRIT_PROJECT}" && -n "${GERRIT_CHANGE_NUMBER}" && -n "${GERRIT_PATCHSET_NUMBER}" ]]; then
-    if [[ "${GERRIT_FETCH_PATCHSET}" == "false" ]]; then
-        # Use Google repo download to bring in change.
-        REPO_CMD="repo download $GERRIT_PROJECT $GERRIT_CHANGE_NUMBER/$GERRIT_PATCHSET_NUMBER"
+    # Use standard git fetch to retrieve the change.
+    # Find the project name from the manifest.
+    PROJECT_PATH=$(repo list -p "${GERRIT_PROJECT}")
+    PROJECT_URL=$(echo "${AAOS_GERRIT_MANIFEST_URL}" | cut -d'/' -f1-3)/"${GERRIT_PROJECT}"
+
+    # Extract the last two digits of the change number.
+    if (( ${#GERRIT_CHANGE_NUMBER} > 2 )); then
+        LAST_TWO_DIGITS=${GERRIT_CHANGE_NUMBER: -2}
     else
-        # Use standard git fetch to retrieve the change.
-        # Find the project name from the manifest.
-        PROJECT_PATH=$(repo list -p "${GERRIT_PROJECT}")
-        PROJECT_URL=$(echo "${AAOS_GERRIT_MANIFEST_URL}" | cut -d'/' -f1-3)/"${GERRIT_PROJECT}"
-
-        # Extract the last two digits of the change number.
-        if (( ${#GERRIT_CHANGE_NUMBER} > 2 )); then
-            LAST_TWO_DIGITS=${GERRIT_CHANGE_NUMBER: -2}
+        if (( ${#GERRIT_CHANGE_NUMBER} == 1 )); then
+            LAST_TWO_DIGITS=0${GERRIT_CHANGE_NUMBER}
         else
-            if (( ${#GERRIT_CHANGE_NUMBER} == 1 )); then
-                LAST_TWO_DIGITS=0${GERRIT_CHANGE_NUMBER}
-            else
-                LAST_TWO_DIGITS=${GERRIT_CHANGE_NUMBER}
-            fi
+            LAST_TWO_DIGITS=${GERRIT_CHANGE_NUMBER}
         fi
-
-        FETCHED_REFS="refs/changes/${LAST_TWO_DIGITS}"/"${GERRIT_CHANGE_NUMBER}"/"${GERRIT_PATCHSET_NUMBER}"
-        # shellcheck disable=SC2164
-        REPO_CMD="cd ${PROJECT_PATH} && git fetch ${PROJECT_URL} ${FETCHED_REFS} && git cherry-pick FETCH_HEAD && cd -"
     fi
+
+    FETCHED_REFS="refs/changes/${LAST_TWO_DIGITS}"/"${GERRIT_CHANGE_NUMBER}"/"${GERRIT_PATCHSET_NUMBER}"
+    # shellcheck disable=SC2164
+    REPO_CMD="cd ${PROJECT_PATH} && git fetch ${PROJECT_URL} ${FETCHED_REFS} && git cherry-pick FETCH_HEAD && cd -"
+
     echo "Running: ${REPO_CMD}"
     eval "${REPO_CMD}"
 fi

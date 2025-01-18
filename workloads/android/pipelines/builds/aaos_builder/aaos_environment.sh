@@ -29,7 +29,6 @@
 #  - AAOS_CLEAN: whether to clean before building.
 #  - AAOS_ARTIFACT_STORAGE_SOLUTION: the persistent storage location for
 #         artifacts (GCS_BUCKET default).
-#  - GERRIT_FETCH_PATCHSET: use FETCH vs repo download.
 #
 # For Gerrit review change sets:
 #  - GERRIT_PROJECT: the name of the project to download.
@@ -72,8 +71,6 @@ AAOS_GERRIT_MANIFEST_URL=${AAOS_GERRIT_MANIFEST_URL:-https://android.googlesourc
 AAOS_GERRIT_RPI_MANIFEST_URL=$(echo "${AAOS_GERRIT_RPI_MANIFEST_URL}" | xargs)
 AAOS_GERRIT_RPI_MANIFEST_URL=${AAOS_GERRIT_RPI_MANIFEST_URL:-https://raw.githubusercontent.com/raspberry-vanilla/android_local_manifest/}
 
-# Use FETCH for patchset rather than repo download.
-GERRIT_FETCH_PATCHSET=${GERRIT_FETCH_PATCHSET:-true}
 # Check we have a target defined.
 AAOS_LUNCH_TARGET=$(echo "${AAOS_LUNCH_TARGET}" | xargs)
 # Default if not defined (important for initial pipeline build)
