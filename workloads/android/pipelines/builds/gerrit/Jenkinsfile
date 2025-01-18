@@ -76,7 +76,7 @@ pipeline {
   agent none
 
   triggers {
-    gerrit customUrl: '', gerritProjects: [[branches: [[compareType: 'PLAIN', pattern: 'horizon/android-14.0.0_r30']], compareType: 'PLAIN', disableStrictForbiddenFileVerification: false, pattern: 'android/platform/frameworks/native'], [branches: [[compareType: 'PLAIN', pattern: 'horizon/android-14.0.0_r30']], compareType: 'PLAIN', disableStrictForbiddenFileVerification: false, pattern: 'android/platform/packages/services/Car'], [branches: [[compareType: 'PLAIN', pattern: 'horizon/android-14.0.0_r74']], compareType: 'PLAIN', disableStrictForbiddenFileVerification: false, pattern: 'android/platform/platform_testing']], serverName: 'Gerrit', triggerOnEvents: [patchsetCreated()]
+    gerrit customUrl: '', gerritProjects: [[branches: [[compareType: 'PLAIN', pattern: 'horizon/android-14.0.0_r30']], compareType: 'PLAIN', disableStrictForbiddenFileVerification: false, pattern: 'android/platform/frameworks/native'], [branches: [[compareType: 'PLAIN', pattern: 'horizon/android-14.0.0_r30']], compareType: 'PLAIN', disableStrictForbiddenFileVerification: false, pattern: 'android/platform/packages/services/Car'], [branches: [[compareType: 'PLAIN', pattern: 'horizon/android-14.0.0_r30']], compareType: 'PLAIN', disableStrictForbiddenFileVerification: false, pattern: 'android/platform/platform_testing']], serverName: 'Gerrit', triggerOnEvents: [patchsetCreated()]
   }
 
   environment {
