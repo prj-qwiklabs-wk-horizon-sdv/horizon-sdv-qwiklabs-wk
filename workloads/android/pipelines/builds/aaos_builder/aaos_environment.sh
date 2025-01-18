@@ -237,25 +237,9 @@ case "${AAOS_LUNCH_TARGET}" in
         ;;
     *tangorpro_car*)
         AAOS_MAKE_CMDLINE="m && m android.hardware.automotive.vehicle@2.0-default-service android.hardware.automotive.audiocontrol-service.example"
-        AAOS_ARTIFACT_LIST=(
-            "vendor.tgz"
-        )
         # Pixel Tablet binaries for Android 14.0.0 (AP1A.240405.002)
         # https://developers.google.com/android/drivers#tangorproap1a.240405.002
         POST_INITIALISE_COMMANDS="curl --output - https://dl.google.com/dl/android/aosp/google_devices-tangorpro-ap1a.240405.002-8d141153.tgz | tar -xzvf - && tail -n +315 extract-google_devices-tangorpro.sh | tar -zxvf -"
-        POST_BUILD_COMMANDS=(
-            "cp -f ${OUT_DIR}/target/product/tangorpro/system.img vendor/google_devices/tangorpro/proprietary"
-            "cp -f ${OUT_DIR}/target/product/tangorpro/bootloader.img vendor/google_devices/tangorpro/proprietary"
-            "cp -f ${OUT_DIR}/target/product/tangorpro/vbmeta_vendor.img vendor/google_devices/tangorpro/proprietary"
-            "cp -f ${OUT_DIR}/target/product/tangorpro/vendor.img vendor/google_devices/tangorpro/proprietary"
-            "cp -f ${OUT_DIR}/target/product/tangorpro/vendor_dlkm.img vendor/google_devices/tangorpro/proprietary"
-            "cp -f ${OUT_DIR}/target/product/tangorpro/android-info.txt vendor/google_devices/tangorpro/"
-            "tar -czf vendor.tgz vendor"
-        )
-        POST_STORAGE_COMMANDS=(
-            "rm -f vendor.tgz"
-            "rm -rf vendor"
-        )
         ;;
     *)
         # If the target is not one of the above, print an error message
