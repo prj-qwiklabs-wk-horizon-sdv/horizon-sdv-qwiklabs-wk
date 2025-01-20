@@ -76,7 +76,7 @@ pipeline {
   agent none
 
   triggers {
-   gerrit customUrl: '', gerritProjects: [[branches: [[compareType: 'ANT', pattern: '**/horizon/*']], compareType: 'REG_EXP', disableStrictForbiddenFileVerification: false, pattern: '^android\\/(?!.*\\/manifest).*$']], serverName: 'Gerrit', triggerOnEvents: [patchsetCreated()]
+    gerrit customUrl: '', gerritProjects: [[branches: [[compareType: 'ANT', pattern: '**/horizon/*']], compareType: 'REG_EXP', disableStrictForbiddenFileVerification: false, pattern: '^android\\/(?!.*\\/manifest).*$']], serverName: 'Gerrit', triggerOnEvents: [patchsetCreated()]
   }
 
   environment {
