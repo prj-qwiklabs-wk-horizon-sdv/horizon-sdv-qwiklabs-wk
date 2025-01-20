@@ -15,14 +15,14 @@ This supports builds for:
 
 This provides the URL for the Android repo manifest. Such as:
 
+* https://dev.horizon-sdv.scpmtk.com/android/platform/manifest (default)
 * https://android.googlesource.com/platform/manifest
-* https://dev.horizon-sdv.scpmtk.com/android/platform/manifest
 
 ## AAOS_REVISION
 
 The Android revision, ie branch or tag to build. Such as:
 
-* horizon/android-14.0.0_r30 (ap1a)
+* horizon/android-14.0.0_r30 (ap1a - default)
 * android14-qpr1-automotiveos-release
 * android-14.0.0_r22
 * android-14.0.0_r30 (ap1a)

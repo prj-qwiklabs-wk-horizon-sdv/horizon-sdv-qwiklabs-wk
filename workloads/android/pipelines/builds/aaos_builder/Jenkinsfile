@@ -76,11 +76,11 @@ pipeline {
 
   parameters {
     string(name: 'AAOS_GERRIT_MANIFEST_URL',
-           defaultValue: 'https://android.googlesource.com/platform/manifest',
+           defaultValue: "https://${env.HORIZON_DOMAIN}/android/platform/manifest",
            description: "<p>Android Manifest URL.</p>")
 
     string(name: 'AAOS_REVISION',
-           defaultValue: 'android-14.0.0_r30',
+           defaultValue: 'horizon/android-14.0.0_r30',
            description: '''<p>Android revision tag/branch name.</p>''')
 
     string(name: 'AAOS_LUNCH_TARGET',
