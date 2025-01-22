@@ -46,10 +46,10 @@ resource "google_container_cluster" "sdv_cluster" {
   # The maintenance policy to use for the cluster - when updates can occur
   maintenance_policy {
     recurring_window {
-    start_time = "2025-01-01T00:00:00Z"
-    end_time  = "2050-01-01T00:00:00Z"
-    recurrence = "FREQ=WEEKLY;BYDAY=SA,SU"
-  }
+      start_time = "2025-01-01T00:00:00Z"
+      end_time   = "2050-01-01T00:00:00Z"
+      recurrence = "FREQ=WEEKLY;BYDAY=SA,SU"
+    }
   }
 
   # enable gateway api
