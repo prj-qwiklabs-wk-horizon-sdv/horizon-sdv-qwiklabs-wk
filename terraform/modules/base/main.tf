@@ -159,22 +159,7 @@ module "sdv_sa_key_secret_gce_creds" {
   ]
 }
 
-# assign role clound storage viewer to users
-# to assign write permission create another module with role = roles/storage.objectCreator
-module "sdv_iam_gcs_viewers" {
-  source = "../sdv-iam"
-
-  member = [
-    "user:wojciech.kobryn@accenture.com",
-    "user:lukasz.domke@accenture.com",
-    "user:marta.kania@accenture.com",
-    "user:dave.m.smith@accenture.com",
-
-  ]
-
-  role = "roles/storage.objectViewer"
-
-}
+# assign role cloud
 
 module "sdv_iam_gcs_users" {
   source = "../sdv-iam"
@@ -207,13 +192,10 @@ module "sdv_iam_compute_network_admin" {
 }
 
 # permission: IAP-secured Tunnel User (roles/iap.tunnelResourceAccessor) for 268541173342-compute
-# and Lukasz and Marta
 module "sdv_iam_secured_tunnel_user" {
   source = "../sdv-iam"
   member = [
     "serviceAccount:${var.sdv_default_computer_sa}",
-    "user:lukasz.domke@accenture.com",
-    "user:marta.kania@accenture.com",
   ]
 
   role = "roles/iap.tunnelResourceAccessor"
@@ -228,18 +210,6 @@ module "sdv_iam_service_account_user" {
   ]
 
   role = "roles/iam.serviceAccountUser"
-
-}
-
-# permission:Secret Manager Secret Accessor (roles/secretmanager.secretAccessor) for Lukasz and Marta
-module "sdv_iam_sceret_manager" {
-  source = "../sdv-iam"
-  member = [
-    "user:lukasz.domke@accenture.com",
-    "user:marta.kania@accenture.com",
-  ]
-
-  role = "roles/secretmanager.secretAccessor"
 
 }
 

@@ -36,22 +36,14 @@ module "base" {
   sdv_build_node_pool_machine_type   = "c2d-highcpu-112"
   sdv_build_node_pool_max_node_count = 10
 
-  sdv_bastion_host_name = "sdv-bastion-host"
-  sdv_bastion_host_sa   = "sdv-bastion-host-sa-iap"
-  sdv_bastion_host_members = [
-    "user:wojciech.kobryn@accenture.com",
-    "user:marta.kania@accenture.com",
-    "user:lukasz.domke@accenture.com",
-  ]
+  sdv_bastion_host_name    = "sdv-bastion-host"
+  sdv_bastion_host_sa      = "sdv-bastion-host-sa-iap"
+  sdv_bastion_host_members = []
 
   sdv_network_egress_router_name = "sdv-egress-internet"
 
-  sdv_artifact_registry_repository_id = "horizon-sdv-dev"
-  sdv_artifact_registry_repository_members = [
-    "user:wojciech.kobryn@accenture.com",
-    "user:marta.kania@accenture.com",
-    "user:lukasz.domke@accenture.com",
-  ]
+  sdv_artifact_registry_repository_id      = "horizon-sdv-dev"
+  sdv_artifact_registry_repository_members = []
   sdv_artifact_registry_repository_reader_members = [
     "serviceAccount:${local.sdv_default_computer_sa}",
   ]
