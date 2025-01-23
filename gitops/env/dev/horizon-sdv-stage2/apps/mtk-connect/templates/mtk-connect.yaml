@@ -270,7 +270,7 @@ spec:
               name: mtk-connect-config
               subPath: config.json
         - name: docs
-          image: harbor.scpmtk.com/mtk-connect/mtk-connect-docs:v2.0.10-ce973f6
+          image: harbor.scpmtk.com/mtk-connect/mtk-connect-docs:v2.0.11
           resources:
             requests:
               cpu: 50m
