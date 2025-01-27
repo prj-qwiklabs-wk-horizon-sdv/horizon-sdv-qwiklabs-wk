@@ -87,10 +87,12 @@ pipeline {
       agent { kubernetes { yaml kubernetesPodTemplate } }
       stages {
         stage ('Retain instance') {
-          steps {
-            container(name: 'builder') {
-              script {
-                sleep(time: "${INSTANCE_MAX_UPTIME}", unit: 'HOURS')
+          when { expression { env.INSTANCE_MAX_UPTIME } }
+            steps {
+              container(name: 'builder') {
+                script {
+                  sleep(time: "${INSTANCE_MAX_UPTIME}", unit: 'HOURS')
+                }
               }
             }
           }
