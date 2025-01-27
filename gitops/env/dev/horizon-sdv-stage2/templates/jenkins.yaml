@@ -240,7 +240,7 @@ spec:
                         }
                       }
                   - script: >
-                      pipelineJob('Android/Builds/Development Instance') {
+                      pipelineJob('Android/Environment/Development Instance') {
                         description('''
                           <br/><h3>Development Instance Pipeline</h3>
                           <p>This job allows creation of temporary build instances that can be used to aid development.<br/>
