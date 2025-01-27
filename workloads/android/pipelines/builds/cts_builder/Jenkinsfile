@@ -98,6 +98,11 @@ pipeline {
            </ul>
            <b>Warning:</b> Only use when necessary.</p>''')
 
+    choice(name: 'INSTANCE_RETENTION_TIME',
+           choices: ['0', '15', '30', '45', '60'],
+           description: '''<p>Time in minutes to retain the instance after build completion.<br/>
+           Useful for debugging build issues, reviewing target outputs etc.</p>''')
+
     string(name: 'AAOS_ARTIFACT_STORAGE_SOLUTION', defaultValue: 'GCS_BUCKET',
            description: '''<p>Android Artifact Storage:<br/>
            <ul><li>GCS_BUCKET will store to cloud bucket storage</li>
@@ -122,6 +127,7 @@ pipeline {
           when {
             allOf {
               expression { env.AAOS_LUNCH_TARGET }
+              expression { env.AAOS_LUNCH_TARGET =~ /(aosp_cf)/ }
               expression { env.AAOS_CLEAN != 'NO_CLEAN' }
             }
           }
@@ -140,7 +146,12 @@ pipeline {
         }
 
         stage ('Initialise') {
-          when { expression { env.AAOS_LUNCH_TARGET } }
+          when {
+            allOf {
+              expression { env.AAOS_LUNCH_TARGET }
+              expression { env.AAOS_LUNCH_TARGET =~ /(aosp_cf)/ }
+            }
+          }
           steps {
             script {
               currentBuild.description = "${env.AAOS_LUNCH_TARGET}"
@@ -165,7 +176,12 @@ pipeline {
         }
 
         stage ('Build') {
-          when { expression { env.AAOS_LUNCH_TARGET } }
+          when {
+            allOf {
+              expression { env.AAOS_LUNCH_TARGET }
+              expression { env.AAOS_LUNCH_TARGET =~ /(aosp_cf)/ }
+            }
+          }
           steps {
             container(name: 'builder') {
               sh '''
@@ -182,6 +198,7 @@ pipeline {
           when {
             allOf {
               expression { env.AAOS_LUNCH_TARGET }
+              expression { env.AAOS_LUNCH_TARGET =~ /(aosp_cf)/ }
               expression { env.AAOS_ARTIFACT_STORAGE_SOLUTION }
             }
           }
@@ -198,6 +215,22 @@ pipeline {
                   ./workloads/android/pipelines/builds/aaos_builder/aaos_storage.sh
                 '''
                 archiveArtifacts artifacts: '*artifacts*.txt', followSymlinks: false, onlyIfSuccessful: false, allowEmptyArchive: true
+              }
+            }
+          }
+        }
+
+        stage ('Retain instance') {
+          when {
+            allOf {
+              expression { env.AAOS_LUNCH_TARGET }
+              expression { env.AAOS_LUNCH_TARGET =~ /(aosp_cf)/ }
+            }
+          }
+          steps {
+            container(name: 'builder') {
+              script {
+                sleep(time: "${INSTANCE_RETENTION_TIME}", unit: 'MINUTES')
               }
             }
           }

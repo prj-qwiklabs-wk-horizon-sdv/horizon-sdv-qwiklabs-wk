@@ -240,6 +240,31 @@ spec:
                         }
                       }
                   - script: >
+                      pipelineJob('Android/Builds/Development Instance') {
+                        description('''
+                          <br/><h3>Development Instance Pipeline</h3>
+                          <p>This job allows creation of temporary build instances that can be used to aid development.<br/>
+                          Instances can be expensive and therefore there is a maximum up-time before the instance will automatically be terminated</p>
+                          <p>Access the instance via <tt>bastion</tt> host and <tt>kubectl</tt> command line tool, e.g.</p>
+                          <p><tt>kubectl exec -it -n jenkins &lt;pod name&gt; -- bash</tt></p>
+                          <p><b>Note:</b> users are responsible for saving their own work to persistent storage before expiry.</p>''')
+                        definition {
+                          cpsScm {
+                            lightweight()
+                            scm {
+                              git {
+                                remote {
+                                  url('https://github.com/AGBG-ASG/acn-horizon-sdv.git')
+                                  credentials('jenkins-github-agbg')
+                                }
+                                branch('*/main')
+                              }
+                            }
+                            scriptPath('workloads/android/pipelines/environment/dev_instance/Jenkinsfile')
+                          }
+                        }
+                      }
+                  - script: >
                       pipelineJob('Android/Builds/AAOS Builder') {
                         description('<p>Android Automotive build pipeline.<br/>This pipeline builds Android Automotive OS targets.</p>')
                         definition {

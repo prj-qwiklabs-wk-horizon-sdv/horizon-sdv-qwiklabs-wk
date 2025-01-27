@@ -61,6 +61,8 @@ Examples:
     -   `aosp_cf_arm64_auto-ap4a-userdebug`
 -   Pixel Devices:
     -   `aosp_tangorpro_car-ap1a-userdebug`
+    -   `aosp_tangorpro_car-ap2a-userdebug`
+    -   `aosp_tangorpro_car-ap3a-userdebug`
 -   Raspberry Pi:
     -   `aosp_rpi4_car-ap3a-userdebug`
     -   `aosp_rpi5_car-ap3a-userdebug`
@@ -68,6 +70,38 @@ Examples:
 ## ANDROID_VERSION
 
 This is required for the SDK Car AVD builds so that the correct `devices.xml` and SDK Addon can be generated for use with Android Studio.
+
+## ADDITIONAL_INITIALISE_COMMANDS
+
+This allows the user to include additional commands tun run after the rep has been initialised.
+
+## OVERRIDE_MAKE_COMMAND
+
+This allows the user to override the default target make command.
+
+## AAOS_RPI_REVISION
+
+See  [RPi](https://github.com/raspberry-vanilla/android_local_manifest), define the tag/branch to use. This must align with `AAOS_REVISION`.
+
+## AAOS_CLEAN
+
+Option to clean the build workspaace, either fully or simply for the `AAOS_LUNCH_TARGET` target defined.
+
+## BUILD_INSTANCE_RETENTION_TIME
+
+Keep the build VM instance and container running to allow user to connect to it. Useful for debugging build issues, determining target output archives etc.
+
+Access using `kubectl` e.g. `kubectl exec -it -n jenkins <pod name> -- bash` from `bastion` host.
+
+## AAOS_ARTIFACT_STORAGE_SOLUTION
+
+Define storage solution used to push artifacts.
+
+Currently `GCS_BUCKET` default pushes to GCS bucket, if empty then nothing will be stored.
+
+## GERRIT_PROJECT / GERRIT_CHANGE_NUMBER / GERRIT_PATCHSET_NUMBER
+
+These allow the user to fetch a specific Gerrit patchset.
 
 # KNOWN ISSUES
 
