@@ -106,25 +106,39 @@ AAOS_SDK_SYSTEM_IMAGE_PREFIX=${AAOS_SDK_SYSTEM_IMAGE_PREFIX:-sdk-repo-linux-syst
 # Cache directory
 AAOS_CACHE_DIRECTORY=${AAOS_CACHE_DIRECTORY:-/aaos-cache}
 
+AAOS_BUILDS_DIRECTORY="aaos_builds"
+AAOS_BUILDS_RPI_DIRECTORY="aaos_builds_rpi"
+
+# Remove unwanted directories that may have been created for dev.
+# Retain the official cache directories.
+if [ -d "${AAOS_CACHE_DIRECTORY}" ]; then
+  find "${AAOS_CACHE_DIRECTORY}" -mindepth 1 -maxdepth 1 -type d ! -name "${AAOS_BUILDS_DIRECTORY}" ! -name \
+      "${AAOS_BUILDS_RPI_DIRECTORY}" ! -name 'lost+found' -exec rm -rf {} + || true
+fi
+
 # AAOS workspace and artifact storage paths
+# Store original workspace for use later.
 if [ -z "${WORKSPACE}" ]; then
     ORIG_WORKSPACE="${HOME}"
-    WORKSPACE="${HOME}"/aaos_builds
-    AAOS_CACHE_DIRECTORY="${WORKSPACE}"
-    EMPTY_DIR="${HOME}"/empty_dir
 else
-    # Store original workspace for use later.
     ORIG_WORKSPACE="${WORKSPACE}"
+fi
+
+if [ -d "${AAOS_CACHE_DIRECTORY}" ]; then
     # Ensure PVC has correct privileges.
     # Note: builder Dockerfile defines USER name
     sudo chown builder:builder /"${AAOS_CACHE_DIRECTORY}"
     sudo chmod g+s /"${AAOS_CACHE_DIRECTORY}"
-    WORKSPACE=/"${AAOS_CACHE_DIRECTORY}"/aaos_builds
+    WORKSPACE="${AAOS_CACHE_DIRECTORY}"/"${AAOS_BUILDS_DIRECTORY}"
     if [[ "${AAOS_LUNCH_TARGET}" =~ "rpi" ]]; then
         # Avoid RPI builds affecting standard android repos.
-        WORKSPACE=/"${AAOS_CACHE_DIRECTORY}"/aaos_builds_rpi
+        WORKSPACE="${AAOS_CACHE_DIRECTORY}"/"${AAOS_BUILDS_RPI_DIRECTORY}"
     fi
     EMPTY_DIR="${AAOS_CACHE_DIRECTORY}"/empty_dir
+else
+    WORKSPACE="${HOME}"/"${AAOS_BUILDS_DIRECTORY}"
+    EMPTY_DIR="${HOME}"/empty_dir
+    AAOS_CACHE_DIRECTORY="${WORKSPACE}"
 fi
 
 function remove_directory() {

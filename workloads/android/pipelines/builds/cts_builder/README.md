@@ -44,6 +44,26 @@ Examples:
     -   `aosp_cf_arm64_auto-ap3a-userdebug`
     -   `aosp_cf_arm64_auto-ap4a-userdebug`
 
+## AAOS_CLEAN
+
+Option to clean the build workspaace, either fully or simply for the `AAOS_LUNCH_TARGET` target defined.
+
+## BUILD_INSTANCE_RETENTION_TIME
+
+Keep the build VM instance and container running to allow user to connect to it. Useful for debugging build issues, determining target output archives etc.
+
+Access using `kubectl` e.g. `kubectl exec -it -n jenkins <pod name> -- bash` from `bastion` host.
+
+## AAOS_ARTIFACT_STORAGE_SOLUTION
+
+Define storage solution used to push artifacts.
+
+Currently `GCS_BUCKET` default pushes to GCS bucket, if empty then nothing will be stored.
+
+## GERRIT_PROJECT / GERRIT_CHANGE_NUMBER / GERRIT_PATCHSET_NUMBER
+
+These allow the user to fetch a specific Gerrit patchset.
+
 # KNOWN ISSUES
 
 Refer to workloads/android/pipelines/builds/aaos_builder/README.md.

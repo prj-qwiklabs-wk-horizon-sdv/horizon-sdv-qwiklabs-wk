@@ -126,7 +126,7 @@ pipeline {
           }
         }
 
-        stage ('Keep Devices Alive'){
+        stage ('Keep Devices Alive') {
           when {
             allOf {
               expression { env.CUTTLEFISH_DOWNLOAD_URL }

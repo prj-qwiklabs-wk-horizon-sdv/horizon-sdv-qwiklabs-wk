@@ -58,29 +58,31 @@ function gcs_bucket() {
     /usr/bin/gsutil -m rm "${destination}"/* || true
     rm -f "${artifacts_summary}"
 
-    # Print download URL links in console log and file..
-    echo ""
-    echo "Artifacts for ${AAOS_LUNCH_TARGET} stored in ${destination}" | tee -a "${artifacts_summary}"
-    echo "Bucket URL: ${cloud_url}" | tee -a "${artifacts_summary}"
-    echo "" | tee -a "${artifacts_summary}"
+    if [ ${#AAOS_ARTIFACT_LIST[@]} ]; then
+        # Print download URL links in console log and file..
+        echo ""
+        echo "Artifacts for ${AAOS_LUNCH_TARGET} stored in ${destination}" | tee -a "${artifacts_summary}"
+        echo "Bucket URL: ${cloud_url}" | tee -a "${artifacts_summary}"
+        echo "" | tee -a "${artifacts_summary}"
 
-    # Copy artifacts to Google Cloud Storage bucket
-    echo "Storing ${AAOS_LUNCH_TARGET} artifacts to bucket ${bucket_name}"
-    for artifact in "${AAOS_ARTIFACT_LIST[@]}"; do
-        for file in ${artifact}; do
-            # Look for wildcard files.
-            if [ -e "${file}" ]; then
-                # Copy the artifact to the bucket
-                /usr/bin/gsutil cp "${file}" "${destination}"/ || true
-                echo "Copied ${file} to ${destination}"
-                # shellcheck disable=SC2086
-                filename=$(echo ${file} | awk -F / '{print $NF}')
-                echo "    gsutil cp ${destination}/${filename} ." | tee -a "${artifacts_summary}"
-            fi
+        # Copy artifacts to Google Cloud Storage bucket
+        echo "Storing ${AAOS_LUNCH_TARGET} artifacts to bucket ${bucket_name}"
+        for artifact in "${AAOS_ARTIFACT_LIST[@]}"; do
+            for file in ${artifact}; do
+                # Look for wildcard files.
+                if [ -e "${file}" ]; then
+                    # Copy the artifact to the bucket
+                    /usr/bin/gsutil cp "${file}" "${destination}"/ || true
+                    echo "Copied ${file} to ${destination}"
+                    # shellcheck disable=SC2086
+                    filename=$(echo ${file} | awk -F / '{print $NF}')
+                    echo "    gsutil cp ${destination}/${filename} ." | tee -a "${artifacts_summary}"
+                fi
+            done
         done
-    done
-    echo "Artifacts summary:"
-    cat "${artifacts_summary}"
+        echo "Artifacts summary:"
+        cat "${artifacts_summary}"
+    fi
 }
 
 #
