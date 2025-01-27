@@ -307,7 +307,8 @@ spec:
                       pipelineJob('Android/Builds/Gerrit') {
                         description('<p>Gerrit triggered build and test. Triggered by Gerrit commits.</p>')
                         triggers {
-                          hudsonStartupTrigger {                            
+                          hudsonStartupTrigger {
+                            nodeParameterName()
                             quietPeriod("0")
                             runOnChoice("False")
                           }
