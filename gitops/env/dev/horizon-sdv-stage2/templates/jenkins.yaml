@@ -49,6 +49,7 @@ spec:
             - pipeline-stage-view:latest
             - throttle-concurrents:latest
             - build-blocker-plugin:latest
+            - startup-trigger-plugin:latest
           additionalExistingSecrets:
             - name: jenkins-keycloak
               keyName: keycloakJson
