@@ -88,11 +88,10 @@ pipeline {
       stages {
         stage ('Retain instance') {
           when { expression { env.INSTANCE_MAX_UPTIME } }
-            steps {
-              container(name: 'builder') {
-                script {
-                  sleep(time: "${INSTANCE_MAX_UPTIME}", unit: 'HOURS')
-                }
+          steps {
+            container(name: 'builder') {
+              script {
+                sleep(time: "${INSTANCE_MAX_UPTIME}", unit: 'HOURS')
               }
             }
           }
