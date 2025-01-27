@@ -48,7 +48,7 @@ Examples:
 
 Option to clean the build workspaace, either fully or simply for the `AAOS_LUNCH_TARGET` target defined.
 
-## BUILD_INSTANCE_RETENTION_TIME
+## INSTANCE_RETENTION_TIME
 
 Keep the build VM instance and container running to allow user to connect to it. Useful for debugging build issues, determining target output archives etc.
 
