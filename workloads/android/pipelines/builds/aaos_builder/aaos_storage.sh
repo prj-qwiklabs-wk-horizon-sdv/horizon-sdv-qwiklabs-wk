@@ -58,7 +58,7 @@ function gcs_bucket() {
     /usr/bin/gsutil -m rm "${destination}"/* || true
     rm -f "${artifacts_summary}"
 
-    if [ ${#AAOS_ARTIFACT_LIST[@]} ]; then
+    if [ ${#AAOS_ARTIFACT_LIST[@]} -gt 0 ]; then
         # Print download URL links in console log and file..
         echo ""
         echo "Artifacts for ${AAOS_LUNCH_TARGET} stored in ${destination}" | tee -a "${artifacts_summary}"
