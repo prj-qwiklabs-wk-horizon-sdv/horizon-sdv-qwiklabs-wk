@@ -306,12 +306,14 @@ spec:
                   - script: >
                       pipelineJob('Android/Builds/Gerrit') {
                         description('<p>Gerrit triggered build and test. Triggered by Gerrit commits.</p>')
-                        triggers {
-                          hudsonStartupTrigger {
-                            nodeParameterName('Built-In Node')
-                            label('')
-                            quietPeriod('60')
-                            runOnChoice('True')
+                        pipelineTriggers {
+                          triggers {
+                            hudsonStartupTrigger {
+                              nodeParameterName('built-in')
+                              label('')
+                              quietPeriod('60')
+                              runOnChoice('True')
+                            }
                           }
                         }
                         definition {
