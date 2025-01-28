@@ -252,7 +252,6 @@ case "${AAOS_LUNCH_TARGET}" in
         ;;
     *tangorpro_car*)
         AAOS_ARTIFACT_LIST=(
-            "vendor.tgz"
             "${OUT_DIR}.tgz"
         )
         AAOS_MAKE_CMDLINE="m && m android.hardware.automotive.vehicle@2.0-default-service android.hardware.automotive.audiocontrol-service.example"
@@ -287,11 +286,11 @@ case "${AAOS_LUNCH_TARGET}" in
                 ${OUT_DIR}/target/product/tangorpro/product.img \
                 ${OUT_DIR}/target/product/tangorpro/vendor.img \
                 ${OUT_DIR}/target/product/tangorpro/vendor_dlkm.img \
-                ${OUT_DIR}/target/product/tangorpro/system_other.img"
-            "tar -zcf vendor.tgz vendor"
+                ${OUT_DIR}/target/product/tangorpro/system_other.img \
+                ${OUT_DIR}/target/product/tangorpro/vendor"
         )
         POST_STORAGE_COMMANDS=(
-            "rm -f vendor.tgz ${OUT_DIR}.tgz"
+            "rm -f ${OUT_DIR}.tgz"
             "rm -rf vendor"
             "rm -f extract-google_devices-tangorpro.sh"
         )
