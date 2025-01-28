@@ -310,8 +310,8 @@ spec:
                           hudsonStartupTrigger {
                             nodeParameterName('Built-In Node')
                             label('Built-In Node')
-                            quietPeriod('10')
-                            runOnChoice('False')
+                            quietPeriod('60')
+                            runOnChoice('True')
                           }
                         }
                         definition {
