@@ -256,9 +256,17 @@ case "${AAOS_LUNCH_TARGET}" in
             "${OUT_DIR}.tgz"
         )
         AAOS_MAKE_CMDLINE="m && m android.hardware.automotive.vehicle@2.0-default-service android.hardware.automotive.audiocontrol-service.example"
-        # Pixel Tablet binaries for Android 14.0.0 (AP1A.240405.002)
-        # https://developers.google.com/android/drivers#tangorproap1a.240405.002
-        POST_INITIALISE_COMMANDS="curl --output - https://dl.google.com/dl/android/aosp/google_devices-tangorpro-ap1a.240405.002-8d141153.tgz | tar -xzvf - && tail -n +315 extract-google_devices-tangorpro.sh | tar -zxvf -"
+        # Pixel Tablet binaries for Android ap1a/ap2a/ap3a
+        case "${AAOS_LUNCH_TARGET}" in
+            *ap2a*)
+                POST_INITIALISE_COMMANDS="curl --output - https://dl.google.com/dl/android/aosp/google_devices-tangorpro-ap2a.240805.005-7e95f619.tgz | tar -xzvf - && tail -n +315 extract-google_devices-tangorpro.sh | tar -zxvf -"
+            *ap3a*)
+                POST_INITIALISE_COMMANDS="curl --output - https://dl.google.com/dl/android/aosp/google_devices-tangorpro-ap3a.241105.007-2bf56572.tgz | tar -xzvf - && tail -n +315 extract-google_devices-tangorpro.sh | tar -zxvf -"
+            *)
+                # android-14.0.0_r30: https://developers.google.com/android/drivers#tangorproap1a.240405.002
+                POST_INITIALISE_COMMANDS="curl --output - https://dl.google.com/dl/android/aosp/google_devices-tangorpro-ap1a.240405.002-8d141153.tgz | tar -xzvf - && tail -n +315 extract-google_devices-tangorpro.sh | tar -zxvf -"
+                ;;
+        esac
         POST_BUILD_COMMANDS=(
             "tar -zcf ${OUT_DIR}.tgz \
                 ${OUT_DIR}/target/product/tangorpro/fastboot-info.txt \
