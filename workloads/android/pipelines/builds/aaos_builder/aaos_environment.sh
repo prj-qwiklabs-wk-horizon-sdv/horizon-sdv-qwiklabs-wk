@@ -232,6 +232,10 @@ case "${AAOS_LUNCH_TARGET}" in
             "${OUT_DIR}/target/product/emulator_car64_${AAOS_ARCH}/${AAOS_SDK_SYSTEM_IMAGE_PREFIX}*.zip"
             "${OUT_DIR}/target/product/emulator_car64_${AAOS_ARCH}/${AAOS_SDK_ADDON_FILE}"
         )
+        POST_STORAGE_COMMANDS=(
+            "rm -f devices.xml"
+            "rm -f ${AAOS_SDK_ADDON_FILE}"
+        )
         ;;
     aosp_cf*)
         AAOS_MAKE_CMDLINE="m dist"
@@ -247,10 +251,40 @@ case "${AAOS_LUNCH_TARGET}" in
         fi
         ;;
     *tangorpro_car*)
+        AAOS_ARTIFACT_LIST=(
+            "vendor.tgz"
+            "${OUT_DIR}.tgz"
+        )
         AAOS_MAKE_CMDLINE="m && m android.hardware.automotive.vehicle@2.0-default-service android.hardware.automotive.audiocontrol-service.example"
         # Pixel Tablet binaries for Android 14.0.0 (AP1A.240405.002)
         # https://developers.google.com/android/drivers#tangorproap1a.240405.002
         POST_INITIALISE_COMMANDS="curl --output - https://dl.google.com/dl/android/aosp/google_devices-tangorpro-ap1a.240405.002-8d141153.tgz | tar -xzvf - && tail -n +315 extract-google_devices-tangorpro.sh | tar -zxvf -"
+        POST_BUILD_COMMANDS=(
+            "tar -zcf ${OUT_DIR}.tgz \
+                ${OUT_DIR}/target/product/tangorpro/fastboot-info.txt \
+                ${OUT_DIR}/target/product/tangorpro/boot.img \
+                ${OUT_DIR}/target/product/tangorpro/init_boot.img \
+                ${OUT_DIR}/target/product/tangorpro/dtbo.img \
+                ${OUT_DIR}/target/product/tangorpro/vendor_kernel_boot.img \
+                ${OUT_DIR}/target/product/tangorpro/pvmfw.img \
+                ${OUT_DIR}/target/product/tangorpro/vendor_boot.img \
+                ${OUT_DIR}/target/product/tangorpro/vbmeta.img \
+                ${OUT_DIR}/target/product/tangorpro/vbmeta_system.img \
+                ${OUT_DIR}/target/product/tangorpro/vbmeta_vendor.img \
+                ${OUT_DIR}/target/product/tangorpro/system.img \
+                ${OUT_DIR}/target/product/tangorpro/system_dlkm.img \
+                ${OUT_DIR}/target/product/tangorpro/system_ext.img \
+                ${OUT_DIR}/target/product/tangorpro/product.img \
+                ${OUT_DIR}/target/product/tangorpro/vendor.img \
+                ${OUT_DIR}/target/product/tangorpro/vendor_dlkm.img \
+                ${OUT_DIR}/target/product/tangorpro/system_other.img"
+            "tar -zcf vendor.tgz vendor"
+        )
+        POST_STORAGE_COMMANDS=(
+            "rm -f vendor.tgz ${OUT_DIR}.tgz"
+            "rm -rf vendor"
+            "rm -f extract-google_devices-tangorpro.sh"
+        )
         ;;
     *)
         # If the target is not one of the above, print an error message
@@ -266,11 +300,7 @@ if [ -n "${OVERRIDE_MAKE_COMMAND}" ]; then
     AAOS_MAKE_CMDLINE="${OVERRIDE_MAKE_COMMAND}"
 fi
 if [ -n "${ADDITIONAL_INITIALISE_COMMANDS}" ]; then
-    if [ -n "${POST_INITIALISE_COMMANDS}" ]; then
-        POST_INITIALISE_COMMANDS+=" && ${ADDITIONAL_INITIALISE_COMMANDS}"
-    else
-        POST_INITIALISE_COMMANDS+="${ADDITIONAL_INITIALISE_COMMANDS}"
-    fi
+    POST_INITIALISE_COMMANDS="${ADDITIONAL_INITIALISE_COMMANDS}"
 fi
 
 # Gerrit Review environment variables: remove leading and trailing slashes.

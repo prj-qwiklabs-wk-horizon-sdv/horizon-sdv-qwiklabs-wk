@@ -56,7 +56,7 @@ function gcs_bucket() {
 
     # Remove the old artifacts
     /usr/bin/gsutil -m rm "${destination}"/* || true
-    rm -f "${artifacts_summary}" || true
+    rm -f "${artifacts_summary}"
 
     # Print download URL links in console log and file..
     echo ""
