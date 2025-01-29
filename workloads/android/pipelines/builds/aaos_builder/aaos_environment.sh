@@ -119,13 +119,6 @@ AAOS_CACHE_DIRECTORY=${AAOS_CACHE_DIRECTORY:-/aaos-cache}
 AAOS_BUILDS_DIRECTORY="aaos_builds"
 AAOS_BUILDS_RPI_DIRECTORY="aaos_builds_rpi"
 
-# Remove unwanted directories that may have been created for dev.
-# Retain the official cache directories.
-if [ -d "${AAOS_CACHE_DIRECTORY}" ]; then
-  find "${AAOS_CACHE_DIRECTORY}" -mindepth 1 -maxdepth 1 -type d ! -name "${AAOS_BUILDS_DIRECTORY}" ! -name \
-      "${AAOS_BUILDS_RPI_DIRECTORY}" ! -name 'lost+found' -exec rm -rf {} + || true
-fi
-
 # AAOS workspace and artifact storage paths
 # Store original workspace for use later.
 if [ -z "${WORKSPACE}" ]; then
@@ -139,16 +132,38 @@ if [ -d "${AAOS_CACHE_DIRECTORY}" ]; then
     # Note: builder Dockerfile defines USER name
     sudo chown builder:builder /"${AAOS_CACHE_DIRECTORY}"
     sudo chmod g+s /"${AAOS_CACHE_DIRECTORY}"
-    WORKSPACE="${AAOS_CACHE_DIRECTORY}"/"${AAOS_BUILDS_DIRECTORY}"
-    if [[ "${AAOS_LUNCH_TARGET}" =~ "rpi" ]]; then
-        # Avoid RPI builds affecting standard android repos.
-        WORKSPACE="${AAOS_CACHE_DIRECTORY}"/"${AAOS_BUILDS_RPI_DIRECTORY}"
-    fi
-    EMPTY_DIR="${AAOS_CACHE_DIRECTORY}"/empty_dir
 else
-    WORKSPACE="${HOME}"/"${AAOS_BUILDS_DIRECTORY}"
-    EMPTY_DIR="${HOME}"/empty_dir
-    AAOS_CACHE_DIRECTORY="${WORKSPACE}"
+    # Local build or no PVC mounted, build in user home.
+    AAOS_CACHE_DIRECTORY="${HOME}"
+fi
+
+CACHE_DIRECTORY="${AAOS_CACHE_DIRECTORY}"
+EMPTY_DIR="${CACHE_DIRECTORY}"/empty_dir
+
+declare -a DIRECTORY_LIST=(
+    "${CACHE_DIRECTORY}"/"${AAOS_BUILDS_DIRECTORY}"
+    "${CACHE_DIRECTORY}"/"${AAOS_BUILDS_RPI_DIRECTORY}"
+)
+
+if [[ "${AAOS_LUNCH_TARGET}" =~ "rpi" ]]; then
+    # Avoid RPI builds affecting standard android repos.
+    WORKSPACE="${CACHE_DIRECTORY}"/"${AAOS_BUILDS_RPI_DIRECTORY}"
+else
+    WORKSPACE="${CACHE_DIRECTORY}"/"${AAOS_BUILDS_DIRECTORY}"
+fi
+
+# Clean commands
+AAOS_CLEAN=${AAOS_CLEAN:-NO_CLEAN}
+
+# Override build output directory to keep builds
+# separate from each other.
+export OUT_DIR="out_sdv-${AAOS_LUNCH_TARGET}"
+
+# Remove unwanted directories that may have been created for dev.
+# Retain the official cache directories.
+if [ -d "${AAOS_CACHE_DIRECTORY}" ]; then
+  find "${AAOS_CACHE_DIRECTORY}" -mindepth 1 -maxdepth 1 -type d ! -name "${AAOS_BUILDS_DIRECTORY}" ! -name \
+      "${AAOS_BUILDS_RPI_DIRECTORY}" ! -name 'lost+found' -exec rm -rf {} + || true
 fi
 
 function remove_directory() {
@@ -162,15 +177,12 @@ function remove_directory() {
     echo "Removed directory ${1}."
 }
 
-# Override build output directory to keep builds
-# separate from each other.
-export OUT_DIR="out_sdv-${AAOS_LUNCH_TARGET}"
-
 # Clean Workspace or specific build target directory.
-AAOS_CLEAN=${AAOS_CLEAN:-NO_CLEAN}
 case "${AAOS_CLEAN}" in
     CLEAN_ALL)
-        remove_directory "${WORKSPACE}"
+        for directory in "${DIRECTORY_LIST[@]}"; do
+            remove_directory "${directory}"
+        done
         ;;
     CLEAN_BUILD)
         remove_directory "${WORKSPACE}"/"${OUT_DIR}"
