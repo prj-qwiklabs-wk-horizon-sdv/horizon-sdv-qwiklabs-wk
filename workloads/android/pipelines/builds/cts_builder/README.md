@@ -48,6 +48,12 @@ Examples:
 
 Option to clean the build workspaace, either fully or simply for the `AAOS_LUNCH_TARGET` target defined.
 
+## GERRIT_REPO_SYNC_JOBS
+
+This is the value used for parallel jobs for `repo sync`, ie `-j <GERRIT_REPO_SYNC_JOBS>`.
+The default is defined in system environment variable: `REPO_SYNC_JOBS`.
+The minimum is 1 and the maximum is 24.
+
 ## INSTANCE_RETENTION_TIME
 
 Keep the build VM instance and container running to allow user to connect to it. Useful for debugging build issues, determining target output archives etc.

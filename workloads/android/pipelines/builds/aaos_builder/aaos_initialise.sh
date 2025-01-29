@@ -32,6 +32,9 @@
 # Optional variables:
 #  - AAOS_CLEAN: whether to clean before building.
 #  - AAOS_ARTIFACT_STORAGE: the persistent storage location for artifacts
+#  - REPO_SYNC_JOBS: the number of parallel repo sync jobs to use.
+#  - MAX_REPO_SYNC_JOBS: the maximum number of parallel repo sync jobs
+#         supported. (Default: 24).
 #
 # For Gerrit review change sets:
 #  - GERRIT_PROJECT: the name of the project to download.
@@ -63,9 +66,8 @@ for ((i=1; i<="${MAX_RETRIES}"; i++)); do
         rm .repo/local_manifests/remove_projects.xml > /dev/null 2>&1
     fi
 
-    # Clean previous changes.
     # This will automatically clean any previous downloaded changes.
-    if ! repo sync --no-tags --optimized-fetch --prune --retry-fetches=3 --auto-gc --no-clone-bundle --fail-fast --force-sync -j2
+    if ! repo sync --no-tags --optimized-fetch --prune --retry-fetches=3 --auto-gc --no-clone-bundle --fail-fast --force-sync "${REPO_SYNC_JOBS_ARG}"
     then
         echo "WARNING: repo sync failed, sleep 60s and retrying..."
         sleep 60
