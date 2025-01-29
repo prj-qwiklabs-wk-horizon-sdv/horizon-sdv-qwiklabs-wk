@@ -29,6 +29,9 @@
 #  - AAOS_CLEAN: whether to clean before building.
 #  - AAOS_ARTIFACT_STORAGE_SOLUTION: the persistent storage location for
 #         artifacts (GCS_BUCKET default).
+#  - REPO_SYNC_JOBS: the number of parallel repo sync jobs to use Default: 2).
+#  - MAX_REPO_SYNC_JOBS: the maximum number of parallel repo sync jobs
+#         supported. (Default: 24).
 #
 # For Gerrit review change sets:
 #  - GERRIT_PROJECT: the name of the project to download.
@@ -70,6 +73,13 @@ AAOS_GERRIT_MANIFEST_URL=$(echo "${AAOS_GERRIT_MANIFEST_URL}" | xargs)
 AAOS_GERRIT_MANIFEST_URL=${AAOS_GERRIT_MANIFEST_URL:-https://android.googlesource.com/platform/manifest}
 AAOS_GERRIT_RPI_MANIFEST_URL=$(echo "${AAOS_GERRIT_RPI_MANIFEST_URL}" | xargs)
 AAOS_GERRIT_RPI_MANIFEST_URL=${AAOS_GERRIT_RPI_MANIFEST_URL:-https://raw.githubusercontent.com/raspberry-vanilla/android_local_manifest/}
+
+# Google Repo Sync parallel jobs value
+REPO_SYNC_JOBS=${REPO_SYNC_JOBS:-2}
+MAX_REPO_SYNC_JOBS=${MAX_REPO_SYNC_JOBS:-24}
+# Set up the parallel sync job argument based on value.
+# Min 1, Max 24.
+REPO_SYNC_JOBS_ARG="-j$(( REPO_SYNC_JOBS < 1 ? 1 : REPO_SYNC_JOBS > MAX_REPO_SYNC_JOBS ? MAX_REPO_SYNC_JOBS : REPO_SYNC_JOBS ))"
 
 # Check we have a target defined.
 AAOS_LUNCH_TARGET=$(echo "${AAOS_LUNCH_TARGET}" | xargs)
@@ -353,6 +363,8 @@ Environment:
     GERRIT_PROJECT=${GERRIT_PROJECT}
     GERRIT_CHANGE_NUMBER=${GERRIT_CHANGE_NUMBER}
     GERRIT_PATCHSET_NUMBER=${GERRIT_PATCHSET_NUMBER}
+
+    REPO_SYNC_JOBS_ARG=${REPO_SYNC_JOBS_ARG}
 
     Storage Usage (${AAOS_CACHE_DIRECTORY}): $(df -h "${AAOS_CACHE_DIRECTORY}" | tail -1 | awk '{print "Used " $3 " of " $2}')
    "

@@ -121,6 +121,12 @@ pipeline {
            </ul>
            <b>Warning:</b> Only use when necessary.</p>''')
 
+    string(name: 'GERRIT_REPO_SYNC_JOBS',
+           defaultValue: "${env.REPO_SYNC_JOBS}",
+           description: '''<p>Number of parallel sync jobs for <i>repo sync</i>.<br/>
+           Default set to <tt>REPO_SYNC_JOBS</tt> environment variable value.<br/>
+           If undefined (or null), defaults to 1.</p>''')
+
     choice(name: 'INSTANCE_RETENTION_TIME',
            choices: ['0', '15', '30', '45', '60'],
            description: '''<p>Time in minutes to retain the instance after build completion.<br/>
@@ -131,7 +137,7 @@ pipeline {
            <ul><li>GCS_BUCKET will store to cloud bucket storage</li>
            <li>Empty will result in nothing stored</li></ul></p>''')
 
-    // From manual upstream open review change.
+    // Fetch patchset from upstream open review change.
     string(name: 'GERRIT_PROJECT', defaultValue: '',
            description: '<p>Gerrit Project with open review.</p>')
     string(name: 'GERRIT_CHANGE_NUMBER', defaultValue: '',
@@ -194,6 +200,7 @@ pipeline {
                     AAOS_LUNCH_TARGET="${AAOS_LUNCH_TARGET}" \
                     AAOS_CLEAN="NO_CLEAN" \
                     ADDITIONAL_INITIALISE_COMMANDS="${ADDITIONAL_INITIALISE_COMMANDS}" \
+                    REPO_SYNC_JOBS="${GERRIT_REPO_SYNC_JOBS}" \
                     ./workloads/android/pipelines/builds/aaos_builder/aaos_initialise.sh
                   '''
                 }

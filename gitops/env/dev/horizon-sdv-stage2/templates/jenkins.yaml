@@ -162,6 +162,8 @@ spec:
                   globalNodeProperties:
                     - envVars:
                         env:
+                        - key: "ANDROID_BUILD_BUCKET_ROOT_NAME"
+                          value: "sdva-2108202401-aaos"
                         - key: "ANDROID_BUILD_DOCKER_ARTIFACT_PATH_NAME"
                           value: "horizon-sdv-dev/aaos_builder"
                         - key: "CLOUD_REGION"
@@ -176,8 +178,8 @@ spec:
                           value: "jenkins-sa"
                         - key: "JENKINS_CACHE_STORAGE_CLASS_NAME"
                           value: "reclaimable-storage-class"
-                        - key: "ANDROID_BUILD_BUCKET_ROOT_NAME"
-                          value: "sdva-2108202401-aaos"
+                        - key: "REPO_SYNC_JOBS"
+                          value: "2"
                 groovy:
                   - script: >
                       println("This is groovy !");
