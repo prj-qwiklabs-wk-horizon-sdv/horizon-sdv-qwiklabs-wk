@@ -313,7 +313,7 @@ spec:
                             nodeParameterName('')
                             label('')
                             quietPeriod('60')
-                            runOnChoice('Run when node brought online')
+                            runOnChoice('True')
                           }
                         }                        
                         definition {
