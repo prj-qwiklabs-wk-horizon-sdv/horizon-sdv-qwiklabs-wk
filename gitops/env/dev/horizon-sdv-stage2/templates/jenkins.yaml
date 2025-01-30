@@ -309,13 +309,13 @@ spec:
                       pipelineJob('Android/Builds/Gerrit') {
                         description('<p>Gerrit triggered build and test. Triggered by Gerrit commits.</p>')
                         triggers {
-                            hudsonStartupTrigger {
-                              nodeParameterName('built-in')
-                              label('')
-                              quietPeriod('60')
-                              runOnChoice('True')
-                            }
-                        }                        
+                          hudsonStartupTrigger {
+                            nodeParameterName('built-in')
+                            label('')
+                            quietPeriod('90')
+                            runOnChoice('True')
+                          }
+                        }
                         definition {
                           cpsScm {
                             lightweight()
