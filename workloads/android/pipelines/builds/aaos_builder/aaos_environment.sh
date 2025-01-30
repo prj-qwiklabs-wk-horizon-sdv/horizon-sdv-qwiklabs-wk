@@ -166,14 +166,21 @@ if [ -d "${AAOS_CACHE_DIRECTORY}" ]; then
       "${AAOS_BUILDS_RPI_DIRECTORY}" ! -name 'lost+found' -exec rm -rf {} + || true
 fi
 
+RSYNC_DELETE=${RSYNC_DELETE:-false}
 function remove_directory() {
     echo "Remove directory ${1} ..."
-    mkdir -p "${EMPTY_DIR}"
-    # Faster than rm -rf
-    rsync -aq --delete "${EMPTY_DIR}"/ "${1}"/ || true
-    # Final, remove directories.
-    rm -rf "${EMPTY_DIR}"
-    rm -rf "${1}"
+    if [[ "${RSYNC_DELETE}" == "true" ]]; then
+        echo "Delete with rsync ..."
+        mkdir -p "${EMPTY_DIR}"
+        # Faster than rm -rf
+        time rsync --max-alloc=0 -aq --delete "${EMPTY_DIR}"/ "${1}"/ || true
+        # Final, remove directories.
+        rm -rf "${EMPTY_DIR}"
+        rm -rf "${1}"
+    else
+        echo "Delete with find ..."
+        time find "${1}" -delete
+    fi
     echo "Removed directory ${1}."
 }
 
