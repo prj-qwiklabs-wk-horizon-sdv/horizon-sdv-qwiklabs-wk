@@ -312,7 +312,7 @@ spec:
                           hudsonStartupTrigger {
                             nodeParameterName('built-in')
                             label('')
-                            quietPeriod('90')
+                            quietPeriod('360')
                             runOnChoice('True')
                           }
                         }                        
