@@ -310,10 +310,10 @@ spec:
                         description('<p>Gerrit triggered build and test.Triggered by Gerrit commits.</p>')
                         triggers {
                           hudsonStartupTrigger {
-                            nodeParameterName('built-in')
+                            nodeParameterName('')
                             label('')
                             quietPeriod('60')
-                            runOnChoice('')
+                            runOnChoice('Run when node brought online')
                           }
                         }                        
                         definition {
