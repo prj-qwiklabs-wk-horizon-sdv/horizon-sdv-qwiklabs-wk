@@ -122,9 +122,6 @@ declare cuttlefish_unique_name=${UNIQUE_NAME//./-}
 if [[ "${cuttlefish_unique_name}" == "cuttlefish-vm" ]]; then
     # If unique name is default, append version.
     cuttlefish_unique_name="${cuttlefish_unique_name}"-"${cuttlefish_version}"-debian
-else
-    # Use the requested name.
-    cuttlefish_unique_name="${cuttlefish_unique_name}"
 fi
 declare -r vm_cuttlefish_image=image-"${cuttlefish_unique_name}"
 declare -r vm_cuttlefish_instance_template=instance-template-"${cuttlefish_unique_name}"

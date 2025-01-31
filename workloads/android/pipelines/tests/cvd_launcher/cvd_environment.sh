@@ -35,9 +35,6 @@ CUTTLEFISH_KEEP_ALIVE_TIME=${CUTTLEFISH_KEEP_ALIVE_TIME:-20}
 # https://source.android.com/docs/compatibility/cts/downloads
 CTS_ANDROID_15_URL="https://dl.google.com/dl/android/cts/android-cts-15_r2-linux_x86-x86.zip"
 CTS_ANDROID_14_URL="https://dl.google.com/dl/android/cts/android-cts-14_r6-linux_x86-x86.zip"
-# Store logs in Bucket.
-CUTTLEFISH_ARTIFACT_REGION=${CLOUD_REGION:--europe-west1}
-CUTTLEFISH_ARTIFACT_ROOT_NAME=cuttlefish_logs
 JOB_NAME=${JOB_NAME:-AAOS_CVD}
 
 # Architecture x86_64 is only supported at this time.
@@ -61,33 +58,52 @@ else
 fi
 
 # Show variables.
-VARIABLES="
-Environment:
-    CUTTLEFISH_REPO_URL=${CUTTLEFISH_REPO_URL}
-    CUTTLEFISH_REPO_NAME=${CUTTLEFISH_REPO_NAME}
-    CUTTLEFISH_REVISION=${CUTTLEFISH_REVISION}
-    CUTTLEFISH_UPDATE=${CUTTLEFISH_UPDATE}
+VARIABLES="Environment:
+        CTS_ANDROID_15_URL=${CTS_ANDROID_15_URL}
+        CTS_ANDROID_14_URL=${CTS_ANDROID_14_URL}
 
-    CUTTLEFISH_ARTIFACT_REGION=${CUTTLEFISH_ARTIFACT_REGION}
-    CUTTLEFISH_ARTIFACT_ROOT_NAME=${CUTTLEFISH_ARTIFACT_ROOT_NAME}
+        ARCHITECTURE=${ARCHITECTURE}
+"
 
-    CUTTLEFISH_MAX_BOOT_TIME=${CUTTLEFISH_MAX_BOOT_TIME}
-    CUTTLEFISH_KEEP_ALIVE_TIME=${CUTTLEFISH_KEEP_ALIVE_TIME}
+case "$0" in
+    *create_instance_template.sh.sh)
+        VARIABLES+="
+        CUTTLEFISH_REVISION=${CUTTLEFISH_REVISION}
 
-    CTS URLs (download and install on host):
-    CTS_ANDROID_15_URL=${CTS_ANDROID_15_URL}
-    CTS_ANDROID_14_URL=${CTS_ANDROID_14_URL}
+        CVD_PATH=${CVD_PATH}
+        "
+        ;;
+    *initialise.sh)
+        VARIABLES+="
+        CUTTLEFISH_REPO_URL=${CUTTLEFISH_REPO_URL}
+        CUTTLEFISH_REPO_NAME=${CUTTLEFISH_REPO_NAME}
+        CUTTLEFISH_REVISION=${CUTTLEFISH_REVISION}
+        CUTTLEFISH_UPDATE=${CUTTLEFISH_UPDATE}
 
-    ARCHITECTURE=${ARCHITECTURE}
+        "
+        ;;
+    *start_stop.sh)
+        VARIABLES+="
+        CUTTLEFISH_MAX_BOOT_TIME=${CUTTLEFISH_MAX_BOOT_TIME}
+        CUTTLEFISH_KEEP_ALIVE_TIME=${CUTTLEFISH_KEEP_ALIVE_TIME}
 
-    CVD variables:
-    CUTTLEFISH_DOWNLOAD_URL=${CUTTLEFISH_DOWNLOAD_URL}
-    CVD_PATH=${CVD_PATH}
-    NUM_INSTANCES=${NUM_INSTANCES} (--num_instances=${NUM_INSTANCES})
-    VM_CPUS=${VM_CPUS} (--cpu ${VM_CPUS})
-    VM_MEMORY_MB=${VM_MEMORY_MB} (--memory_mb ${VM_MEMORY_MB})
-    /proc/cpuproc vmx: $(grep -cw vmx /proc/cpuinfo)
+        CUTTLEFISH_DOWNLOAD_URL=${CUTTLEFISH_DOWNLOAD_URL}
 
-    Storage Usage (/dev/sda1): $(df -h /dev/sda1 | tail -1 | awk '{print "Used " $3 " of " $2}')
-   "
+        NUM_INSTANCES=${NUM_INSTANCES} (--num_instances=${NUM_INSTANCES})
+        VM_CPUS=${VM_CPUS} (--cpu ${VM_CPUS})
+        VM_MEMORY_MB=${VM_MEMORY_MB} (--memory_mb ${VM_MEMORY_MB})
+        "
+        ;;
+    *)
+        ;;
+esac
+
+VARIABLES+="
+        WORKSPACE=${WORKSPACE}
+
+        /proc/cpuproc vmx: $(grep -cw vmx /proc/cpuinfo)
+
+        Storage Usage (/dev/sda1): $(df -h /dev/sda1 | tail -1 | awk '{print "Used " $3 " of " $2}')
+"
+
 echo "${VARIABLES}"

@@ -17,7 +17,7 @@
 # Description:
 # Initialise Android CTS for use when testing Cuttlefish Virtual Device
 # (CVD) on host.
-#
+
 # Include common functions and variables.
 # shellcheck disable=SC1091
 source "$(dirname "${BASH_SOURCE[0]}")"/cts_environment.sh "$0"
@@ -40,14 +40,7 @@ function cts_initialise() {
         echo "Installed Android CTS from ${CTS_DOWNLOAD_URL}."
     else
         # Create symlink
-        case "${CTS_VERSION}" in
-            15)
-                ln -sf android-cts_r15/android-cts android-cts
-                ;;
-            14|*)
-                ln -sf android-cts_r14/android-cts android-cts
-                ;;
-        esac
+        ln -sf android-cts_r"${CTS_VERSION}"/android-cts "${CTS_PATHNAME}"
     fi
     # Setup JDK path
     echo "export PATH=${PATH}:${HOME}/android-cts/jdk/bin" >> "${HOME}/.bashrc"
