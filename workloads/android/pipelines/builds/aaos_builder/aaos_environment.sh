@@ -38,10 +38,6 @@
 #  - GERRIT_CHANGE_NUMBER: the change number of the changeset to download.
 #  - GERRIT_PATCHSET_NUMBER: the patchset number of the changeset to download.
 #
-#  Jenkins Global node properties, configured as code:
-#  - CLOUD_PROJECT: the GCP project ID, eg. sdvc-2108202401
-#  - CLOUD_REGION: the GCP project location, eg. europe-west1
-#  - ANDROID_BUILD_DOCKER_ARTIFACT_PATH_NAME: Docker artifact path
 
 # Store BUILD_NUMBER for path in aaos_storage.sh
 # shellcheck disable=SC2034
@@ -132,6 +128,11 @@ if [ -d "${AAOS_CACHE_DIRECTORY}" ]; then
     # Note: builder Dockerfile defines USER name
     sudo chown builder:builder /"${AAOS_CACHE_DIRECTORY}"
     sudo chmod g+s /"${AAOS_CACHE_DIRECTORY}"
+
+    # Remove unwanted directories that may have been created for dev.
+    # Retain the official cache directories.
+    find "${AAOS_CACHE_DIRECTORY}" -mindepth 1 -maxdepth 1 -type d ! -name "${AAOS_BUILDS_DIRECTORY}" ! -name \
+        "${AAOS_BUILDS_RPI_DIRECTORY}" ! -name 'lost+found' -exec rm -rf {} + || true
 else
     # Local build or no PVC mounted, build in user home.
     AAOS_CACHE_DIRECTORY="${HOME}"
@@ -159,60 +160,6 @@ AAOS_CLEAN=${AAOS_CLEAN:-NO_CLEAN}
 # separate from each other.
 export OUT_DIR="out_sdv-${AAOS_LUNCH_TARGET}"
 
-# Remove unwanted directories that may have been created for dev.
-# Retain the official cache directories.
-if [ -d "${AAOS_CACHE_DIRECTORY}" ]; then
-  find "${AAOS_CACHE_DIRECTORY}" -mindepth 1 -maxdepth 1 -type d ! -name "${AAOS_BUILDS_DIRECTORY}" ! -name \
-      "${AAOS_BUILDS_RPI_DIRECTORY}" ! -name 'lost+found' -exec rm -rf {} + || true
-fi
-
-RSYNC_DELETE=${RSYNC_DELETE:-false}
-function remove_directory() {
-    echo "Remove directory ${1} ..."
-    if [[ "${RSYNC_DELETE}" == "true" ]]; then
-        echo "Delete with rsync ..."
-        mkdir -p "${EMPTY_DIR}"
-        # Faster than rm -rf
-        time rsync --max-alloc=0 -aq --delete "${EMPTY_DIR}"/ "${1}"/ || true
-        # Final, remove directories.
-        rm -rf "${EMPTY_DIR}"
-        rm -rf "${1}"
-    else
-        echo "Delete with find ..."
-        time find "${1}" -delete
-    fi
-    echo "Removed directory ${1}."
-}
-
-# Clean Workspace or specific build target directory.
-case "${AAOS_CLEAN}" in
-    CLEAN_ALL)
-        for directory in "${DIRECTORY_LIST[@]}"; do
-            remove_directory "${directory}"
-        done
-        ;;
-    CLEAN_BUILD)
-        remove_directory "${WORKSPACE}"/"${OUT_DIR}"
-        ;;
-    NO_CLEAN)
-        echo "Reusing existing ${WORKSPACE}..."
-        ;;
-    *)
-        ;;
-esac
-
-function create_workspace() {
-    mkdir -p "${WORKSPACE}" > /dev/null 2>&1
-    cd "${WORKSPACE}" || exit
-}
-
-function recreate_workspace() {
-    remove_directory "${WORKSPACE}"
-    create_workspace
-}
-
-create_workspace
-
 # Architecture:
 AAOS_ARCH=""
 if [[ "${AAOS_LUNCH_TARGET}" =~ "arm64" ]]; then
@@ -227,14 +174,13 @@ elif [[ "${AAOS_LUNCH_TARGET}" =~ "tangor" ]]; then
     AAOS_ARCH="arm64"
 fi
 
-# Declare articact array.
-declare -a AAOS_ARTIFACT_LIST
-
-# Define the make command line for given target
-AAOS_MAKE_CMDLINE=""
-
 # If Jenkins, or local, the artifacts differ so update.
 USER=$(whoami)
+
+# Declare articact array.
+declare -a AAOS_ARTIFACT_LIST
+# Define the make command line for given target
+AAOS_MAKE_CMDLINE=""
 # Post build commands
 declare -a POST_BUILD_COMMANDS
 # Post storage commands
@@ -353,39 +299,121 @@ AAOS_ARTIFACT_STORAGE_SOLUTION=$(echo "${AAOS_ARTIFACT_STORAGE_SOLUTION}" | xarg
 
 # Artifact storage bucket
 AAOS_ARTIFACT_ROOT_NAME=${AAOS_ARTIFACT_ROOT_NAME:-sdva-2108202401-aaos}
-AAOS_ARTIFACT_REGION=${CLOUD_REGION:-europe-west1}
 
-# Show variables.
-VARIABLES="
-Environment:
-    AAOS_GERRIT_MANIFEST_URL=${AAOS_GERRIT_MANIFEST_URL}
-    AAOS_GERRIT_RPI_MANIFEST_URL=${AAOS_GERRIT_RPI_MANIFEST_URL}
+# Show variables that are applicable to each script.
+VARIABLES="Environment:
+        AAOS_LUNCH_TARGET=${AAOS_LUNCH_TARGET}
+"
 
-    AAOS_LUNCH_TARGET=${AAOS_LUNCH_TARGET}
-    AAOS_REVISION=${AAOS_REVISION}
-    AAOS_RPI_REVISION=${AAOS_RPI_REVISION}
-    AAOS_ARCH=${AAOS_ARCH}
-    AAOS_MAKE_CMDLINE=${AAOS_MAKE_CMDLINE}
+case "$0" in
+    *environment.sh)
+        VARIABLES+="
+        AAOS_CLEAN=${AAOS_CLEAN}
+        "
+        ;;
+    *initialise.sh)
+        VARIABLES+="
+        AAOS_GERRIT_MANIFEST_URL=${AAOS_GERRIT_MANIFEST_URL}
+        AAOS_GERRIT_RPI_MANIFEST_URL=${AAOS_GERRIT_RPI_MANIFEST_URL}
 
-    ANDROID_VERSION=${ANDROID_VERSION}
-    ANDROID_API_LEVEL=${ANDROID_API_LEVEL}
+        AAOS_REVISION=${AAOS_REVISION}
+        AAOS_RPI_REVISION=${AAOS_RPI_REVISION}
 
-    POST_INITIALISE_COMMANDS=${POST_INITIALISE_COMMANDS}
+        POST_INITIALISE_COMMANDS=${POST_INITIALISE_COMMANDS}
 
-    hostname=$(hostname)
+        REPO_SYNC_JOBS_ARG=${REPO_SYNC_JOBS_ARG}
 
-    WORKSPACE=${WORKSPACE}
+        GERRIT_PROJECT=${GERRIT_PROJECT}
+        GERRIT_CHANGE_NUMBER=${GERRIT_CHANGE_NUMBER}
+        GERRIT_PATCHSET_NUMBER=${GERRIT_PATCHSET_NUMBER}
+        "
+        ;;
+    *build.sh)
+        AAOS_CLEAN=NO_CLEAN
+        VARIABLES+="
+        AAOS_MAKE_CMDLINE=${AAOS_MAKE_CMDLINE}
+        "
+        ;;
+    *avd_sdk.sh)
+        AAOS_CLEAN=NO_CLEAN
+        VARIABLES+="
+        ANDROID_VERSION=${ANDROID_VERSION}
+        ANDROID_API_LEVEL=${ANDROID_API_LEVEL}
 
-    AAOS_ARTIFACT_STORAGE_SOLUTION=${AAOS_ARTIFACT_STORAGE_SOLUTION}
-    AAOS_ARTIFACT_ROOT_NAME=${AAOS_ARTIFACT_ROOT_NAME}
-    AAOS_ARTIFACT_REGION=${AAOS_ARTIFACT_REGION}
+        AAOS_SDK_SYSTEM_IMAGE_PREFIX=${AAOS_SDK_SYSTEM_IMAGE_PREFIX}
+        AAOS_SDK_ADDON_FILE=${AAOS_SDK_ADDON_FILE}
+        "
+        ;;
 
-    GERRIT_PROJECT=${GERRIT_PROJECT}
-    GERRIT_CHANGE_NUMBER=${GERRIT_CHANGE_NUMBER}
-    GERRIT_PATCHSET_NUMBER=${GERRIT_PATCHSET_NUMBER}
+    *storage.sh)
+        AAOS_CLEAN=NO_CLEAN
+        VARIABLES+="
+        AAOS_BUILD_NUMBER=${AAOS_BUILD_NUMBER}
 
-    REPO_SYNC_JOBS_ARG=${REPO_SYNC_JOBS_ARG}
+        AAOS_ARCH=${AAOS_ARCH}
 
-    Storage Usage (${AAOS_CACHE_DIRECTORY}): $(df -h "${AAOS_CACHE_DIRECTORY}" | tail -1 | awk '{print "Used " $3 " of " $2}')
-   "
+        AAOS_ARTIFACT_STORAGE_SOLUTION=${AAOS_ARTIFACT_STORAGE_SOLUTION}
+        AAOS_ARTIFACT_ROOT_NAME=${AAOS_ARTIFACT_ROOT_NAME}
+        "
+        ;;
+    *)
+        ;;
+esac
+
+VARIABLES+="
+        WORKSPACE=${WORKSPACE}
+        hostname=$(hostname)
+
+        Storage Usage (${AAOS_CACHE_DIRECTORY}): $(df -h "${AAOS_CACHE_DIRECTORY}" | tail -1 | awk '{print "Used " $3 " of " $2}')
+"
+
 echo "${VARIABLES}"
+
+# Remove directories if requested.
+RSYNC_DELETE=${RSYNC_DELETE:-false}
+function remove_directory() {
+    echo "Remove directory ${1} ..."
+    if [[ "${RSYNC_DELETE}" == "true" ]]; then
+        echo "Delete with rsync ..."
+        mkdir -p "${EMPTY_DIR}"
+        # Faster than rm -rf
+        time rsync --max-alloc=0 -aq --delete "${EMPTY_DIR}"/ "${1}"/ || true
+        # Final, remove directories.
+        rm -rf "${EMPTY_DIR}"
+        rm -rf "${1}"
+    else
+        echo "Delete with find ..."
+        time find "${1}" -delete
+    fi
+    echo "Removed directory ${1}."
+}
+
+# Clean Workspace or specific build target directory.
+case "${AAOS_CLEAN}" in
+    CLEAN_ALL)
+        for directory in "${DIRECTORY_LIST[@]}"; do
+            remove_directory "${directory}"
+        done
+        ;;
+    CLEAN_BUILD)
+        remove_directory "${WORKSPACE}"/"${OUT_DIR}"
+        ;;
+    NO_CLEAN)
+        echo "Reusing existing ${WORKSPACE}..."
+        ;;
+    *)
+        ;;
+esac
+
+function create_workspace() {
+    mkdir -p "${WORKSPACE}" > /dev/null 2>&1
+    cd "${WORKSPACE}" || exit
+}
+
+function recreate_workspace() {
+    remove_directory "${WORKSPACE}"
+    create_workspace
+}
+
+create_workspace
+

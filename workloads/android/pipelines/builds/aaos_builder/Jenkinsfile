@@ -250,7 +250,6 @@ pipeline {
                   AAOS_LUNCH_TARGET="${AAOS_LUNCH_TARGET}" \
                   AAOS_ARTIFACT_ROOT_NAME="${ANDROID_BUILD_BUCKET_ROOT_NAME}" \
                   AAOS_ARTIFACT_STORAGE_SOLUTION="${AAOS_ARTIFACT_STORAGE_SOLUTION}" \
-                  CLOUD_REGION="${CLOUD_REGION}" \
                   AAOS_CLEAN="NO_CLEAN" \
                   ./workloads/android/pipelines/builds/aaos_builder/aaos_storage.sh
                 '''

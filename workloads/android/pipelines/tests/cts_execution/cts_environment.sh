@@ -27,12 +27,18 @@ CTS_MODULE=${CTS_MODULE:-}
 # android.app.RemoteActionTest#testClone}
 CTS_TEST=${CTS_TEST:-}
 CTS_TIMEOUT=${CTS_TIMEOUT:-60}
+CTS_VERSION=${CTS_VERSION:-14}
 
 # Architecture x86_64 is only supported at this time.
 ARCHITECTURE=${ARCHITECTURE:-x86_64}
 
 # Shards should match CVD --num_instances (NUM_INSTANCES).
 SHARD_COUNT=${SHARD_COUNT:-8}
+
+if [ -z "${WORKSPACE}" ]; then
+    WORKSPACE="${HOME}"
+fi
+
 
 # Don't risk downloading CTS locally!
 if [ "$(uname -s)" = "Darwin" ]; then
@@ -41,20 +47,36 @@ if [ "$(uname -s)" = "Darwin" ]; then
 fi
 
 # Show variables.
-VARIABLES="
-Environment:
-    CTS_DOWNLOAD_URL=${CTS_DOWNLOAD_URL}
-    CTS_PATHNAME=${CTS_PATHNAME}
+VARIABLES="Environment:
+        ARCHITECTURE=${ARCHITECTURE}
+"
 
-    ARCHITECTURE=${ARCHITECTURE}
+case "$0" in
+    *initialise.sh)
+        VARIABLES+="
+        CTS_DOWNLOAD_URL=${CTS_DOWNLOAD_URL}
+        CTS_VERSION=${CTS_VERSION}
+        CTS_PATHNAME=${CTS_PATHNAME}
+        "
+        ;;
+    *execution.sh)
+        VARIABLES+="
+        CTS_TESTPLAN=${CTS_TESTPLAN}
+        CTS_MODULE=${CTS_MODULE}
+        CTS_TEST=${CTS_TEST}
+        CTS_TIMEOUT=${CTS_TIMEOUT}
 
-    CTS variables:
-    CTS_TESTPLAN=${CTS_TESTPLAN}
-    CTS_MODULE=${CTS_MODULE}
-    CTS_TEST=${CTS_TEST}
-    CTS_TIMEOUT=${CTS_TIMEOUT}
-    SHARD_COUNT=${SHARD_COUNT} (--shard-count ${SHARD_COUNT})
+        SHARD_COUNT=${SHARD_COUNT} (--shard-count ${SHARD_COUNT})
+        "
+        ;;
+    *)
+        ;;
+esac
 
-    Storage Usage (/dev/sda1): $(df -h /dev/sda1 | tail -1 | awk '{print "Used " $3 " of " $2}')
-   "
+VARIABLES+="
+        WORKSPACE=${WORKSPACE}
+
+        Storage Usage (/dev/sda1): $(df -h /dev/sda1 | tail -1 | awk '{print "Used " $3 " of " $2}')
+"
+
 echo "${VARIABLES}"
