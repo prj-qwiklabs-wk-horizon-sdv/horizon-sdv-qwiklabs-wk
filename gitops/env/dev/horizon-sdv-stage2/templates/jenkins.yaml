@@ -311,9 +311,9 @@ spec:
                         triggers {
                           hudsonStartupTrigger {
                             nodeParameterName('Built-In Node')
-                            label('')
-                            quietPeriod('60')
-                            runOnChoice('True')
+                            label('Built-In Node')
+                            quietPeriod('30')
+                            runOnChoice('False')
                           }
                         }                        
                         definition {
