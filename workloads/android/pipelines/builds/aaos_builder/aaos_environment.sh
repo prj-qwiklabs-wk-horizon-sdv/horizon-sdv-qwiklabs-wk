@@ -299,6 +299,7 @@ case "${AAOS_LUNCH_TARGET}" in
         esac
         POST_BUILD_COMMANDS=(
             "tar -zcf ${OUT_DIR}.tgz \
+                ${OUT_DIR}/target/product/tangorpro/android-info.txt \
                 ${OUT_DIR}/target/product/tangorpro/fastboot-info.txt \
                 ${OUT_DIR}/target/product/tangorpro/boot.img \
                 ${OUT_DIR}/target/product/tangorpro/init_boot.img \
