@@ -310,8 +310,8 @@ spec:
                         description('<p>Gerrit triggered build and test.Triggered by Gerrit commits.</p>')
                         triggers {
                           hudsonStartupTrigger {
-                            nodeParameterName('Built-In Node')
-                            label('Built-In Node')
+                            nodeParameterName('built-in')
+                            label('built-in')
                             quietPeriod('10')
                             runOnChoice('False')
                           }
