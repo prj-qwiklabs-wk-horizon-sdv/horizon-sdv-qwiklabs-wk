@@ -50,7 +50,7 @@ for ((i=1; i<="${MAX_RETRIES}"; i++)); do
     # Initialise repo checkout.
     repo init -u "${AAOS_GERRIT_MANIFEST_URL}" -b "${AAOS_REVISION}" --depth=1
 
-    for command in "${POST_REPO_INIT_COMMANDS_LIST[@]}"; do
+    for command in "${POST_REPO_INITIALISE_COMMANDS_LIST[@]}"; do
         echo "${command}"
         eval "${command}"
     done
