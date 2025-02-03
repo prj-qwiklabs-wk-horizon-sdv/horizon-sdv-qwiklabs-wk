@@ -64,24 +64,24 @@ Examples:
     -   `aosp_tangorpro_car-ap2a-userdebug`
     -   `aosp_tangorpro_car-ap3a-userdebug`
 -   Raspberry Pi:
-    -   `aosp_rpi4_car-ap3a-userdebug`
     -   `aosp_rpi5_car-ap3a-userdebug`
 
 ## ANDROID_VERSION
 
 This is required for the SDK Car AVD builds so that the correct `devices.xml` and SDK Addon can be generated for use with Android Studio.
 
-## ADDITIONAL_INITIALISE_COMMANDS
+## POST_REPO_INITIALISE_COMMAND
 
-This allows the user to include additional commands tun run after the rep has been initialised.
+This allows the user to include additional commands to run after the repo has been initialised.
+
+
+## POST_REPO_SYNC_COMMAND
+
+This allows the user to include additional commands to run after the repo has been synced.
 
 ## OVERRIDE_MAKE_COMMAND
 
 This allows the user to override the default target make command.
-
-## AAOS_RPI_REVISION
-
-See  [RPi](https://github.com/raspberry-vanilla/android_local_manifest), define the tag/branch to use. This must align with `AAOS_REVISION`.
 
 ## AAOS_CLEAN
 
