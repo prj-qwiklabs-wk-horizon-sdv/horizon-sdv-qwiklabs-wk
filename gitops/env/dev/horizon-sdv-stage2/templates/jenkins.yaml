@@ -184,7 +184,7 @@ spec:
                   - script: >
                       println("This is groovy !");
                       def job = Jenkins.instance.getItemByFullName("Android/Builds/Gerrit")
-                      job.scheduleBuild(10)
+                      job.scheduleBuild(120)
                 jobs:
                   - script: >
                       folder('Android') {
