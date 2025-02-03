@@ -313,7 +313,7 @@ spec:
                             nodeParameterName("built-in")
                             label("built-in")
                             quietPeriod("0")
-                            runOnChoice("True")
+                            runOnChoice("ON_CONNECT")
                           }
                         }                        
                         definition {
