@@ -314,7 +314,7 @@ spec:
                           hudsonStartupTrigger {
                             nodeParameterName("master")
                             label("")
-                            quietPeriod("5")
+                            quietPeriod("3")
                             runOnChoice("ON_BOTH")
                           }
                         }                        
