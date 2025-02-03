@@ -312,8 +312,8 @@ spec:
                           hudsonStartupTrigger {
                             nodeParameterName("built-in")
                             label("built-in")
-                            quietPeriod("3")
-                            runOnChoice("ON_ONLINE")
+                            quietPeriod("5")
+                            runOnChoice("ON_BOTH")
                           }
                         }                        
                         definition {
