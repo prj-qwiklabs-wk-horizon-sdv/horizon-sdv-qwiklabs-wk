@@ -311,10 +311,10 @@ spec:
                         description('<p>Gerrit triggered build and test.Triggered by Gerrit commits.</p>')
                         triggers {
                           hudsonStartupTrigger {
-                            nodeParameterName("master")
-                            label("master")
-                            quietPeriod("1")
-                            runOnChoice("ON_BOTH")
+                            nodeParameterName("")
+                            label("")
+                            quietPeriod("0")
+                            runOnChoice("ON_CONNECT")
                           }
                         }                        
                         definition {
