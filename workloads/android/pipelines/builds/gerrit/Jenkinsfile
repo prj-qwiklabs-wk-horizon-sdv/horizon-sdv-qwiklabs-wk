@@ -159,6 +159,7 @@ pipeline {
                   export AAOS_BUILD_NUMBER=${BUILD_NUMBER}/${AAOS_LUNCH_TARGET}
                   export AAOS_CLEAN="NO_CLEAN"
                   ./workloads/android/pipelines/builds/aaos_builder/aaos_build.sh
+                  ./workloads/android/pipelines/builds/aaos_builder/aaos_avd_sdk.sh || true
                   ./workloads/android/pipelines/builds/aaos_builder/aaos_storage.sh
                 '''
                 archiveArtifacts artifacts: '*artifacts*.txt', followSymlinks: false, onlyIfSuccessful: false, allowEmptyArchive: true
