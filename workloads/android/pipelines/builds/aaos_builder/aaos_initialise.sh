@@ -27,6 +27,7 @@
 #
 #  - AAOS_GERRIT_MANIFEST_URL: the URL of the AAOS manifest.
 #  - AAOS_REVISION: the branch or version of the AAOS manifest.
+#  - AAOS_LUNCH_TARGET: the target device.
 #
 # Optional variables:
 #  - AAOS_CLEAN: whether to clean before building. Only CLEAN_BUILD or
@@ -46,10 +47,12 @@
 # Example usage:
 # AAOS_GERRIT_MANIFEST_URL=https://dev.horizon-sdv.scpmtk.com/android/platform/manifest \
 # AAOS_REVISION=horizon/android-14.0.0_r30 \
+# AAOS_LUNCH_TARGET=aosp_cf_x86_64_auto-ap1a-userdebug \
 # ./workloads/android/pipelines/builds/aaos_builder/aaos_initialise.sh
 #
 # AAOS_GERRIT_MANIFEST_URL=https://dev.horizon-sdv.scpmtk.com/android/platform/manifest \
 # AAOS_REVISION=horizon/android-14.0.0_r30 \
+# AAOS_LUNCH_TARGET=aosp_tangorpro_car-ap1a-userdebug \
 # GERRIT_CHANGE_NUMBER=82 \
 # GERRIT_PATCHSET_NUMBER=1 \
 # GERRIT_PROJECT=android/platform/packages/services/Car \
