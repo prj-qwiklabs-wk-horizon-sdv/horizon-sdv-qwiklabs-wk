@@ -182,7 +182,8 @@ spec:
                           value: "2"
                 groovy:
                   - script: >
-                      println("This is groovy !");                      
+                      println("This is groovy !");
+                      curl -X POST -L --user lukasz.domke@accenture.com:1166089b35246a16ef950f6b24d9bf779e https://dev.horizon-sdv.scpmtk.com/jenkins/job/Android/job/Builds/job/Gerrit/build?delay=0sec
                 jobs:
                   - script: >
                       folder('Android') {
