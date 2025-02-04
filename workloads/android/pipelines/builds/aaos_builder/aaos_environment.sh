@@ -179,7 +179,7 @@ fi
 USER=$(whoami)
 
 # Post repo init commands
-declare -a POST_REPO_INITITIALISE_COMMANDS_LIST=(
+declare -a POST_REPO_INITIALISE_COMMANDS_LIST=(
     "rm .repo/local_manifests/manifest_brcm_rpi.xml > /dev/null 2>&1"
     "rm .repo/local_manifests/remove_projects.xml > /dev/null 2>&1"
 )
@@ -307,7 +307,7 @@ esac
 
 # Additional repo init/sync commands.
 if [ -n "${POST_REPO_INITIALISE_COMMAND}" ]; then
-    POST_REPO_INITITIALISE_COMMANDS_LIST=("${POST_REPO_INITIALISE_COMMAND}")
+    POST_REPO_INITIALISE_COMMANDS_LIST=("${POST_REPO_INITIALISE_COMMAND}")
 fi
 
 if [ -n "${POST_REPO_SYNC_COMMAND}" ]; then
