@@ -29,6 +29,16 @@
 #  4. Creates the SDK Addons file.
 #  5. Adds SDK addons to archives for upload.
 #
+# The following variables must be set before running this script:
+#  - AAOS_LUNCH_TARGET: the target device.
+#  - ANDROID_VERSION: the Android version (default: 14).
+#        Determines the API level.
+#
+# Example usage:
+# AAOS_LUNCH_TARGET=sdk_car_x86_64-ap1a-userdebug \
+# ANDROID_VERSION=14 \
+# ./workloads/android/pipelines/builds/aaos_builder/aaos_avd_sdk.sh
+
 # Include common functions and variables.
 # shellcheck disable=SC1091
 source "$(dirname "${BASH_SOURCE[0]}")"/aaos_environment.sh "$0"
