@@ -79,7 +79,6 @@ case "$0" in
         CUTTLEFISH_REPO_NAME=${CUTTLEFISH_REPO_NAME}
         CUTTLEFISH_REVISION=${CUTTLEFISH_REVISION}
         CUTTLEFISH_UPDATE=${CUTTLEFISH_UPDATE}
-
         "
         ;;
     *start_stop.sh)

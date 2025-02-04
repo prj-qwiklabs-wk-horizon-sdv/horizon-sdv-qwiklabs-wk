@@ -17,7 +17,8 @@
 # Description:
 # Common functions and variables for use with AAOS build scripts.
 #
-# The following variables must be set before running this script:
+# The following variables must be set before this script is referenced by
+# the calling scripts.
 #
 #  - AAOS_GERRIT_MANIFEST_URL: the URL of the AAOS manifest.
 #  - AAOS_REVISION: the branch or tag/version of the AAOS manifest.
@@ -27,6 +28,8 @@
 #  - AAOS_CLEAN: whether to clean before building.
 #  - AAOS_ARTIFACT_STORAGE_SOLUTION: the persistent storage location for
 #        artifacts (GCS_BUCKET default).
+#  - AAOS_ARTIFACT_ROOT_NAME: the name of the bucket to store artifacts.
+#  - ANDROID_VERSION: the Android version (default: 14).
 #  - REPO_SYNC_JOBS: the number of parallel repo sync jobs to use Default: 2).
 #  - MAX_REPO_SYNC_JOBS: the maximum number of parallel repo sync jobs
 #        supported. (Default: 24).
@@ -40,6 +43,14 @@
 #  - GERRIT_CHANGE_NUMBER: the change number of the changeset to download.
 #  - GERRIT_PATCHSET_NUMBER: the patchset number of the changeset to download.
 #
+# If running standalone, only AAOS_CLEAN and AAOS_LUNCH_TARGET apply, eg.
+#
+# AAOS_CLEAN=CLEAN_BUILD \
+# AAOS_LUNCH_TARGET=aosp_cf_x86_64_auto-ap1a-userdebug \
+# ./workloads/android/pipelines/builds/aaos_builder/aaos_environment.sh
+#
+# AAOS_CLEAN=CLEAN_ALL \
+# ./workloads/android/pipelines/builds/aaos_builder/aaos_environment.sh
 
 # Store BUILD_NUMBER for path in aaos_storage.sh
 # shellcheck disable=SC2034
@@ -83,7 +94,7 @@ REPO_SYNC_JOBS_ARG="-j$(( REPO_SYNC_JOBS < 1 ? 1 : REPO_SYNC_JOBS > MAX_REPO_SYN
 # Check we have a target defined.
 AAOS_LUNCH_TARGET=$(echo "${AAOS_LUNCH_TARGET}" | xargs)
 # Default if not defined (important for initial pipeline build)
-AAOS_LUNCH_TARGET=${AAOS_LUNCH_TARGET:-sdk_car_x86_64-userdebug}
+AAOS_LUNCH_TARGET=${AAOS_LUNCH_TARGET:-sdk_car_x86_64-ap1a-userdebug}
 if [ -z "${AAOS_LUNCH_TARGET}" ]; then
     echo "Error: please define AAOS_LUNCH_TARGET"
     exit 255
