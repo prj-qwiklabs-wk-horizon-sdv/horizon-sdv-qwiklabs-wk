@@ -15,7 +15,7 @@
 # limitations under the License.
 #
 # Description:
-# This script creates the SDK addon file fnd devices.xml for AVD targets.
+# This script creates the SDK addon file and devices.xml for AVD targets.
 # It then packs AVD image for use with Android Studio.
 #
 # This script does the following:
