@@ -176,8 +176,10 @@ export OUT_DIR="out_sdv-${AAOS_LUNCH_TARGET}"
 
 # Architecture:
 AAOS_ARCH=""
+AAOS_ARCH_ABI=""
 if [[ "${AAOS_LUNCH_TARGET}" =~ "arm64" ]]; then
     AAOS_ARCH="arm64"
+    AAOS_ARCH_ABI="-v8a"
 elif [[ "${AAOS_LUNCH_TARGET}" =~ "x86_64" ]]; then
     AAOS_ARCH="x86_64"
 elif [[ "${AAOS_LUNCH_TARGET}" =~ "rpi" ]]; then

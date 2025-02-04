@@ -53,6 +53,7 @@ declare avd_sha1=''
 declare avd_size=''
 declare avd_image_url=''
 declare output_dir=''
+declare -r aaos_arch="${AAOS_ARCH}${AAOS_ARCH_ABI}"
 
 # Create the SDK Addons file for use with AVD images and Android Studio.
 function create_sdk_addons() {
@@ -71,7 +72,7 @@ function create_sdk_addons() {
     sed -i '/<uses-license ref=.*/a \        <channelRef ref="channel-0"/>' "${AAOS_SDK_ADDON_FILE}"
 
     # Update remote name
-    local package_path="system-images;android-${ANDROID_API_LEVEL};aaos-horizon-sdv;${AAOS_ARCH}"
+    local package_path="system-images;android-${ANDROID_API_LEVEL};aaos-horizon-sdv;${aaos_arch}"
     sed -i "s|<remotePackage path=\"[^\"]*\">|<remotePackage path=\"${package_path}\">|" "${AAOS_SDK_ADDON_FILE}"
 
     # Update Tag Display Name and ID.
@@ -83,7 +84,7 @@ function create_sdk_addons() {
     # Update API Level
     sed -i "s|<api-level>[^<]*</api-level>|<api-level>${ANDROID_API_LEVEL}</api-level>|" "${AAOS_SDK_ADDON_FILE}"
     # Update ARCH
-    sed -i "s|<abi>[^<]*</abi>|<abi>${AAOS_ARCH}</abi>|" "${AAOS_SDK_ADDON_FILE}"
+    sed -i "s|<abi>[^<]*</abi>|<abi>${aaos_arch}</abi>|" "${AAOS_SDK_ADDON_FILE}"
     # Update Display Name
     display_name="Horizon SDV AAOS - ${JOB_NAME}-${AAOS_BUILD_NUMBER}"
     sed -i "s|<display-name>\(.*\)</display-name>|<display-name>${display_name}</display-name>|" "${AAOS_SDK_ADDON_FILE}"
@@ -108,7 +109,7 @@ function create_devices_xml() {
     sed -i 's|<d:ram unit="KiB">[0-9]*</d:ram>|<d:ram unit="GiB">2</d:ram>|' devices.xml
     sed -i 's|<d:internal-storage unit="KiB">[0-9]*</d:internal-storage>|<d:internal-storage="GiB">2</d:internal-storage>|' devices.xml
     # Arch and API Level
-    sed -i "/<d:abi>/,/<\/d:abi>/ s|x86_64|${AAOS_ARCH}|" devices.xml
+    sed -i "/<d:abi>/,/<\/d:abi>/ s|x86_64|${aaos_arch}|" devices.xml
     sed -i "s|<d:api-level>[^<]*</d:api-level>|<d:api-level>${ANDROID_API_LEVEL}</d:api-level>|" devices.xml
 }
 
