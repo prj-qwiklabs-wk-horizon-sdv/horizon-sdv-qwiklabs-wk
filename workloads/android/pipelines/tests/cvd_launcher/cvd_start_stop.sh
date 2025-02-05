@@ -172,12 +172,22 @@ case "${1}" in
             adb devices
         else
             echo "Device(s) not booted within ${CUTTLEFISH_MAX_BOOT_TIME} seconds"
-            # Stop and clean up
-            cuttlefish_archive_logs
-            cuttlefish_stop
-            cuttlefish_cleanup
-            sudo reboot
-            exit 1
+            echo "    Try to reboot adb server"
+            # Ensure adb devices show devices.
+            sudo adb kill-server || true
+            sleep 30
+            sudo adb start-server || true
+            sleep 60
+            num_instances=$(adb devices | grep -c -E '0.+device$')
+            if (( num_instances == 0 )); then
+                echo "Error: adb reboot failed, devices not booted."
+                # Stop and clean up
+                cuttlefish_archive_logs
+                cuttlefish_stop
+                cuttlefish_cleanup
+                sudo reboot
+                exit 1
+            fi
         fi
         ;;
 esac
