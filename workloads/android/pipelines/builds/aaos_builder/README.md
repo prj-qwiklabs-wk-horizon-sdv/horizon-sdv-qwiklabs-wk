@@ -254,3 +254,6 @@ AAOS_LUNCH_TARGET=sdk_car_x86_64-ap1a-userdebug \
 
 -   [RPi](https://github.com/raspberry-vanilla/android_local_manifest) targets and branch names can change. Currently we define limited support in [aaos_environment.sh](#aaos_environment) but user may override the `repo init` command to include newer manifests and branch names that may not align with Google main branch. Simply update `POST_REPO_INITIALISE_COMMAND` with the RPi command that you prefer post `repo init`.
 
+### Resource Limits (Pod)
+
+-    The resource limits in the Jenkins Pod templates were chosen to give the optimal performance of builds. Higher values exposed issues with Jenkins kubernetes plugin and losing connection with the agent. e.g. The instance has 112 cores but some of those are required by Jenkins agent, 96 was most reliable to get the optimal performance.
