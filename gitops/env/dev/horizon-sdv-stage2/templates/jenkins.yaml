@@ -29,7 +29,6 @@ spec:
             userkey: jenkins-admin-user
             passwordkey: jenkins-admin-password
           jenkinsUrl: "https://dev.horizon-sdv.scpmtk.com/jenkins"
-          numExecutors: "1"
           installPlugins:
             - kubernetes:latest
             - kubernetes-credentials-provider:latest
