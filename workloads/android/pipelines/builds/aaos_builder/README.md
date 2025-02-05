@@ -245,8 +245,10 @@ AAOS_LUNCH_TARGET=sdk_car_x86_64-ap1a-userdebug \
     -   `android-15.0.0_r10` : 3h and not completed (stuck in `CtsLibcoreOjTestCases` tests).
     -   `android-15.0.0_r10` : very new, latest and thus expect bugs.
 
-### CTS
+### Cuttlefish and CTS
 
+-   Some releases of Android have issues with launching cuttlefish virtual devices.
+    `android-14.0.0_r30` is a more reliable release.
 -   If using later releases than `android-14.0.0_r30`, consider tailoring the CTS Execution resources to suit those of
     the version under test. The number of instances, CPUs and Memory defaults are set up as default for `android-14.0.0_r30`.
 
