@@ -102,9 +102,17 @@ function create_devices_xml() {
     cp "${aaos_devices_file}" devices.xml
 
     # Device Name, ID and Manufaturer
-    sed -i "s|<d:name>\(.*\)</d:name>|<d:name>Horizon SDV AAOS</d:-name>|" devices.xml
-    sed -i "s|<d:id>\(.*\)</d:id>|<d:id>horizon_sdv_aaos</d:-id>|" devices.xml
-    sed -i "s|<d:manufacturer>\(.*\)</d:manufacturer>|<d:manufacturer>Horizon SDV</d:-manufacturer>|" devices.xml
+    sed -i "s|<d:name>\(.*\)</d:name>|<d:name>Horizon SDV AAOS</d:name>|" devices.xml
+    sed -i "s|<d:id>\(.*\)</d:id>|<d:id>horizon_sdv_aaos</d:id>|" devices.xml
+    sed -i "s|<d:manufacturer>\(.*\)</d:manufacturer>|<d:manufacturer>Horizon SDV</d:manufacturer>|" devices.xml
+    # Hardware
+    sed -i "s|<d:screen-size>\(.*\)</d:screen-size>|<d:screen-size>normal</d:screen-size>|" devices.xml
+    sed -i "s|<d:diagonal-length>\(.*\)</d:diagonal-length>|<d:diagonal-length>11.3</d:diagonal-length>|" devices.xml
+    sed -i "s|<d:pixel-density>\(.*\)</d:pixel-density>|<d:pixel-density>mdpi</d:pixel-density>|" devices.xml
+    sed -i "s|<d:x-dimension>\(.*\)</d:x-dimension>|<d:x-dimension>1152</d:x-dimension>|" devices.xml
+    sed -i "s|<d:y-dimension>\(.*\)</d:y-dimension>|<d:y-dimension>1536</d:y-dimension>|" devices.xml
+    sed -i "s|<d:xdpi>\(.*\)</d:xdpi>|<d:xdpi>180</d:xdpi>|" devices.xml
+    sed -i "s|<d:ydpi>\(.*\)</d:ydpi>|<d:ydpi>180</d:ydpi>|" devices.xml
     # Update RAM and Storage (smaller)
     sed -i 's|<d:ram unit="KiB">[0-9]*</d:ram>|<d:ram unit="GiB">2</d:ram>|' devices.xml
     sed -i 's|<d:internal-storage unit="KiB">[0-9]*</d:internal-storage>|<d:internal-storage="GiB">2</d:internal-storage>|' devices.xml
