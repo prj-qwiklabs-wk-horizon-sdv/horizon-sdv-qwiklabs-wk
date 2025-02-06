@@ -202,7 +202,7 @@ pipeline {
               sh '''
                 BUCKET_FOLDER=$(echo "$JOB_NAME" | tr ' ' '_')
                 export CUTTLEFISH_DOWNLOAD_URL="gs://${CLOUD_PROJECT}-aaos/$BUCKET_FOLDER/$BUILD_NUMBER/aosp_cf_x86_64_auto-${ANDROID_BUILD_ID}userdebug"
-                export NUM_INSTANCES=10
+                export NUM_INSTANCES=8
                 export VM_CPUS=6
                 export CTS_VERSION=${ANDROID_VERSION}
                 export CTS_MODULE="CtsHostsideNumberBlockingTestCases"
@@ -212,6 +212,8 @@ pipeline {
                 ./workloads/android/pipelines/tests/cts_execution/cts_execution.sh
                 ./workloads/android/pipelines/tests/cvd_launcher/cvd_start_stop.sh --stop || true
               '''
+              archiveArtifacts artifacts: 'cvd*.log', followSymlinks: false, onlyIfSuccessful: false, allowEmptyArchive: true
+              archiveArtifacts artifacts: 'cuttlefish*.tgz', followSymlinks: false, onlyIfSuccessful: false, allowEmptyArchive: true
               archiveArtifacts artifacts: 'cts*.txt', followSymlinks: false, onlyIfSuccessful: false, allowEmptyArchive: true
               archiveArtifacts artifacts: 'android-cts-results/invocation_summary.txt', followSymlinks: false, onlyIfSuccessful: false, allowEmptyArchive: true
               archiveArtifacts artifacts: 'android-cts-results/*.zip', followSymlinks: false, onlyIfSuccessful: false, allowEmptyArchive: true
