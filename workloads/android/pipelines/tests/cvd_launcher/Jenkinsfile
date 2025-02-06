@@ -1,3 +1,4 @@
+
 // Copyright (c) 2024-2025 Accenture, All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -135,35 +136,36 @@ pipeline {
           }
           steps {
             catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-              sh '''
-                CUTTLEFISH_KEEP_ALIVE_TIME="${CUTTLEFISH_KEEP_ALIVE_TIME}" \
-                ./workloads/android/pipelines/tests/cvd_launcher/cvd_start_stop.sh --keep-alive
-              '''
+              script {
+                sleep(time: "${CUTTLEFISH_KEEP_ALIVE_TIME}", unit: 'MINUTES')
+              }
             }
           }
         }
-      }
-      post {
-        always {
-          catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+
+        stage ('Stop Virtual Devices') {
+          when { expression { env.CUTTLEFISH_DOWNLOAD_URL } }
+          steps {
             withCredentials([usernamePassword(credentialsId: 'jenkins-mtk-connect-apikey', passwordVariable: 'MTK_CONNECT_PASSWORD', usernameVariable: 'MTK_CONNECT_USERNAME')]) {
-              sh '''
-                if test -n "$CUTTLEFISH_DOWNLOAD_URL"; then
-                  sudo \
-                  MTK_CONNECT_DOMAIN=${HORIZON_DOMAIN} \
-                  MTK_CONNECT_USERNAME=${MTK_CONNECT_USERNAME} \
-                  MTK_CONNECT_PASSWORD=${MTK_CONNECT_PASSWORD} \
-                  MTK_CONNECTED_DEVICES="${NUM_INSTANCES}" \
-                  MTK_CONNECT_TESTBENCH="${JOB_NAME}-${BUILD_NUMBER}" \
-                  timeout 10m ./workloads/android/pipelines/tests/cvd_launcher/cvd_mtk_connect.sh --stop || true
-                  ./workloads/android/pipelines/tests/cvd_launcher/cvd_start_stop.sh --stop || true
-                else
-                  echo "Post stage skipped due to conditional"
-                fi
-              '''
+              catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+                script {
+                  sh 'echo "Stopping  MTK Connect"'
+                  sh '''
+                    sudo \
+                    MTK_CONNECT_DOMAIN=${HORIZON_DOMAIN} \
+                    MTK_CONNECT_USERNAME=${MTK_CONNECT_USERNAME} \
+                    MTK_CONNECT_PASSWORD=${MTK_CONNECT_PASSWORD} \
+                    MTK_CONNECTED_DEVICES="${NUM_INSTANCES}" \
+                    MTK_CONNECT_TESTBENCH="${JOB_NAME}-${BUILD_NUMBER}" \
+                    timeout 10m ./workloads/android/pipelines/tests/cvd_launcher/cvd_mtk_connect.sh --stop || true
+                  '''
+                  sh 'echo "Stopping Cuttlefish"'
+                  sh './workloads/android/pipelines/tests/cvd_launcher/cvd_start_stop.sh --stop || true'
+                }
+                archiveArtifacts artifacts: 'cvd*.log', followSymlinks: false, onlyIfSuccessful: false, allowEmptyArchive: true
+                archiveArtifacts artifacts: 'cuttlefish*.tgz', followSymlinks: false, onlyIfSuccessful: false, allowEmptyArchive: true
+              }
             }
-            archiveArtifacts artifacts: 'cvd*.log', followSymlinks: false, onlyIfSuccessful: false, allowEmptyArchive: true
-            archiveArtifacts artifacts: 'cuttlefish*.tgz', followSymlinks: false, onlyIfSuccessful: false, allowEmptyArchive: true
           }
         }
       }
