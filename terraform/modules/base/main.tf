@@ -18,6 +18,10 @@ module "sdv_wi" {
   source = "../sdv-wi"
 
   wi_service_accounts = var.sdv_wi_service_accounts
+
+  depends_on = [
+    module.sdv_gke_cluster
+  ]
 }
 
 module "sdv_gcs" {
@@ -128,6 +132,8 @@ module "sdv_copy_to_bastion_host" {
     module.sdv_bastion_host,
     module.sdv_gcs_scripts
   ]
+
+  ]
 }
 
 module "sdv_bash_on_bastion_host" {
@@ -156,6 +162,10 @@ module "sdv_sa_key_secret_gce_creds" {
       ns = "jenkins"
       sa = "jenkins-sa"
     }
+  ]
+
+  depends_on = [
+    module.sdv_gke_cluster
   ]
 }
 
